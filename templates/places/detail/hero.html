@@ -1,0 +1,45 @@
+{% if place.cover_image %}
+<div class="place-hero-section mb-4">
+    <img src="{{ place.cover_image.url }}" alt="{{ place.name }}" class="place-hero-img">
+    <div
+        class="place-hero-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-end p-5">
+        <div class="container text-white" style="margin-bottom: 4rem;">
+            <div class="animate__animated animate__fadeInUp">
+                <span class="badge bg-white text-dark bg-opacity-25 backdrop-blur-sm mb-3 px-3 py-2 rounded-pill">
+                    <i class="fas fa-map-marker-alt text-warning me-2"></i> {{ place.get_directorate_display }}
+                </span>
+                <h1 class="display-3 fw-bold mb-3 text-shadow">{{ place.name }}</h1>
+                <p class="fs-5 opacity-90 max-w-lg mb-4">
+                    {% if place.category %}
+                    <span class="fw-bold text-warning">{{ place.category.name }}</span>
+                    {% endif %}
+                    <span class="mx-2">•</span>
+                    <span>{{ place.get_status_display }}</span>
+                </p>
+                <!-- Actions -->
+                <div class="d-flex gap-3">
+                    <button class="btn btn-primary px-4 py-3 rounded-pill fw-bold shadow-lg"
+                        onclick="window.open('https://www.google.com/maps/dir/?api=1&destination={{ place.latitude|default:0 }},{{ place.longitude|default:0 }}', '_blank')">
+                        <i class="fas fa-location-arrow me-2"></i> احصل على الاتجاهات
+                    </button>
+                    {% if feature_toggles.enable_reviews and user.is_authenticated %}
+                    <button class="btn btn-warning px-4 py-3 rounded-pill fw-bold shadow-lg text-dark ms-2"
+                        onclick="document.getElementById('reviews-section').scrollIntoView({behavior: 'smooth'}); setTimeout(openReviewModal, 800);">
+                        <i class="fas fa-star me-2"></i> قيم الآن
+                    </button>
+                    {% endif %}
+                    {% if feature_toggles.enable_favorites %}
+                        <div id="fav-btn-wrap-{{ place.id }}">
+                            {% include "partials/favorite_button.html" with is_fav=is_favorited %}
+                        </div>
+                    {% endif %}
+
+                    {% if feature_toggles.enable_favorites %}
+                        {% include "interactions/partials/follow_button.html" with place=place following=is_following followers_count=followers_count %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}

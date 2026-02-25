@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ itinerary.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>{{ itinerary.title }}</h1>
+            <p class="text-muted mb-0">
+                <i class="fas fa-calendar"></i>
+                {% if itinerary.start_date %}{{ itinerary.start_date }}{% else %}غير محدد{% endif %}
+                &bull; {{ itinerary.duration_days }} أيام
+            </p>
+        </div>
+        {% if is_owner %}
+        <div class="d-flex gap-2">
+            <!-- Toggle Public -->
+             {% include "interactions/partials/itinerary_public_toggle.html" with itinerary=itinerary %}
+            {% if itinerary.is_public %}
+            <a href="{% url 'itinerary_public' itinerary.pk %}" class="btn btn-info" target="_blank">
+                <i class="fas fa-share"></i> رابط المشاركة
+            </a>
+            {% endif %}
+            <a href="{% url 'itinerary_delete' itinerary.pk %}" class="btn btn-outline-danger">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Days -->
+    {% for day_num, items in days %}
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">📅 اليوم {{ day_num }}</h5>
+            {% if is_owner %}
+            <button class="btn btn-sm btn-outline-primary rounded-pill" onclick="openAddModal({{ day_num }})">
+                <i class="fas fa-plus me-1"></i> إضافة مكان
+            </button>
+            {% endif %}
+        </div>
+        <div class="card-body" id="day-{{ day_num }}-body">
+            {% if items %}
+            <div class="list-group list-group-flush">
+                {% for item in items %}
+                <div class="list-group-item d-flex justify-content-between align-items-center" data-id="{{ item.pk }}">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-grip-vertical text-muted me-3 drag-handle" style="cursor: grab;"></i>
+                        <div>
+                            <span class="badge bg-primary me-2">{{ item.order }}</span>
+                            <strong>{{ item.place.name }}</strong>
+                            {% if item.notes %}
+                            <small class="text-muted d-block">{{ item.notes }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if is_owner %}
+                    <form method="post" action="{% url 'itinerary_item_delete' item.pk %}" class="d-inline"
+                        hx-post="{% url 'itinerary_item_delete' item.pk %}"
+                        hx-target="closest .list-group-item"
+                        hx-swap="outerHTML swap:1s"
+                        hx-confirm="حذف هذا المكان؟">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted text-center mb-0">لا توجد أماكن لهذا اليوم</p>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-4">
+        <p class="text-muted">لم تقم بإضافة أي أماكن بعد</p>
+    </div>
+    {% endfor %}
+
+    {% if is_owner %}
+    <!-- Add Place Section (Trigger for Modal) -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fas fa-plus"></i> إضافة مكان</h5>
+        </div>
+        <div class="card-body text-center">
+            <p class="text-muted">لإضافة مكان، اضغط على زر "إضافة مكان" في بطاقة اليوم المحدد.</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Search Modal -->
+    <div class="modal fade" id="addPlaceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4 border-0 shadow-lg">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">إضافة مكان للخطة</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Hidden Input for selected day -->
+                    <input type="hidden" name="day_number" id="dayNumberInput" value="1">
+                    
+                    <!-- Search Input -->
+                    <div class="input-group mb-4 shadow-sm rounded-pill overflow-hidden">
+                        <span class="input-group-text bg-white border-0 ps-4"><i class="fas fa-search text-muted"></i></span>
+                        <input type="text" name="q" class="form-control border-0 py-3" 
+                               placeholder="ابحث عن مكان (مطعم، فندق، معلم...)"
+                               hx-get="{% url 'itinerary_search_place' %}?itinerary_pk={{ itinerary.pk }}"
+                               hx-target="#search-results"
+                               hx-trigger="keyup changed delay:500ms, search"
+                               hx-include="#dayNumberInput">
+                    </div>
+                    
+                    <!-- Results -->
+                    <div id="search-results" class="overflow-auto" style="max-height: 400px;">
+                        <div class="text-center py-5 text-muted">
+                            <i class="fas fa-search fa-2x mb-3 opacity-25"></i>
+                            <p>ابدأ الكتابة للبحث عن الأماكن...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SortableJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Init Sortable on all day lists
+            const lists = document.querySelectorAll('.list-group');
+            lists.forEach(list => {
+                new Sortable(list, {
+                    animation: 150,
+                    ghostClass: 'bg-light',
+                    handle: '.drag-handle', // Optional: if we want a handle
+                    onEnd: function (evt) {
+                        const itemEl = evt.item;
+                        const newIndex = evt.newIndex;
+                        const oldIndex = evt.oldIndex;
+                        const dayBody = itemEl.closest('.card-body');
+                        
+                        // Get all item IDs in new order
+                        const itemIds = Array.from(dayBody.querySelectorAll('.list-group-item'))
+                            .map(el => el.getAttribute('data-id'));
+                            
+                        // Send reorder request
+                        fetch('{% url "itinerary_reorder_items" %}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({
+                                item_ids: itemIds
+                            })
+                        });
+                    }
+                });
+            });
+        });
+
+        function openAddModal(dayNum) {
+            document.getElementById('dayNumberInput').value = dayNum;
+            var myModal = new bootstrap.Modal(document.getElementById('addPlaceModal'));
+            myModal.show();
+        }
+    </script>
+</div>
+{% endblock %}

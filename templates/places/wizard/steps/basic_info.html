@@ -1,0 +1,41 @@
+{% load i18n %}
+<div class="row g-3">
+    <div class="col-md-12">
+        <label class="form-label fw-bold">{{ form.name.label }}</label>
+        <input type="text" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}"
+            value="{{ form.name.value|default:'' }}" class="form-control {% if form.name.errors %}is-invalid{% endif %}"
+            required>
+        {% for error in form.name.errors %}
+        <div class="invalid-feedback">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label fw-bold">{{ form.category.label }}</label>
+        {{ form.category }}
+        <!-- Note: Widget defines class 'form-select' -->
+        {% if form.category.errors %}
+        <div class="text-danger small">{{ form.category.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div class="col-12">
+        <label class="form-label fw-bold">{{ form.description.label }}</label>
+        <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" rows="5"
+            class="form-control {% if form.description.errors %}is-invalid{% endif %}">{{ form.description.value|default:'' }}</textarea>
+        {% for error in form.description.errors %}
+        <div class="invalid-feedback">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="col-12">
+        <label class="form-label fw-bold">{{ form.cover_image.label }}</label>
+        <input type="file" name="{{ form.cover_image.name }}" class="form-control">
+        {% if form.instance.cover_image %}
+        <div class="mt-2 p-2 border rounded bg-light d-inline-block">
+            <small class="d-block text-muted mb-1">{% trans "Current Image:" %}</small>
+            <img src="{{ form.instance.cover_image.url }}" class="img-fluid rounded" style="max-height: 150px;">
+        </div>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found - Ibb Guide{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center min-vh-75 d-flex flex-column justify-content-center align-items-center">
+    <div class="display-1 fw-bold text-success mb-3">404</div>
+    <h2 class="fw-bold mb-4">هل ضللت الطريق في الجبال؟</h2>
+    <p class="lead text-muted mb-5">
+        الصفحة التي تبحث عنها قد تكون انتقلت أو غير موجودة.
+    </p>
+    <a href="{% url 'home' %}" class="btn btn-outline-success btn-lg rounded-pill px-5">
+        <i class="fas fa-compass me-2"></i> العودة للرئيسية
+    </a>
+</div>
+{% endblock %}

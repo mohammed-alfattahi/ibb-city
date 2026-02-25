@@ -1,0 +1,260 @@
+/* ============ Enhanced Floating Filter Sidebar ============ */
+
+/* Sidebar Container */
+#changelist-filter {
+    position: fixed;
+    top: 60px;
+    /* Below header */
+    left: -280px;
+    /* Hide by default (RTL support handles direction) */
+    width: 260px;
+    height: calc(100vh - 60px);
+    background: #fff;
+    z-index: 1000;
+    padding: 0;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+/* RTL Support - For Arabic, it should be on RIGHT */
+[dir="rtl"] #changelist-filter {
+    left: auto;
+    right: -280px;
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+}
+
+[dir="rtl"] #changelist-filter.active {
+    right: 0;
+}
+
+#changelist-filter.active {
+    left: 0;
+}
+
+/* Toggle Button */
+#changelist-filter-toggle {
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    /* RTL handles flipping */
+    z-index: 999;
+    width: 44px;
+    height: 44px;
+    background: #28a745;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 18px;
+}
+
+[dir="rtl"] #changelist-filter-toggle {
+    left: auto;
+    right: 20px;
+}
+
+[dir="rtl"] #changelist-filter.active~#changelist-filter-toggle {
+    right: 280px;
+}
+
+#changelist-filter-toggle:hover {
+    transform: scale(1.1);
+    background: #218838;
+}
+
+/* Header */
+#changelist-filter h2 {
+    padding: 20px;
+    margin: 0;
+    background: #f8f9fa;
+    color: #343a40;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #e9ecef;
+}
+
+/* Close Icon */
+#changelist-filter-close {
+    cursor: pointer;
+    opacity: 0.5;
+    transition: 0.2s;
+    font-size: 20px;
+}
+
+#changelist-filter-close:hover {
+    opacity: 1;
+    color: #dc3545;
+}
+
+/* Filter Groups */
+#changelist-filter h3 {
+    padding: 15px 20px 5px;
+    margin: 0;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #6c757d;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+#changelist-filter ul {
+    padding: 5px 10px;
+    margin-bottom: 10px;
+}
+
+#changelist-filter li a {
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: #495057;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#changelist-filter li a:hover {
+    background: #f1f3f5;
+    color: #28a745;
+    transform: translateX(-4px);
+    /* Slide effect */
+}
+
+#changelist-filter li.selected a {
+    background: #e6f9ec;
+    color: #28a745;
+    font-weight: 700;
+    border-right: 3px solid #28a745;
+    /* Active indicator */
+}
+
+/* Reset Link */
+#changelist-filter .bottom {
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+}
+
+/* Overlay */
+#filter-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 900;
+    display: none;
+    backdrop-filter: blur(2px);
+}
+
+#filter-overlay.active {
+    display: block;
+}
+
+/* ============ Grid View for Inline Images ============ */
+
+/* Specific targeting for PlaceMedia and Image inlines */
+.inline-group .tabular td.original p {
+    display: none;
+    /* Hide default "change" text */
+}
+
+.inline-group .tabular tr.has_original td {
+    /* transform: none; No row styling, we want grid */
+}
+
+/* Grid Container Setup */
+/* Note: Django tabular inlines are tables. We can force them into grid with flex */
+
+.inline-group.grp-place_media tbody,
+.inline-group[id^="placemedia_set-group"] tbody {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 16px;
+}
+
+.inline-group.grp-place_media tr,
+.inline-group[id^="placemedia_set-group"] tbody tr {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 0;
+    /* Remove padding from tr */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s;
+}
+
+.inline-group.grp-place_media tr:hover,
+.inline-group[id^="placemedia_set-group"] tbody tr:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-color: #28a745;
+}
+
+/* Image Preview Area */
+.inline-group[id^="placemedia_set-group"] .field-image {
+    width: 100%;
+    height: 150px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0 !important;
+}
+
+.inline-group[id^="placemedia_set-group"] .field-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.inline-group[id^="placemedia_set-group"] .field-image a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Fields Styling in Grid Card */
+.inline-group[id^="placemedia_set-group"] td:not(.field-image) {
+    padding: 8px 12px;
+    border: none;
+    display: block;
+    width: 100%;
+}
+
+.inline-group[id^="placemedia_set-group"] td label {
+    font-size: 11px;
+    color: #adb5bd;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.inline-group[id^="placemedia_set-group"] .delete {
+    background: #ffe3e3;
+    padding: 8px !important;
+    text-align: center;
+    cursor: pointer;
+}
+
+.inline-group[id^="placemedia_set-group"] .delete input {
+    margin-left: 6px;
+}
+
+.inline-group[id^="placemedia_set-group"] .delete:hover {
+    background: #ffc9c9;
+}

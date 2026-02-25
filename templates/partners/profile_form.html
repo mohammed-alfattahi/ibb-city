@@ -1,0 +1,92 @@
+{% extends "partners/base_partner.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}الملف الشخصي - شريك إب{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Main Profile Settings -->
+    <div class="col-lg-8">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="ent-card mb-4">
+                <div class="ent-card-header">
+                    <span><i class="fas fa-user-edit me-2"></i> بيانات الملف الشخصي</span>
+                </div>
+                <div class="ent-card-body">
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        يرجى تصحيح الأخطاء أدناه
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form|crispy }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-end py-3">
+                    <button type="submit" class="btn btn-primary px-4 fw-bold">
+                        <i class="fas fa-save me-2"></i> حفظ التغييرات
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sidebar Info -->
+    <div class="col-lg-4">
+        <!-- Account Status -->
+        <div class="ent-card mb-4">
+            <div class="ent-card-header bg-success text-white">
+                <span><i class="fas fa-id-card me-2"></i> بطاقة الحساب</span>
+            </div>
+            <div class="ent-card-body text-center">
+                {% if user.profile_image %}
+                <img src="{{ user.profile_image.url }}"
+                    class="rounded-circle border border-4 border-light shadow-sm mb-3" width="100" height="100">
+                {% else %}
+                <div class="mx-auto rounded-circle bg-light d-flex align-items-center justify-content-center border mb-3"
+                    style="width: 100px; height: 100px;">
+                    <span class="h1 mb-0 text-muted">{{ user.username|slice:":1"|upper }}</span>
+                </div>
+                {% endif %}
+
+                <h5 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h5>
+                <span class="badge bg-primary rounded-pill mb-3">شريك معتمد</span>
+
+                <ul class="list-group list-group-flush text-start small">
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">اسم المستخدم</span>
+                        <span class="fw-bold">{{ user.username }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">البريد الإلكتروني</span>
+                        <span class="fw-bold">{{ user.email }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">تاريخ الانضمام</span>
+                        <span class="fw-bold">{{ user.date_joined|date:"Y-m-d" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">آخر دخول</span>
+                        <span class="fw-bold">{{ user.last_login|date:"Y-m-d H:i" }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Help Card -->
+        <div class="ent-card text-center">
+            <div class="ent-card-body">
+                <i class="fas fa-headset fa-3x text-muted mb-3"></i>
+                <h6 class="fw-bold">الدعم الفني</h6>
+                <p class="small text-muted mb-3">هل تحتاج إلى مساعدة؟ فريقنا جاهز لخدمتك</p>
+                <a href="mailto:support@ibb-guide.com" class="btn btn-outline-secondary btn-sm w-100">تواصل معنا</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

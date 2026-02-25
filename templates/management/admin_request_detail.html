@@ -1,0 +1,184 @@
+{% extends "management/admin_base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="d-flex align-items-center mb-4">
+                <a href="{% url 'admin_request_list' %}" class="btn btn-outline-secondary me-3">
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <h2 class="h3 fw-bold mb-0">{% trans "مراجعة الطلب" %} #{{ req.pk }}</h2>
+            </div>
+
+            <!-- Request Info -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light py-3">
+                    <h5 class="mb-0">{% trans "معلومات الطلب" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-muted small">{% trans "الشريك" %}</label>
+                            <p class="fw-medium mb-0">{{ req.user.username }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">{% trans "نوع الطلب" %}</label>
+                            <p class="fw-medium mb-0">{{ req.get_request_type_display }}</p>
+                        </div>
+                        <div class="col-12">
+                            <label class="text-muted small">{% trans "الوصف من الشريك" %}</label>
+                            <div class="p-3 bg-light rounded">
+                                {{ req.description|default:"-" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Changes Diff -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-warning text-dark py-3">
+                    <h5 class="mb-0">{% trans "مقارنة التعديلات" %}</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-bordered mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="w-25">{% trans "الحقل" %}</th>
+                                <th class="w-35 text-danger">{% trans "قبل (Old Value)" %}</th>
+                                <th class="w-35 text-success">{% trans "بعد (New Value)" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for field, new_val in req.changes.items %}
+                            <tr>
+                                <td class="fw-bold">{{ field }}</td>
+                                <td class="text-danger bg-light">
+                                    {% for k, v in req.original_data.items %}
+                                    {% if k == field %}{{ v }}{% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td class="text-success bg-white fw-bold">{{ new_val }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">{% trans "لا توجد حقول معدلة (ربما طلب إنشاء أو نوع آخر)" %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Panel -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0">{% trans "اتخاذ قرار" %}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'admin_request_action' req.pk %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label">{% trans "ملاحظات الإدارة / سبب الرفض" %}</label>
+                            <textarea name="admin_response" class="form-control" rows="3"
+                                placeholder="اكتب ملاحظات للشريك هنا..."></textarea>
+                        </div>
+
+                        <!-- Advanced Approval Fields -->
+                        <div class="mb-3 bg-light p-2 rounded">
+                            <label class="form-label small fw-bold">{% trans "خيارات متقدمة (للموافقة المشروطة أو طلب تعديل)" %}</label>
+
+                            <div class="mb-2">
+                                <label class="small text-muted">{% trans "مهلة التعديل (Deadline)" %}</label>
+                                <input type="datetime-local" name="deadline" class="form-control form-control-sm">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="small text-muted">{% trans "شروط الموافقة (مطلوب للموافقة المشروطة)" %}</label>
+                                <textarea name="conditions" class="form-control form-control-sm" rows="2"
+                                    placeholder="أدخل الشروط هنا..."></textarea>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="small text-muted">{% trans "مرفقات القرار (مثلاً: خطاب رسمي)" %}</label>
+                                <input type="file" name="decision_doc" class="form-control form-control-sm">
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" name="action" value="approve" class="btn btn-success py-2">
+                                <i class="fas fa-check"></i> {% trans "موافقة نهائية" %}
+                            </button>
+
+                            <button type="submit" name="action" value="conditional_approve"
+                                class="btn btn-info text-white py-2">
+                                <i class="fas fa-check-circle"></i> {% trans "موافقة مشروطة" %}
+                            </button>
+
+                            <button type="submit" name="action" value="needs_info"
+                                class="btn btn-warning text-dark py-2">
+                                <i class="fas fa-question"></i> {% trans "طلب معلومات إضافية" %}
+                            </button>
+
+                            <button type="submit" name="action" value="reject" class="btn btn-danger py-2">
+                                <i class="fas fa-times"></i> {% trans "رفض الطلب" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request History (StatusLog) -->
+    <div class="col-lg-4 mt-4 mt-lg-0">
+        <!-- If more panels are added, this structure ensures they stack correctly on mobile -->
+    </div>
+
+</div>
+
+<!-- Timeline in separate row if needed, or sidebar -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-secondary text-white py-3">
+                <h5 class="mb-0">{% trans "سجل الحالات" %} (History Log)</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>{% trans "الحالة" %}</th>
+                                <th>{% trans "التاريخ" %}</th>
+                                <th>{% trans "المستخدم" %}</th>
+                                <th>{% trans "ملاحظات" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in req.status_logs.all %}
+                            <tr>
+                                <td>{{ log.get_status_icon }} {{ log.to_status }}</td>
+                                <td>{{ log.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>{{ log.changed_by.username }}</td>
+                                <td>{{ log.internal_note|default:log.message }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">{% trans "لا يوجد سجل" %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

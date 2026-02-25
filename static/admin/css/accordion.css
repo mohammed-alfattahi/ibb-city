@@ -1,0 +1,201 @@
+/**
+ * Admin Accordion Styles
+ * أنماط الأقسام القابلة للطي
+ */
+
+/* Accordion Container */
+.admin-accordion {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+/* Accordion Header */
+.admin-accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.admin-accordion-header:hover {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+}
+
+.admin-accordion-header.active {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.admin-accordion-header .icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.2);
+    border-radius: 6px;
+    margin-left: 12px;
+}
+
+.admin-accordion-header .title {
+    flex: 1;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.admin-accordion-header .arrow {
+    transition: transform 0.3s ease;
+}
+
+.admin-accordion-header.active .arrow {
+    transform: rotate(180deg);
+}
+
+/* Accordion Content */
+.admin-accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    background: #fff;
+}
+
+.admin-accordion-content.open {
+    max-height: 1000px;
+}
+
+.admin-accordion-content-inner {
+    padding: 16px;
+}
+
+/* Section Colors */
+.accordion-primary .admin-accordion-header.active {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.accordion-success .admin-accordion-header.active {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.accordion-warning .admin-accordion-header.active {
+    background: linear-gradient(135deg, #ffc107 0%, #d39e00 100%);
+    color: #212529;
+}
+
+.accordion-danger .admin-accordion-header.active {
+    background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
+}
+
+.accordion-info .admin-accordion-header.active {
+    background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%);
+}
+
+/* RTL Support */
+[dir="rtl"] .admin-accordion-header .icon {
+    margin-left: 0;
+    margin-right: 12px;
+}
+
+/* Quick Action Cards */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    padding: 16px;
+}
+
+.quick-action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 16px;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #212529;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #28a745;
+}
+
+.quick-action-card .icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    font-size: 24px;
+}
+
+.quick-action-card:hover .icon {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.quick-action-card .label {
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Status Sidebar Widget */
+.status-widget {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.status-widget-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #495057;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    margin: 4px 0;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.status-item.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-item.approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-item.rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-item .count {
+    font-weight: 700;
+    font-size: 14px;
+}

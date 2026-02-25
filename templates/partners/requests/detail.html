@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex align-items-center mb-4">
+                <a href="{% url 'partner_request_list' %}" class="btn btn-outline-secondary me-3">
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+                <h2 class="h3 fw-bold mb-0">{% trans "تفاصيل الطلب" %} #{{ req.pk }}</h2>
+                <div class="ms-auto">
+                    {% if req.status == 'PENDING' %}
+                    <span class="badge bg-warning text-dark fs-6">{% trans "قيد المراجعة" %}</span>
+                    {% elif req.status == 'APPROVED' %}
+                    <span class="badge bg-success fs-6">{% trans "مقبول" %}</span>
+                    {% elif req.status == 'REJECTED' %}
+                    <span class="badge bg-danger fs-6">{% trans "مرفوض" %}</span>
+                    {% elif req.status == 'CONDITIONAL_APPROVAL' %}
+                    <span class="badge bg-info text-dark fs-6">{% trans "موافقة مشروطة" %}</span>
+                    {% elif req.status == 'NEEDS_INFO' %}
+                    <span class="badge bg-warning text-dark fs-6">{% trans "يحتاج معلومات" %}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">{% trans "معلومات الطلب" %}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-muted small">{% trans "نوع الطلب" %}</label>
+                            <p class="fw-medium mb-0">{{ req.get_request_type_display }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">{% trans "تاريخ الإنشاء" %}</label>
+                            <p class="fw-medium mb-0">{{ req.created_at|date:"Y-m-d H:i" }}</p>
+                        </div>
+                        <div class="col-12">
+                            <label class="text-muted small">{% trans "الوصف" %}</label>
+                            <p class="mb-0">{{ req.description|default:"-" }}</p>
+                        </div>
+                        {% if req.admin_response %}
+                        <div class="col-12">
+                            <div class="alert alert-light border mt-2">
+                                <label class="text-muted small d-block mb-1">{% trans "رد الإدارة" %}</label>
+                                {{ req.admin_response }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if req.conditions or req.deadline %}
+                <div class="alert alert-warning border shadow-sm mb-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-exclamation-triangle-fill fs-4 me-2"></i>
+                        <h5 class="mb-0 fw-bold">{% trans "متطلبات إضافية" %}</h5>
+                    </div>
+
+                    {% if req.deadline %}
+                    <div class="mb-2">
+                        <span class="fw-bold">{% trans "مهلة التعديل (Deadline):" %}</span>
+                        <span class="badge bg-dark">{{ req.deadline|date:"Y-m-d H:i" }}</span>
+                        {% if req.deadline < now %} <span class="text-danger fw-bold ms-2">({% trans "منتهية الصلاحية" %})</span>
+                            {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% if req.conditions %}
+                    <div>
+                        <span class="fw-bold d-block mb-1">{% trans "الشروط:" %}</span>
+                        <p class="mb-0 bg-white p-2 rounded">{{ req.conditions }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if req.changes %}
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0">{% trans "التغييرات المطلوبة" %}</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="w-25">{% trans "الحقل" %}</th>
+                            <th class="w-35 text-muted">{% trans "القيمة الحالية" %}</th>
+                            <th class="w-35 text-primary">{% trans "القيمة الجديدة" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for field, new_val in req.changes.items %}
+                        <tr>
+                            <td class="fw-medium">{{ field }}</td>
+                            <td class="text-muted">
+                                {# Direct lookup in original_data dict #}
+                                {% for k, v in req.original_data.items %}
+                                {% if k == field %}{{ v }}{% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="text-primary fw-medium">{{ new_val }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</div>
+{% endblock %}

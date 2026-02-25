@@ -1,0 +1,384 @@
+{% extends "base_marketing.html" %}
+{% load static %}
+
+{% block title %}الرئيسية - دليل إب السياحي{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/canva_home.css' %}">
+{% endblock %}
+
+{% block body_content %}
+
+    <!-- Hero Section -->
+    <section class="hero-section position-relative d-flex align-items-center justify-content-center text-center text-white overflow-hidden py-5" 
+             style="min-height: 600px; background: var(--canva-bg-gradient);">
+        
+        <!-- Background Pattern/Overlay -->
+        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-10"></div>
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background-image: url('{% static 'img/hero-pattern.svg' %}'); opacity: 0.1;"></div>
+
+        <div class="container position-relative z-2">
+            <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInDown">ماذا تريد أن تستكشف اليوم؟</h1>
+            
+            <!-- Search Bar -->
+            <div class="row justify-content-center mb-5 animate__animated animate__fadeInUp">
+                <div class="col-md-8 col-lg-6">
+                    <form action="{% url 'place_list' %}" method="get" class="search-form position-relative">
+                        <input type="text" name="q" class="form-control form-control-lg rounded-pill border-0 py-3 pe-5 ps-3 shadow-lg" 
+                               placeholder="ابحث عن أماكن، فعاليات، أو أكثر..." style="height: 60px;">
+                        <button type="submit" class="btn position-absolute top-50 end-0 translate-middle-y me-2 text-primary bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                                style="width: 45px; height: 45px;">
+                            <i class="fas fa-search fa-lg"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Categories Grid (Premium Icons) -->
+            <div class="row justify-content-center g-3 g-md-4 animate__animated animate__fadeInUp animate__delay-1s px-2 categories-grid">
+                <!-- All -->
+                <div class="col-3 col-md-auto">
+                    <a href="{% url 'place_list' %}" class="cat-pill" data-category="all">
+                        <div class="cat-icon-box">
+                            <i class="fas fa-compass"></i>
+                        </div>
+                        <span class="cat-label">الكل</span>
+                    </a>
+                </div>
+                <!-- Hotels -->
+                <div class="col-3 col-md-auto">
+                    <a href="{% url 'places_hotels_list' %}" class="cat-pill" data-category="hotels">
+                        <div class="cat-icon-box">
+                            <i class="fas fa-hotel"></i>
+                        </div>
+                        <span class="cat-label">فنادق</span>
+                    </a>
+                </div>
+                <!-- Restaurants -->
+                <div class="col-3 col-md-auto">
+                    <a href="{% url 'places_restaurants_list' %}" class="cat-pill" data-category="restaurants">
+                        <div class="cat-icon-box">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <span class="cat-label">مطاعم</span>
+                    </a>
+                </div>
+                <!-- Parks -->
+                <div class="col-3 col-md-auto">
+                    <a href="{% url 'places_parks_list' %}" class="cat-pill" data-category="parks">
+                        <div class="cat-icon-box">
+                            <i class="fas fa-tree"></i>
+                        </div>
+                        <span class="cat-label">منتزهات</span>
+                    </a>
+                </div>
+                <!-- Nature -->
+                <div class="col-3 col-md-auto">
+                    <a href="{% url 'nature_list' %}" class="cat-pill" data-category="nature">
+                        <div class="cat-icon-box">
+                            <i class="fas fa-mountain"></i>
+                        </div>
+                        <span class="cat-label">طبيعة</span>
+                    </a>
+                </div>
+                <!-- Landmarks -->
+                <div class="col-3 col-md-auto">
+                    <a href="{% url 'places_landmarks_list' %}" class="cat-pill" data-category="landmarks">
+                        <div class="cat-icon-box">
+                            <i class="fas fa-monument"></i>
+                        </div>
+                        <span class="cat-label">معالم</span>
+                    </a>
+                </div>
+                <!-- Investment -->
+                <div class="col-3 col-md-auto">
+                    <a href="{% url 'investment_list' %}" class="cat-pill" data-category="investment">
+                        <div class="cat-icon-box">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <span class="cat-label">استثمار</span>
+                    </a>
+                </div>
+                <!-- Safety -->
+                <div class="col-3 col-md-auto">
+                    <a href="{% url 'safety_guide' %}" class="cat-pill" data-category="safety">
+                        <div class="cat-icon-box">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <span class="cat-label">السلامة</span>
+                    </a>
+                </div>
+                <!-- Cafes -->
+                <div class="col-3 col-md-auto">
+                    <a href="{% url 'place_list' %}?category=cafes" class="cat-pill" data-category="cafes">
+                        <div class="cat-icon-box">
+                            <i class="fas fa-coffee"></i>
+                        </div>
+                        <span class="cat-label">كافيهات</span>
+                    </a>
+                </div>
+                <!-- Events -->
+                <div class="col-3 col-md-auto">
+                    <a href="{% url 'events:list' %}" class="cat-pill" data-category="events">
+                        <div class="cat-icon-box">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <span class="cat-label">فعاليات</span>
+                    </a>
+                </div>
+                <!-- Photos -->
+                <div class="col-3 col-md-auto">
+                    <a href="{% url 'gallery' %}" class="cat-pill" data-category="photos">
+                        <div class="cat-icon-box">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <span class="cat-label">صور</span>
+                    </a>
+                </div>
+                <!-- Map -->
+                <div class="col-3 col-md-auto">
+                    <a href="{% url 'map_explore' %}" class="cat-pill" data-category="map">
+                        <div class="cat-icon-box">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <span class="cat-label">الخريطة</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-5 text-white-50 small animate__animated animate__fadeInUp animate__delay-2s">
+                 استكشف أكثر من 1500+ وجهة سياحية في مدينة اللواء الأخضر
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Featured Places (Premium) -->
+    <section class="content-section bg-white animate__animated animate__fadeInUp">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title text-primary"><i class="fas fa-star border-accent me-2"></i> أماكن مميزة</h2>
+                <a href="{% url 'place_list' %}" class="btn btn-sm btn-light border-slate-100 rounded-pill px-3">عرض الكل</a>
+            </div>
+            
+            <div class="cards-scroller-container">
+                <div class="cards-scroller">
+                    {% if featured_places %}
+                        {% for place in featured_places %}
+                        <a href="{{ place.get_absolute_url }}" class="canva-card">
+                            <div class="card-image-wrap">
+                                {% if place.cover_image %}
+                                    <img src="{{ place.cover_image.url }}" class="card-image" alt="{{ place.name }}"
+                                         onerror="this.onerror=null;this.src='{% static 'images/placeholder.jpg' %}';">
+                                {% else %}
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light text-muted">
+                                    <i class="fas fa-image fa-2x"></i>
+                                </div>
+                                {% endif %}
+                                <div class="card-badges">
+                                    <span class="c-badge bg-warning text-dark"><i class="fas fa-star nav-icon"></i> مميز</span>
+                                    <span class="c-badge"><i class="fas fa-star text-warning"></i> {{ place.average_rating|default:"4.5" }}</span>
+                                </div>
+                                
+                                <!-- Favorite Toggle Wrapper -->
+                                <div class="position-absolute top-0 end-0 m-3" style="z-index: 10;" id="fav-btn-wrap-{{ place.id }}" onclick="event.preventDefault(); event.stopPropagation();">
+                                    {% include "partials/favorite_button.html" with is_fav=place.is_favorited %}
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">{{ place.name }}</h3>
+                                <div class="card-meta">
+                                    <span><i class="fas fa-map-marker-alt ms-1"></i> {{ place.address|truncatechars:20 }}</span>
+                                    <span>{{ place.category.name|default:"عام" }}</span>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <!-- Placeholder Content -->
+                          {% for i in "123"|make_list %}
+                          <div class="canva-card opacity-50">
+                            <div class="card-image-wrap bg-secondary bg-opacity-10"></div>
+                            <div class="card-content">
+                                <h3 class="card-title bg-secondary bg-opacity-10 rounded text-transparent">Place Name</h3>
+                                <div class="card-meta">
+                                    <span class="bg-secondary bg-opacity-10 rounded text-transparent">Address...</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Recently Added -->
+    <section class="content-section animate__animated animate__fadeInUp">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title text-slate-800">أحدث الأماكن في إب</h2>
+                <a href="{% url 'place_list' %}?sort=newest" class="btn btn-sm btn-light border-slate-100 rounded-pill px-3">عرض الكل</a>
+            </div>
+            
+            <div class="cards-scroller-container">
+                <div class="cards-scroller">
+                    {% if latest_places %}
+                        {% for place in latest_places %}
+                        <a href="{{ place.get_absolute_url }}" class="canva-card">
+                            <div class="card-image-wrap">
+                                {% if place.cover_image %}
+                                    <img src="{{ place.cover_image.url }}" class="card-image" alt="{{ place.name }}"
+                                         onerror="this.onerror=null;this.src='{% static 'images/placeholder.jpg' %}';">
+                                {% else %}
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light text-muted">
+                                    <i class="fas fa-image fa-2x"></i>
+                                </div>
+                                {% endif %}
+                                <div class="card-badges">
+                                    {% if place.is_featured %}<span class="c-badge bg-warning text-dark"><i class="fas fa-star nav-icon"></i> مميز</span>{% endif %}
+                                    <span class="c-badge"><i class="fas fa-star text-warning"></i> {{ place.average_rating|default:"4.5" }}</span>
+                                </div>
+                                <!-- Favorite Toggle Wrapper -->
+                                <div class="position-absolute top-0 end-0 m-3" style="z-index: 10;" id="fav-btn-wrap-{{ place.id }}" onclick="event.preventDefault(); event.stopPropagation();">
+                                    {% include "partials/favorite_button.html" with is_fav=place.is_favorited %}
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">{{ place.name }}</h3>
+                                <div class="card-meta">
+                                    <span><i class="fas fa-map-marker-alt ms-1"></i> {{ place.address|truncatechars:20 }}</span>
+                                    <span>{{ place.category.name|default:"عام" }}</span>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <!-- Placeholder Content if no data yet (for visualization) -->
+                         <div class="text-center w-100 text-muted py-5">
+                            <i class="fas fa-circle-notch fa-spin fa-2x mb-3"></i>
+                            <p>جاري تحميل الأماكن...</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Events -->
+    <section class="content-section bg-white">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">فعاليات ومواسم قادمة</h2>
+                <a href="{% url 'events:list' %}" class="section-link">عرض التقويم</a>
+            </div>
+            
+            <div class="cards-scroller-container">
+                <div class="cards-scroller">
+                     {% if upcoming_events %}
+                        {% for event in upcoming_events %}
+                        <a href="{% url 'events:detail' event.pk %}" class="canva-card">
+                            <div class="card-image-wrap">
+                                 {% if event.cover_image %}
+                                <img src="{{ event.cover_image.url }}" class="card-image" alt="{{ event.title }}">
+                                {% else %}
+                                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400" class="card-image">
+                                {% endif %}
+                                <div class="card-badges">
+                                    <span class="c-badge bg-danger">{{ event.start_datetime|date:"d M" }}</span>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">{{ event.title }}</h3>
+                                <div class="card-meta">
+                                    <span><i class="fas fa-map-pin ms-1"></i> {{ event.location }}</span>
+                                    <span class="text-success fw-bold">
+                                        {% if event.price == 0 %}مجاناً{% else %}{{ event.price|floatformat:0 }} ر.ي{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                       <div class="text-center w-100 py-4">
+                           <p class="text-muted">لا توجد فعاليات معروضة حالياً.</p>
+                       </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marketing/Banner Section -->
+    {% if not user.is_authenticated or user.role.name != 'partner' and not user.is_staff %}
+    <div class="container my-5 animate__animated animate__fadeInUp">
+        <div class="rounded-5 overflow-hidden position-relative p-5 text-white shadow-lg border border-white border-opacity-10" 
+             style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <div class="row align-items-center position-relative z-1">
+                <div class="col-md-8">
+                    <h2 class="fw-800 mb-3 display-6">لديك مشروع سياحي في إب؟</h2>
+                    <p class="fs-5 opacity-90 mb-4 fw-500">انضم إلى شبكة شركاء دليل إب ووصل خدماتك لألاف الزوار شهرياً.</p>
+                    <a href="{% url 'partner_signup' %}" class="btn btn-white text-success fw-800 rounded-pill px-4 py-3 hover-scale shadow-sm">
+                        <i class="fas fa-rocket me-2"></i> انضم كشريك الآن
+                    </a>
+                </div>
+                <div class="col-md-4 d-none d-md-block text-center">
+                    <i class="fas fa-store-alt fa-10x opacity-10"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Approved Partner Dashboard Access -->
+    {% if user.is_authenticated and user.is_partner and user.partnerprofile.is_approved %}
+    <div class="container my-4">
+        <div class="rounded-4 overflow-hidden position-relative p-5 text-white shadow-lg" 
+             style="background: linear-gradient(45deg, #3b82f6, #2563eb);">
+            <div class="row align-items-center position-relative z-1">
+                <div class="col-md-8">
+                    <h2 class="fw-bold mb-3">أهلاً بك يا شريكنا المميز!</h2>
+                    <p class="fs-5 opacity-90 mb-4">قم بإدارة منشأتك وتحديث بياناتك ومتابعة الإحصائيات من لوحة التحكم الخاصة بك.</p>
+                    <a href="{% url 'partner_dashboard' %}" class="btn btn-light text-primary fw-bold rounded-pill px-4 py-2 hover-scale">
+                        <i class="fas fa-chart-line me-2"></i> الانتقال إلى لوحة الشريك
+                    </a>
+                </div>
+                <div class="col-md-4 d-none d-md-block text-center">
+                    <i class="fas fa-chart-pie fa-8x opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- Mobile Bottom Nav -->
+<div class="mobile-nav-spacer d-md-none"></div>
+<div class="mobile-bottom-nav d-md-none">
+    <a href="{% url 'home' %}" class="nav-item-m {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+        <i class="fas fa-home"></i>
+        <span>الرئيسية</span>
+    </a>
+    <a href="{% url 'place_list' %}" class="nav-item-m {% if request.resolver_match.url_name == 'place_list' %}active{% endif %}">
+        <i class="fas fa-search"></i>
+        <span>استكشف</span>
+    </a>
+    <a href="{% url 'map_explore' %}" class="nav-item-m {% if request.resolver_match.url_name == 'map_explore' %}active{% endif %}">
+        <i class="fas fa-map-marked-alt"></i>
+        <span>الخريطة</span>        
+    </a>
+    
+    {% if user.is_authenticated and user.is_partner and user.partnerprofile.is_approved %}
+    <a href="{% url 'partner_dashboard' %}" class="nav-item-m {% if 'partner' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="fas fa-chart-line"></i>
+        <span>لوحتي</span>
+    </a>
+    {% else %}
+    <a href="{% url 'login' %}" class="nav-item-m">
+        <i class="fas fa-user"></i>
+        <span>حسابي</span>
+    </a>
+    {% endif %}
+</div>
+
+{% endblock body_content %}

@@ -1,0 +1,368 @@
+{% extends "management/admin_base.html" %}
+
+{% block title %}لوحة تحكم الإدارة{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .stat-card {
+        border-radius: 16px;
+        border: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 250px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold mb-1">لوحة تحكم الإدارة</h1>
+            <p class="text-muted mb-0">نظرة شاملة على النظام والإحصائيات</p>
+        </div>
+        <a href="{% url 'admin:index' %}" class="btn btn-outline-primary rounded-pill">
+            <i class="fas fa-cog me-2"></i> Django Admin
+        </a>
+    </div>
+
+    <!-- Quick Stats Row 1 -->
+    <div class="row g-3 mb-4">
+        <!-- المستخدمين -->
+        <div class="col-6 col-md-3">
+            <div class="card stat-card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary mx-auto mb-3">
+                        <i class="fas fa-users fa-xl"></i>
+                    </div>
+                    <div class="stat-number text-primary">{{ total_users }}</div>
+                    <small class="text-muted">إجمالي المستخدمين</small>
+                </div>
+            </div>
+        </div>
+        <!-- الأماكن -->
+        <div class="col-6 col-md-3">
+            <div class="card stat-card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success mx-auto mb-3">
+                        <i class="fas fa-map-marker-alt fa-xl"></i>
+                    </div>
+                    <div class="stat-number text-success">{{ active_places }}</div>
+                    <small class="text-muted">الأماكن النشطة</small>
+                </div>
+            </div>
+        </div>
+        <!-- التقييمات -->
+        <div class="col-6 col-md-3">
+            <div class="card stat-card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning mx-auto mb-3">
+                        <i class="fas fa-star fa-xl"></i>
+                    </div>
+                    <div class="stat-number text-warning">{{ total_reviews }}</div>
+                    <small class="text-muted">إجمالي التقييمات</small>
+                </div>
+            </div>
+        </div>
+        <!-- المفضلة -->
+        <div class="col-6 col-md-3">
+            <div class="card stat-card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="stat-icon bg-danger bg-opacity-10 text-danger mx-auto mb-3">
+                        <i class="fas fa-heart fa-xl"></i>
+                    </div>
+                    <div class="stat-number text-danger">{{ total_favorites }}</div>
+                    <small class="text-muted">المفضلة</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Cards -->
+    <div class="row g-3 mb-4">
+        <!-- الشركاء المعلقين -->
+        {% if perms.users.view_partnerprofile %}
+        <div class="col-md-4">
+            <div class="card stat-card shadow-sm h-100 border-start border-primary border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted mb-2">طلبات الشراكة</h6>
+                            <h2 class="fw-bold mb-0">{{ pending_partners }}</h2>
+                            <small class="text-muted">قيد المراجعة</small>
+                        </div>
+                        <span class="badge bg-primary rounded-pill fs-6">جديد</span>
+                    </div>
+                    <a href="{% url 'admin_pending_partners' %}" class="btn btn-primary w-100 mt-3 rounded-pill">
+                        مراجعة الطلبات <i class="fas fa-arrow-left me-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <!-- التحديثات المعلقة -->
+        {% if perms.management.view_request %}
+        <div class="col-md-4">
+            <div class="card stat-card shadow-sm h-100 border-start border-warning border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted mb-2">طلبات التعديل</h6>
+                            <h2 class="fw-bold mb-0">{{ pending_updates }}</h2>
+                            <small class="text-muted">تنتظر الموافقة</small>
+                        </div>
+                        <span class="badge bg-warning rounded-pill fs-6">تحديث</span>
+                    </div>
+                    <a href="{% url 'admin_request_list' %}" class="btn btn-warning w-100 mt-3 rounded-pill">
+                        مراجعة التعديلات <i class="fas fa-arrow-left me-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <!-- البلاغات -->
+        {% if perms.interactions.view_report %}
+        <div class="col-md-4">
+            <div class="card stat-card shadow-sm h-100 border-start border-danger border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted mb-2">البلاغات الجديدة</h6>
+                            <h2 class="fw-bold mb-0">{{ new_reports }}</h2>
+                            <small class="text-muted">تحتاج اهتمام</small>
+                        </div>
+                        <span class="badge bg-danger rounded-pill fs-6">عاجل</span>
+                    </div>
+                    <a href="{% url 'admin:interactions_report_changelist' %}"
+                        class="btn btn-danger w-100 mt-3 rounded-pill">
+                        عرض البلاغات <i class="fas fa-arrow-left me-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-3 mb-4">
+        <!-- رسم بياني للمستخدمين -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="mb-0 fw-bold">المستخدمين الجدد (آخر 7 أيام)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="usersChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- رسم بياني للتقييمات -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="mb-0 fw-bold">توزيع الأماكن حسب الفئة</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="categoriesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Row -->
+    <div class="row g-3 mb-4">
+        <!-- أفضل الأماكن تقييماً -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">أفضل الأماكن تقييماً</h6>
+                    <span class="badge bg-success">Top 5</span>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for place in top_rated_places %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-secondary me-3">{{ forloop.counter }}</span>
+                                <span>{{ place.name }}</span>
+                            </div>
+                            <span class="text-warning fw-bold">
+                                <i class="fas fa-star"></i> {{ place.avg_rating }}
+                            </span>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center text-muted py-4">لا توجد بيانات</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- إحصائيات الإعلانات -->
+        {% if perms.management.view_advertisement %}
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="mb-0 fw-bold">حالة الإعلانات</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-3">
+                            <div class="p-3 rounded bg-warning bg-opacity-10">
+                                <h4 class="fw-bold text-warning">{{ pending_ads_count }}</h4>
+                                <small class="text-muted">قيد المراجعة</small>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="p-3 rounded bg-success bg-opacity-10">
+                                <h4 class="fw-bold text-success">{{ active_ads_count }}</h4>
+                                <small class="text-muted">نشط</small>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="p-3 rounded bg-danger bg-opacity-10">
+                                <h4 class="fw-bold text-danger">{{ rejected_ads_count }}</h4>
+                                <small class="text-muted">مرفوض</small>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="p-3 rounded bg-secondary bg-opacity-10">
+                                <h4 class="fw-bold text-secondary">{{ expired_ads_count }}</h4>
+                                <small class="text-muted">منتهي</small>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{% url 'admin_ad_list' %}" class="btn btn-outline-primary w-100 mt-3 rounded-pill">
+                        إدارة الإعلانات <i class="fas fa-arrow-left me-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Quick Stats Summary -->
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card bg-light border-0">
+                <div class="card-body text-center py-4">
+                    <h5 class="text-primary fw-bold">{{ total_tourists }}</h5>
+                    <small class="text-muted">سياح</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light border-0">
+                <div class="card-body text-center py-4">
+                    <h5 class="text-success fw-bold">{{ total_partners }}</h5>
+                    <small class="text-muted">شركاء معتمدين</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light border-0">
+                <div class="card-body text-center py-4">
+                    <h5 class="text-info fw-bold">{{ total_landmarks }}</h5>
+                    <small class="text-muted">معالم سياحية</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light border-0">
+                <div class="card-body text-center py-4">
+                    <h5 class="text-warning fw-bold">{{ avg_rating_overall|floatformat:1 }}</h5>
+                    <small class="text-muted">متوسط التقييم العام</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // رسم بياني للمستخدمين
+    const usersData = JSON.parse('{{ users_by_day|escapejs }}');
+    const usersLabels = usersData.map(d => new Date(d.day).toLocaleDateString('ar-EG', { weekday: 'short' }));
+    const usersCounts = usersData.map(d => d.count);
+
+    new Chart(document.getElementById('usersChart'), {
+        type: 'line',
+        data: {
+            labels: usersLabels,
+            datasets: [{
+                label: 'مستخدمين جدد',
+                data: usersCounts,
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // رسم بياني للفئات
+    const categoriesData = JSON.parse('{{ places_by_category|escapejs }}');
+    const catLabels = categoriesData.map(d => d.category__name || 'غير مصنف');
+    const catCounts = categoriesData.map(d => d.count);
+    const catColors = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14', '#20c997', '#6c757d'];
+
+    new Chart(document.getElementById('categoriesChart'), {
+        type: 'doughnut',
+        data: {
+            labels: catLabels,
+            datasets: [{
+                data: catCounts,
+                backgroundColor: catColors.slice(0, catLabels.length)
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

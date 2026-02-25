@@ -1,0 +1,208 @@
+/* Modern List CSS (Masonry/Grid) */
+
+body {
+    background-color: #f0f2f5;
+}
+
+/* Page Header */
+.list-header-banner {
+    position: relative;
+    padding: 3rem 1rem;
+    background: linear-gradient(135deg, #050505 0%, #1c1e21 100%);
+    color: white;
+    margin-bottom: -40px;
+    padding-bottom: 60px;
+    overflow: hidden;
+}
+
+.list-header-banner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    background: radial-gradient(circle, rgba(24, 119, 242, 0.2) 0%, transparent 70%);
+    z-index: 0;
+}
+
+.list-title {
+    position: relative;
+    z-index: 1;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+/* Filter Bar */
+.filter-bar-container {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 10;
+}
+
+.filter-toggle-btn {
+    background: #e4e6eb;
+    color: #050505;
+    border: none;
+    font-weight: 600;
+    border-radius: 20px;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s;
+}
+
+.filter-toggle-btn:hover {
+    background: #d8dadf;
+}
+
+/* Grid Layout */
+.places-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Base Card Style (shared with dashboard/home but specific here) */
+.place-card-modern {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.place-card-modern:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+}
+
+.place-img-wrapper {
+    position: relative;
+    padding-top: 60%;
+    /* Aspect Ratio 16:9 approx */
+    overflow: hidden;
+}
+
+.place-img-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.place-card-modern:hover .place-img-wrapper img {
+    transform: scale(1.05);
+}
+
+/* Overlays on Image */
+.place-category-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    backdrop-filter: blur(4px);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.place-rating-badge {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: white;
+    color: #050505;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 2;
+}
+
+/* Card Body */
+.place-card-body {
+    padding: 1.25rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.place-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #050505;
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.place-location {
+    color: #65676b;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+}
+
+.place-actions {
+    margin-top: auto;
+    display: flex;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f2f5;
+}
+
+.btn-card-action {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem;
+    background: #f0f2f5;
+    color: #050505;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-card-action:hover {
+    background: #e4e6eb;
+}
+
+.btn-card-primary {
+    background: #e7f3ff;
+    color: #1877f2;
+}
+
+.btn-card-primary:hover {
+    background: #dbe7f2;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #65676b;
+}

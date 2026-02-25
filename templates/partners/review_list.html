@@ -1,0 +1,156 @@
+{% extends "partners/base_partner.html" %}
+
+{% block title %}التقييمات - شريك النجاح{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0 animate__animated animate__fadeIn">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1 text-dark">سجل التقييمات والآراء</h2>
+                    <p class="text-muted mb-0">تفاعل مع آراء الزوار وقم بالرد عليها.</p>
+                </div>
+
+                <div class="dropdown">
+                    <button class="btn btn-white border shadow-sm rounded-pill dropdown-toggle fw-bold text-dark px-4"
+                        type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-sort-amount-down me-2 text-muted"></i> ترتيب حسب
+                    </button>
+                    <ul class="dropdown-menu shadow-lg border-0 rounded-4 p-2" style="min-width: 200px;">
+                        <li><a class="dropdown-item rounded-2 active" href="#">الأحدث</a></li>
+                        <li><a class="dropdown-item rounded-2" href="#">الأعلى تقييماً</a></li>
+                        <li><a class="dropdown-item rounded-2" href="#">الأقل تقييماً</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column gap-4">
+                {% for review in reviews %}
+                <div class="elite-card p-4">
+                    <!-- Review Header -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex gap-3">
+                            <div class="position-relative">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm"
+                                    style="width: 48px; height: 48px; font-size: 1.25rem;">
+                                    {{ review.user.username|slice:":1"|upper }}
+                                </div>
+                                <!-- Verified Icon (Mock) -->
+                                <div class="position-absolute bottom-0 end-0 bg-white rounded-circle p-1"
+                                    style="line-height: 0;">
+                                    <i class="fas fa-check-circle text-primary small"></i>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1">{{ review.user.username }}</h6>
+                                <div class="d-flex align-items-center gap-2 small text-muted">
+                                    <span class="text-primary fw-bold bg-primary bg-opacity-10 px-2 py-0 rounded-pill"
+                                        style="font-size: 0.7rem;">{{ review.place.name }}</span>
+                                    <span>•</span>
+                                    <span>{{ review.created_at|timesince }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dropdown">
+                            <button class="btn btn-icon btn-light rounded-circle text-muted" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-4 overflow-hidden">
+                                <li><a class="dropdown-item py-2" href="#"><i
+                                            class="fas fa-flag me-2 text-danger opacity-75"></i> إبلاغ عن إساءة</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="mb-3">
+                        <div class="d-flex text-warning fs-6">
+                            {% with ''|center:review.rating as range %}
+                            {% for _ in range %}<i class="fas fa-star"></i>{% endfor %}
+                            {% endwith %}
+                            {% if review.rating < 5 %} {% with 5|add:review.rating|stringformat:"d" as diff %} {# Simple
+                                subtraction logic needed or loop remaining #} <!-- Empty stars logic omitted for
+                                brevity, usually JS handles this better or backend template tags -->
+                                {% endwith %}
+                                {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Comment Body -->
+                    <p class="text-dark mb-4" style="line-height: 1.7; font-size: 0.95rem;">
+                        {{ review.comment }}
+                    </p>
+
+                    <!-- Actions Bar -->
+                    <div class="d-flex gap-2 pt-3 border-top">
+                        {% include "interactions/partials/visibility_toggle.html" with item=review type="review" %}
+                        <button 
+                            hx-get="{% url 'partner_review_reply' review.pk %}"
+                            hx-target="#review-{{ review.pk }}-reply-form-container"
+                            hx-swap="innerHTML"
+                            class="btn btn-light rounded-pill px-3 py-2 text-muted fw-bold flex-grow-1 hover-text-primary transition-all text-decoration-none text-center">
+                            <i class="far fa-comment-dots me-2"></i> الرد على التقييم
+                        </button>
+                    </div>
+
+                    <!-- Replies Section -->
+                    <div id="review-{{ review.pk }}-replies" class="mt-4 ps-4 border-end border-2 border-light position-relative">
+                        {% if review.replies.exists %}
+                        {% for reply in review.replies.all %}
+                        <div class="bg-gray-50 rounded-4 p-3 mb-3 position-relative">
+                            <!-- Connector line -->
+
+                            <div class="d-flex gap-3">
+                                <div class="bg-white border rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold shadow-sm flex-shrink-0"
+                                    style="width: 32px; height: 32px;">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <span class="fw-bold text-dark small">رد الإدارة</span>
+                                        <span class="text-muted small" style="font-size: 0.7rem;">{{ reply.created_at|timesince }}</span>
+                                    </div>
+                                    <p class="mb-0 small text-secondary">{{ reply.content }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Reply Input Container (Initially Hidden or loaded via HTMX) -->
+                    <div id="review-{{ review.pk }}-reply-form-container"></div>
+                </div>
+                {% empty %}
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light" style="width: 100px; height: 100px;">
+                            <i class="far fa-comment-dots fa-3x text-muted opacity-50"></i>
+                        </div>
+                    </div>
+                    <h4 class="text-dark fw-bold">لا توجد تقييمات حتى الآن</h4>
+                    <p class="text-muted mb-3 mx-auto" style="max-width: 450px;">
+                        التقييمات تأتي من الزوار الذين يزورون صفحة منشأتك. شارك رابط منشأتك مع عملائك لجمع أول تقييم!
+                    </p>
+                    <div class="d-inline-flex align-items-center gap-2 bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill small">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>نصيحة: المنشآت ذات التقييمات تظهر في نتائج البحث بشكل أفضل</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    document.addEventListener('DOMContentLoaded', function () {
+    });
+{% csrf_token %}
+{% endblock %}

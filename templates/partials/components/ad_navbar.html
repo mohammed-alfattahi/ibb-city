@@ -1,0 +1,22 @@
+{% if ad %}
+<div class="alert alert-warning alert-dismissible fade show mb-0 text-center rounded-0 fw-bold shadow-sm position-relative z-index-sticky"
+    role="alert" style="z-index: 1050;">
+    <div class="container d-flex justify-content-center align-items-center gap-3 flex-wrap">
+        <span class="badge bg-dark text-warning">إعلان</span>
+        <span class="text-dark">{{ ad.title }}: {{ ad.description|truncatechars:60 }}</span>
+        {% if ad.discount_price %}
+        <span class="badge bg-danger text-white">{{ ad.discount_price }} ر.ي</span>
+        {% endif %}
+
+        {% if ad.place or ad.target_url %}
+        <a href="{% url 'ad_click' ad.pk %}" class="btn btn-sm btn-dark rounded-pill px-3">
+            تصفح العرض <i class="fas fa-arrow-left ms-1"></i>
+        </a>
+        {% else %}
+        <button class="btn btn-sm btn-dark rounded-pill px-3">تفاصيل</button>
+        {% endif %}
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <img src="{% url 'ad_impression' ad.pk %}" style="display:none;" width="1" height="1" alt="" />
+</div>
+{% endif %}

@@ -1,0 +1,185 @@
+{% extends 'partners/base_partner.html' %}
+{% load static %}
+
+{% block title %}{% if is_edit %}تعديل{% else %}إضافة{% endif %} جهة اتصال - {{ establishment.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-{% if is_edit %}edit{% else %}plus{% endif %} me-2 text-primary"></i>
+                        {% if is_edit %}تعديل جهة اتصال{% else %}إضافة جهة اتصال جديدة{% endif %}
+                    </h5>
+                    <p class="text-muted mb-0 mt-1">{{ establishment.name }}</p>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Contact Type -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">نوع جهة الاتصال</label>
+                            {{ form.type }}
+                            {% if form.type.errors %}
+                            <div class="text-danger small">{{ form.type.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Carrier (shown only for phone) -->
+                        <div class="mb-3" id="carrier-field" style="display: none;">
+                            <label class="form-label fw-bold">المشغل</label>
+                            {{ form.carrier }}
+                            {% if form.carrier.errors %}
+                            <div class="text-danger small">{{ form.carrier.errors.0 }}</div>
+                            {% endif %}
+
+                            <!-- Quick carrier buttons -->
+                            <div class="btn-group mt-2 w-100" role="group">
+                                <button type="button" class="btn btn-outline-success btn-sm carrier-btn"
+                                    data-carrier="sabafon">سبأفون</button>
+                                <button type="button" class="btn btn-outline-primary btn-sm carrier-btn"
+                                    data-carrier="yemen_mobile">يمن موبايل</button>
+                                <button type="button" class="btn btn-outline-warning btn-sm carrier-btn"
+                                    data-carrier="you">يو</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm carrier-btn"
+                                    data-carrier="wai">واي</button>
+                                <button type="button" class="btn btn-outline-dark btn-sm carrier-btn"
+                                    data-carrier="landline">أرضي</button>
+                            </div>
+                        </div>
+
+                        <!-- Value -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold" id="value-label">القيمة</label>
+                            {{ form.value }}
+                            {% if form.value.errors %}
+                            <div class="text-danger small">{{ form.value.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text" id="value-help">رقم الهاتف أو الرابط</div>
+                        </div>
+
+                        <!-- Label -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">التسمية (اختياري)</label>
+                            {{ form.label }}
+                            <div class="form-text">مثال: الرقم الرئيسي، خدمة العملاء</div>
+                        </div>
+
+                        <!-- Options -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <div class="form-check">
+                                    {{ form.is_primary }}
+                                    <label class="form-check-label" for="{{ form.is_primary.id_for_label }}">
+                                        جهة اتصال رئيسية
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check">
+                                    {{ form.is_visible }}
+                                    <label class="form-check-label" for="{{ form.is_visible.id_for_label }}">
+                                        مرئي للزوار
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-grow-1">
+                                <i class="fas fa-save me-1"></i>
+                                {% if is_edit %}حفظ التعديلات{% else %}إضافة{% endif %}
+                            </button>
+                            <a href="{% url 'partner_contact_list' establishment.pk %}"
+                                class="btn btn-outline-secondary">
+                                إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const typeSelect = document.getElementById('contact-type');
+    const carrierField = document.getElementById('carrier-field');
+    const carrierSelect = document.getElementById('contact-carrier');
+    const valueLabel = document.getElementById('value-label');
+    const valueHelp = document.getElementById('value-help');
+    const valueInput = document.querySelector('[name="value"]');
+
+    function updateFormForType(type) {
+        // Show/hide carrier field
+        if (type === 'phone') {
+            carrierField.style.display = 'block';
+            valueLabel.textContent = 'رقم الهاتف';
+            valueHelp.textContent = 'مثال: 777123456 أو +967777123456';
+            valueInput.placeholder = '7xxxxxxxx';
+        } else {
+            carrierField.style.display = 'none';
+
+            if (type === 'whatsapp') {
+                valueLabel.textContent = 'رقم الواتساب';
+                valueHelp.textContent = 'رقم الهاتف المسجل في الواتساب';
+                valueInput.placeholder = '7xxxxxxxx';
+            } else if (type === 'telegram') {
+                valueLabel.textContent = 'اسم المستخدم أو الرقم';
+                valueHelp.textContent = 'اسم المستخدم مثل @username أو رقم الهاتف';
+                valueInput.placeholder = '@username';
+            } else if (type === 'email') {
+                valueLabel.textContent = 'البريد الإلكتروني';
+                valueHelp.textContent = 'عنوان البريد الإلكتروني';
+                valueInput.placeholder = 'example@domain.com';
+            } else if (type === 'website') {
+                valueLabel.textContent = 'رابط الموقع';
+                valueHelp.textContent = 'الرابط الكامل للموقع';
+                valueInput.placeholder = 'https://example.com';
+            } else if (['facebook', 'instagram', 'tiktok', 'snapchat', 'youtube'].includes(type)) {
+                valueLabel.textContent = 'الرابط أو اسم المستخدم';
+                valueHelp.textContent = 'رابط الصفحة أو اسم الحساب';
+                valueInput.placeholder = '@username أو الرابط';
+            } else {
+                valueLabel.textContent = 'القيمة';
+                valueHelp.textContent = 'رقم الهاتف أو الرابط';
+                valueInput.placeholder = '';
+            }
+        }
+    }
+
+    // Initial setup
+    updateFormForType(typeSelect.value);
+
+    // Handle type change
+    typeSelect.addEventListener('change', function () {
+        updateFormForType(this.value);
+    });
+
+    // Quick carrier selection
+    document.querySelectorAll('.carrier-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            carrierSelect.value = this.dataset.carrier;
+            // Highlight selected
+            document.querySelectorAll('.carrier-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // Pre-fill from URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('type')) {
+        typeSelect.value = urlParams.get('type');
+        updateFormForType(urlParams.get('type'));
+    }
+    if (urlParams.get('carrier')) {
+        carrierSelect.value = urlParams.get('carrier');
+    }
+</script>
+{% endblock %}

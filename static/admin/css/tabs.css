@@ -1,0 +1,169 @@
+/* Tabs Container */
+.tabs-container {
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.admin-tabs {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 8px;
+}
+
+.admin-tab {
+    padding: 14px 24px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-weight: 600;
+    color: #6c757d;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    position: relative;
+    top: 2px;
+}
+
+.admin-tab:hover {
+    color: #343a40;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px 8px 0 0;
+}
+
+.admin-tab.active {
+    background: transparent;
+    color: #28a745;
+    border-bottom: 3px solid #28a745;
+    z-index: 2;
+}
+
+/* Tab Content Enhancement */
+.tabbed-form fieldset.module {
+    display: none;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 20px 0;
+    margin: 0;
+}
+
+.tabbed-form fieldset.module.active {
+    display: block;
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Premium Form Inputs */
+.tabbed-form .form-row {
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    /* Stack label and input */
+    align-items: stretch;
+}
+
+.tabbed-form .form-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    border-color: #28a745;
+}
+
+.tabbed-form label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #495057;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+    width: 100% !important;
+    /* Force full width label */
+    padding: 0 !important;
+}
+
+.tabbed-form .required label::after {
+    content: " *";
+    color: #dc3545;
+}
+
+/* Input Styling */
+.tabbed-form input[type="text"],
+.tabbed-form input[type="password"],
+.tabbed-form input[type="email"],
+.tabbed-form input[type="url"],
+.tabbed-form input[type="number"],
+.tabbed-form textarea,
+.tabbed-form select {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    color: #212529;
+}
+
+.tabbed-form input:focus,
+.tabbed-form textarea:focus,
+.tabbed-form select:focus {
+    border-color: #28a745;
+    background-color: #fff;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+}
+
+.tabbed-form textarea {
+    min-height: 140px;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+/* Remove default Django grouping weirdness */
+.tabbed-form .form-row>div {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Submit Row - Floating Panel */
+.submit-row {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* RTL Specifics */
+[dir="rtl"] .admin-tab {
+    margin-left: 5px;
+}
+
+[dir="rtl"] .submit-row {
+    justify-content: flex-start;
+    /* Align buttons to right (start in RTL) */
+}

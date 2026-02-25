@@ -1,0 +1,409 @@
+/* Modern Place Detail Design - Premium Edition */
+/* Inherits variables from modern_home.css */
+
+/* ==================== HERO HEADER ==================== */
+.place-hero {
+    position: relative;
+    height: 65vh;
+    min-height: 450px;
+    max-height: 650px;
+    border-radius: 0 0 var(--radius-3xl) var(--radius-3xl);
+    overflow: hidden;
+    margin-bottom: -120px;
+    z-index: 1;
+    box-shadow: var(--shadow-xl);
+}
+
+.place-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+            rgba(15, 23, 42, 0.2) 0%,
+            rgba(15, 23, 42, 0.4) 40%,
+            rgba(15, 23, 42, 0.9) 100%);
+    z-index: 1;
+}
+
+.place-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: slowZoom 25s ease-in-out infinite alternate;
+}
+
+@keyframes slowZoom {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.08);
+    }
+}
+
+.place-hero-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: var(--space-12) 5%;
+    padding-bottom: 9rem;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    z-index: 2;
+}
+
+.place-title {
+    font-size: var(--text-5xl);
+    font-weight: var(--font-extrabold);
+    margin-bottom: var(--space-3);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    letter-spacing: -1px;
+    line-height: var(--leading-tight);
+}
+
+.place-badge {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: white;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition-normal);
+}
+
+.place-badge:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* ==================== FLOATING INFO CARDS ==================== */
+.info-cards-container {
+    padding: 0 5%;
+    position: relative;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-5);
+    margin-bottom: var(--space-10);
+}
+
+.floating-card {
+    background: var(--card-bg);
+    padding: var(--space-6) var(--space-7, 1.75rem);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    transition: all var(--transition-slow);
+    border: 1px solid var(--color-gray-100);
+}
+
+.floating-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+}
+
+.icon-box {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.icon-box.rating {
+    background: linear-gradient(135deg, var(--color-warning-light) 0%, #fde68a 100%);
+    color: #d97706;
+}
+
+.icon-box.time {
+    background: linear-gradient(135deg, var(--color-success-light) 0%, var(--color-primary-200) 100%);
+    color: var(--color-primary-600);
+}
+
+.icon-box.map {
+    background: linear-gradient(135deg, var(--color-info-light) 0%, #bfdbfe 100%);
+    color: #2563eb;
+}
+
+/* ==================== MAIN CONTENT GRID ==================== */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1.8fr 1fr;
+    gap: var(--space-8);
+    padding: 0 5%;
+    margin-bottom: var(--space-16);
+}
+
+.content-section {
+    background: var(--card-bg);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8) var(--space-9, 2.25rem);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-6);
+    border: 1px solid var(--color-gray-100);
+    transition: all var(--transition-normal);
+}
+
+.content-section:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.section-title {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-6);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-main);
+    padding-bottom: var(--space-4);
+    border-bottom: 2px solid var(--color-gray-100);
+}
+
+.section-title i {
+    font-size: 1.2rem;
+}
+
+.text-content {
+    line-height: var(--leading-loose);
+    color: var(--text-muted);
+    font-size: var(--text-lg);
+}
+
+/* ==================== GALLERY GRID ==================== */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+}
+
+.gallery-item {
+    aspect-ratio: 16/10;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+}
+
+.gallery-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.gallery-item:hover::after {
+    opacity: 1;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gallery-item:hover img {
+    transform: scale(1.12);
+}
+
+/* ==================== REVIEWS ==================== */
+.review-item {
+    border-bottom: 1px solid var(--color-gray-100);
+    padding: var(--space-6) 0;
+    transition: all var(--transition-normal);
+}
+
+.review-item:first-child {
+    padding-top: 0;
+}
+
+.review-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.review-item:hover {
+    background: linear-gradient(90deg, var(--color-primary-50) 0%, transparent 100%);
+    margin: 0 -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: var(--radius-lg);
+}
+
+.reviewer-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    border: 3px solid var(--color-gray-100);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ==================== UNITS / ROOMS ==================== */
+.unit-card {
+    background: var(--card-bg);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.4s ease;
+    border: 1px solid var(--color-gray-100);
+}
+
+.unit-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+}
+
+.unit-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.unit-card:hover img {
+    transform: scale(1.05);
+}
+
+.unit-card .p-3 {
+    padding: 1.25rem !important;
+}
+
+.unit-card h6 {
+    font-weight: var(--font-bold);
+    color: var(--text-main);
+}
+
+.unit-card .text-success {
+    color: var(--color-primary-600) !important;
+    font-weight: var(--font-bold);
+}
+
+/* ==================== BUTTONS (Overrides) ==================== */
+/* Rely on components.css/btn mainly, but add detail specific tweaks */
+
+/* ==================== NEARBY PLACES ==================== */
+.content-section a.text-decoration-none:hover h6 {
+    color: var(--color-primary-600) !important;
+}
+
+.content-section a.text-decoration-none {
+    padding: 0.75rem;
+    margin: -0.75rem;
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-normal);
+}
+
+.content-section a.text-decoration-none:hover {
+    background: var(--color-gray-50);
+}
+
+/* ==================== MODAL ==================== */
+.modal-content {
+    border-radius: var(--radius-xl);
+    border: none;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-gray-100) 100%);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-footer {
+    padding: 1.5rem 2rem;
+    background: var(--color-gray-50);
+}
+
+.rating-select i {
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.rating-select i:hover {
+    transform: scale(1.2);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1100px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .place-hero {
+        height: 55vh;
+        min-height: 350px;
+        margin-bottom: -80px;
+    }
+
+    .place-hero-content {
+        padding: 2rem 4%;
+        padding-bottom: 7rem;
+    }
+
+    .place-title {
+        font-size: var(--text-3xl);
+        letter-spacing: 0;
+    }
+
+    .info-cards-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .floating-card {
+        padding: 1.25rem;
+    }
+
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .content-section {
+        padding: 1.5rem;
+    }
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.place-badge.bg-warning {
+    animation: pulse 2s ease-in-out infinite;
+}

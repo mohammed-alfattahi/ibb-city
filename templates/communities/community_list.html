@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 fw-bold text-primary mb-1">المجتمعات السياحية</h1>
+            <p class="text-muted">انضم إلى مجتمعات تناسب اهتماماتك وشارك تجاربك مع الآخرين.</p>
+        </div>
+        {% if user.is_staff %}
+        <a href="{% url 'admin:communities_community_add' %}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i>إنشاء مجتمع جديد
+        </a>
+        {% endif %}
+    </div>
+
+    {% if communities %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for community in communities %}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                <div class="position-relative">
+                    {% if community.cover_image %}
+                    <img src="{{ community.cover_image.url }}" class="card-img-top" alt="{{ community.name }}"
+                        style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-users fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+
+                    {% if community.is_official %}
+                    <span class="position-absolute top-0 end-0 m-3 badge bg-success shadow-sm">
+                        <i class="fas fa-check-circle me-1"></i>رسمي
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-2">
+                        <a href="{% url 'communities:detail' community.slug %}"
+                            class="text-decoration-none text-dark stretched-link">
+                            {{ community.name }}
+                        </a>
+                    </h5>
+                    <p class="card-text text-muted small mb-3">{{ community.description|truncatewords:20 }}</p>
+
+                    <div class="d-flex align-items-center justify-content-between text-muted small">
+                        <span><i class="fas fa-users me-1"></i> {{ community.member_count }} عضو</span>
+                        <span><i class="fas fa-clock me-1"></i> {{ community.created_at|date:"Y/m/d" }}</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pb-3">
+                    <a href="{% url 'communities:detail' community.slug %}"
+                        class="btn btn-outline-primary w-100 rounded-pill">
+                        تصفح المجتمع
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="mb-3">
+            <i class="fas fa-users-slash fa-4x text-muted opacity-50"></i>
+        </div>
+        <h3 class="h5 text-muted">لا توجد مجتمعات متاحة حالياً</h3>
+        <p class="text-muted small mb-4">كن أول من يقترح مجتمعاً جديداً بالتواصل مع الإدارة.</p>
+        {% if user.is_authenticated %}
+        <button class="btn btn-primary" onclick="alert('خاصية إنشاء المجتمعات ستتوفر قريباً!')">
+            <i class="fas fa-plus-circle me-2"></i> إنشاء مجتمع جديد
+        </button>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn btn-outline-primary">
+            <i class="fas fa-sign-in-alt me-2"></i> تسجيل الدخول للمشاركة
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+    }
+
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}

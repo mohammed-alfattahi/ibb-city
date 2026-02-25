@@ -1,0 +1,583 @@
+/**
+ * ═══════════════════════════════════════════════════════════════════════════
+ * IBB GUIDE - HOME PAGE STYLES (Canva-Inspired Design)
+ * ═══════════════════════════════════════════════════════════════════════════
+ * 
+ * يعتمد على: design-tokens.css, components.css
+ * هذا الملف خاص بالصفحة الرئيسية فقط
+ */
+
+/* ════════════════════════════════════════════════════════════════════════════
+ * 1. HERO SECTION - CANVA STYLE (Gradient Background)
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+.canva-hero {
+    min-height: 70vh;
+    background: linear-gradient(135deg,
+            #e8d5f0 0%,
+            #d4e5d1 25%,
+            #c8e6c9 50%,
+            #f5f5f5 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decorative blobs */
+.canva-hero::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.canva-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    left: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(74, 222, 128, 0.25) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.canva-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.canva-hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+    line-height: 1.2;
+}
+
+.canva-hero-subtitle {
+    font-size: 1.1rem;
+    color: #64748b;
+    margin-bottom: 40px;
+}
+
+/* Tabs/Pills like Canva */
+.canva-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.canva-tab {
+    padding: 10px 24px;
+    border-radius: 50px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    color: #475569;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.canva-tab:hover {
+    border-color: #a78bfa;
+    color: #7c3aed;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(167, 139, 250, 0.2);
+}
+
+.canva-tab.active {
+    background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+    color: white;
+    border-color: transparent;
+}
+
+/* Search Bar - Canva Style */
+.canva-search-wrapper {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 40px;
+}
+
+.canva-search {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 50px;
+    padding: 8px 8px 8px 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.canva-search:focus-within {
+    border-color: #a78bfa;
+    box-shadow: 0 8px 30px rgba(167, 139, 250, 0.15);
+}
+
+.canva-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1.1rem;
+    color: #1a1a2e;
+    background: transparent;
+}
+
+.canva-search input::placeholder {
+    color: #94a3b8;
+}
+
+.canva-search-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.canva-search-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+ * 2. CATEGORY CIRCLES - CANVA STYLE
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+.canva-categories {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 0 20px;
+}
+
+.canva-category {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.canva-category:hover {
+    transform: translateY(-8px);
+}
+
+.canva-category-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.canva-category:hover .canva-category-icon {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Category Colors */
+.canva-category-icon.green {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.canva-category-icon.orange {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+.canva-category-icon.blue {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.canva-category-icon.purple {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.canva-category-icon.red {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.canva-category-icon.teal {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+}
+
+.canva-category-icon.pink {
+    background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+}
+
+.canva-category-icon.yellow {
+    background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+}
+
+.canva-category-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+ * 3. EXPLORE SECTION - CARD GRID
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+.canva-section {
+    padding: 60px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.canva-section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.canva-section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.canva-section-subtitle {
+    font-size: 1rem;
+    color: #64748b;
+}
+
+/* Card Grid */
+.canva-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.canva-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    transition: all 0.4s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.canva-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.canva-card-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.canva-card:hover .canva-card-image {
+    transform: scale(1.05);
+}
+
+.canva-card-image-wrapper {
+    overflow: hidden;
+    position: relative;
+}
+
+.canva-card-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.canva-card-body {
+    padding: 20px;
+}
+
+.canva-card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.canva-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.canva-card-meta i {
+    color: #22c55e;
+}
+
+.canva-card-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+}
+
+.canva-card-rating i {
+    color: #fbbf24;
+    font-size: 0.9rem;
+}
+
+.canva-card-rating span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+ * 4. HIGHLIGHTS SECTION
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+.canva-highlights {
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    padding: 80px 20px;
+}
+
+.canva-highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.canva-highlight-card {
+    background: white;
+    border-radius: 24px;
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f1f5f9;
+    transition: all 0.4s ease;
+}
+
+.canva-highlight-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    border-color: transparent;
+}
+
+.canva-highlight-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2rem;
+    color: #059669;
+    transition: all 0.4s ease;
+}
+
+.canva-highlight-card:hover .canva-highlight-icon {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    transform: rotate(5deg) scale(1.1);
+}
+
+.canva-highlight-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+}
+
+.canva-highlight-desc {
+    font-size: 0.95rem;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+ * 5. PARTNERS SECTION
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+.canva-partners {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.canva-partners-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+}
+
+.canva-partners-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    opacity: 0.6;
+    filter: grayscale(100%);
+    transition: all 0.3s ease;
+}
+
+.canva-partners-grid:hover {
+    opacity: 1;
+    filter: grayscale(0%);
+}
+
+.canva-partner-logo {
+    max-height: 50px;
+    width: auto;
+    transition: all 0.3s ease;
+}
+
+.canva-partner-logo:hover {
+    transform: scale(1.1);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+ * 6. RESPONSIVE
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .canva-hero {
+        min-height: 60vh;
+        padding: 40px 16px;
+    }
+
+    .canva-hero-title {
+        font-size: 2rem;
+    }
+
+    .canva-hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .canva-categories {
+        gap: 16px;
+    }
+
+    .canva-category-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .canva-category-label {
+        font-size: 0.8rem;
+    }
+
+    .canva-section-title {
+        font-size: 1.6rem;
+    }
+
+    .canva-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .canva-highlight-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+ * 7. UTILITIES (Keep existing for backward compatibility)
+ * ════════════════════════════════════════════════════════════════════════════ */
+
+.letter-spacing-3 {
+    letter-spacing: 3px;
+}
+
+.letter-spacing-2 {
+    letter-spacing: 2px;
+}
+
+.hover-scale {
+    transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.btn-ibb-green {
+    background: linear-gradient(135deg, #065f46 0%, #059669 100%);
+    color: white !important;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+}
+
+.btn-ibb-green:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+    filter: brightness(1.1);
+}
+
+/* Animation for bounce arrow */
+.animate-bounce {
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    40% {
+        transform: translateX(-50%) translateY(-20px);
+    }
+
+    60% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+}

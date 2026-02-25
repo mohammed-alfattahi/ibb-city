@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}حالة طلب الشراكة - دليل إب السياحي{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+
+            {% if profile.status == 'pending' %}
+            {# ===== Pending Status — Onboarding ===== #}
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-warning text-dark py-4 text-center">
+                    <i class="fas fa-hourglass-half fa-3x mb-3"></i>
+                    <h4 class="mb-1">مرحبًا بك كشريك جديد! 🎉</h4>
+                    <p class="mb-0 opacity-75">طلبك قيد المراجعة من قبل مكتب السياحة</p>
+                </div>
+                <div class="card-body p-4">
+
+                    <div class="alert alert-light border-start border-4 border-warning mb-4">
+                        <i class="fas fa-calendar me-2"></i>
+                        تاريخ التقديم: {{ profile.submitted_at|default:profile.created_at|date:"Y/m/d H:i" }}
+                    </div>
+
+                    {# ===== Onboarding Checklist ===== #}
+                    <h5 class="mb-3"><i class="fas fa-tasks me-2 text-primary"></i>خطوات البدء</h5>
+                    <div class="list-group mb-4">
+                        <div class="list-group-item d-flex align-items-start">
+                            <span class="badge bg-success rounded-pill me-3 mt-1"><i class="fas fa-check"></i></span>
+                            <div>
+                                <strong>إنشاء حساب الشريك</strong>
+                                <small class="d-block text-muted">تم بنجاح ✅</small>
+                            </div>
+                        </div>
+                        <div class="list-group-item d-flex align-items-start">
+                            <span class="badge bg-warning text-dark rounded-pill me-3 mt-1"><i class="fas fa-spinner fa-spin"></i></span>
+                            <div>
+                                <strong>مراجعة الطلب من الإدارة</strong>
+                                <small class="d-block text-muted">جاري المراجعة — ستتلقى إشعارًا عند القبول</small>
+                            </div>
+                        </div>
+                        <div class="list-group-item d-flex align-items-start text-muted">
+                            <span class="badge bg-secondary rounded-pill me-3 mt-1">3</span>
+                            <div>
+                                <strong>استكمال بيانات الملف الشخصي</strong>
+                                <small class="d-block">بعد الموافقة، أكمل معلوماتك وبيانات التواصل</small>
+                            </div>
+                        </div>
+                        <div class="list-group-item d-flex align-items-start text-muted">
+                            <span class="badge bg-secondary rounded-pill me-3 mt-1">4</span>
+                            <div>
+                                <strong>إنشاء أول منشأة</strong>
+                                <small class="d-block">أضف منشأتك السياحية (فندق، مطعم، معلم…)</small>
+                            </div>
+                        </div>
+                        <div class="list-group-item d-flex align-items-start text-muted">
+                            <span class="badge bg-secondary rounded-pill me-3 mt-1">5</span>
+                            <div>
+                                <strong>رفع الوثائق والصور</strong>
+                                <small class="d-block">ارفع صور المنشأة والوثائق الرسمية</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# ===== CTA ===== #}
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'partner_profile' %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-edit me-2"></i>استكمال الملف الشخصي
+                        </a>
+                    </div>
+
+                    <p class="text-muted text-center mt-3 mb-0">
+                        <i class="fas fa-info-circle me-1"></i>
+                        يمكنك تصفح الموقع كسائح ريثما يتم اعتماد طلبك.
+                    </p>
+                </div>
+            </div>
+
+            {% elif profile.status == 'rejected' %}
+            {# ===== Rejected Status ===== #}
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-danger text-white py-4 text-center">
+                    <i class="fas fa-times-circle fa-3x mb-3"></i>
+                    <h4 class="mb-0">تم رفض الطلب</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-danger text-start">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>سبب الرفض:</h6>
+                        <p class="mb-0">{{ profile.rejection_reason|default:"لم يتم تحديد سبب" }}</p>
+                    </div>
+
+                    {% if profile.reviewed_at %}
+                    <p class="text-muted small">
+                        تاريخ المراجعة: {{ profile.reviewed_at|date:"Y/m/d H:i" }}
+                    </p>
+                    {% endif %}
+
+                    <div class="d-grid">
+                        <a href="{% url 'partner_upgrade' %}" class="btn btn-warning btn-lg mt-2">
+                            <i class="fas fa-redo me-2"></i>إعادة التقديم
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {% elif profile.status == 'needs_info' %}
+            {# ===== Needs More Info ===== #}
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-info text-white py-4 text-center">
+                    <i class="fas fa-question-circle fa-3x mb-3"></i>
+                    <h4 class="mb-0">مطلوب معلومات إضافية</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info text-start">
+                        <h6><i class="fas fa-comment me-2"></i>رسالة من المكتب:</h6>
+                        <p class="mb-0">{{ profile.info_request_message|default:"يرجى التواصل مع المكتب" }}</p>
+                    </div>
+
+                    <div class="d-grid">
+                        <a href="{% url 'partner_upgrade' %}" class="btn btn-primary btn-lg mt-2">
+                            <i class="fas fa-edit me-2"></i>تحديث المعلومات
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="text-center mt-4">
+                <a href="{% url 'home' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-home me-2"></i>العودة للموقع الرئيسي
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

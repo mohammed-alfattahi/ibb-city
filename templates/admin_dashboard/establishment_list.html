@@ -1,0 +1,559 @@
+{% extends "management/admin_base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}إدارة المنشآت - لوحة الإدارة{% endblock %}
+{% block title_breadcrumb %}المنشآت{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-pill {
+        padding: 0.75rem 1.25rem;
+        border-radius: 50px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+        border: 2px solid transparent;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    .stat-pill:hover {
+        transform: translateY(-2px);
+    }
+
+    .stat-pill.active {
+        border-color: currentColor;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-pill .count {
+        background: rgba(255, 255, 255, 0.3);
+        padding: 0.2rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+    }
+
+    .place-card {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.2s;
+    }
+
+    .place-card:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
+    }
+
+    .place-thumb {
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .rating-stars {
+        color: #ffc107;
+    }
+
+    .filter-dropdown {
+        min-width: 200px;
+    }
+
+    .bulk-actions {
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    .bulk-actions.show {
+        opacity: 1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+
+    <!-- Stats Pills -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <a href="?status="
+            class="stat-pill bg-primary bg-opacity-10 text-primary {% if not current_status %}active{% endif %}">
+            <i class="fas fa-building"></i>
+            الكل
+            <span class="count">{{ stats.total }}</span>
+        </a>
+        <a href="?status=active"
+            class="stat-pill bg-success bg-opacity-10 text-success {% if current_status == 'active' %}active{% endif %}">
+            <i class="fas fa-check-circle"></i>
+            نشطة
+            <span class="count">{{ stats.active }}</span>
+        </a>
+        <a href="?status=pending"
+            class="stat-pill bg-warning bg-opacity-10 text-warning {% if current_status == 'pending' %}active{% endif %}">
+            <i class="fas fa-clock"></i>
+            معلقة
+            <span class="count">{{ stats.pending }}</span>
+        </a>
+        <a href="?status=inactive"
+            class="stat-pill bg-secondary bg-opacity-10 text-secondary {% if current_status == 'inactive' %}active{% endif %}">
+            <i class="fas fa-pause-circle"></i>
+            غير نشطة
+            <span class="count">{{ stats.inactive }}</span>
+        </a>
+        <a href="?status=suspended"
+            class="stat-pill bg-danger bg-opacity-10 text-danger {% if current_status == 'suspended' %}active{% endif %}">
+            <i class="fas fa-ban"></i>
+            موقوفة
+            <span class="count">{{ stats.suspended }}</span>
+        </a>
+    </div>
+
+    <!-- Filters & Search Row -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body py-3">
+            <form method="get" class="row g-3 align-items-end">
+                <input type="hidden" name="status" value="{{ current_status }}">
+
+                <!-- Search -->
+                <div class="col-md-5">
+                    <label class="form-label small text-muted mb-1">البحث</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" name="q" class="form-control border-0 bg-light"
+                            placeholder="اسم المنشأة، المالك، أو المدينة..." value="{{ search_query }}">
+                    </div>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="col-md-3">
+                    <label class="form-label small text-muted mb-1">التصنيف</label>
+                    <select name="category" class="form-select border-0 bg-light">
+                        <option value="">جميع التصنيفات</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.pk }}" {% if current_category == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <div class="col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="fas fa-filter me-1"></i>تصفية
+                    </button>
+                    <a href="{% url 'admin_establishment_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-redo"></i>
+                    </a>
+                    <a href="{% url 'admin_export' 'places' %}" class="btn btn-outline-success ms-auto">
+                        <i class="fas fa-download me-1"></i>تصدير CSV
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bulk Actions Bar (hidden initially) -->
+    <div class="bulk-actions mb-3" id="bulkActionsBar">
+        <div class="bg-primary bg-opacity-10 rounded-3 p-3 d-flex align-items-center justify-content-between">
+            <div>
+                <span class="text-primary fw-bold me-2">
+                    <span id="selectedCount">0</span> منشأة محددة
+                </span>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-success" onclick="bulkAction('activate')">
+                    <i class="fas fa-check me-1"></i>تفعيل الكل
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="bulkAction('suspend')">
+                    <i class="fas fa-ban me-1"></i>تعليق الكل
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Places Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
+            <h6 class="mb-0 fw-bold">
+                <i class="fas fa-building me-2 text-primary"></i>
+                قائمة المنشآت
+            </h6>
+            <span class="badge bg-primary rounded-pill">{{ places|length }} منشأة</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 40px;">
+                            <input type="checkbox" class="form-check-input" id="selectAll" onchange="toggleSelectAll()">
+                        </th>
+                        <th>المنشأة</th>
+                        <th>المالك</th>
+                        <th>التصنيف</th>
+                        <th>التقييم</th>
+                        <th>الحالة</th>
+                        <th>تاريخ التسجيل</th>
+                        <th style="width: 150px;">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for est in places %}
+                    <tr>
+                        <!-- Checkbox -->
+                        <td>
+                            <input type="checkbox" class="form-check-input row-checkbox" value="{{ est.pk }}"
+                                onchange="updateBulkActions()">
+                        </td>
+
+                        <!-- Place Info -->
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% if est.cover_image %}
+                                <img src="{{ est.cover_image.url }}" class="place-thumb shadow-sm me-3" alt="">
+                                {% else %}
+                                <div
+                                    class="place-thumb bg-primary bg-opacity-10 d-flex align-items-center justify-content-center me-3">
+                                    <span class="text-primary fw-bold fs-5">{{ est.name|slice:":1"|upper }}</span>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <div class="fw-bold">{{ est.name|truncatechars:25 }}</div>
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ est.city|default:"—" }}
+                                    </small>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Owner -->
+                        <td>
+                            <div class="fw-semibold">{{ est.owner.get_full_name|default:est.owner.username }}</div>
+                            <small class="text-muted" dir="ltr">{{ est.owner.phone_number|default:"—" }}</small>
+                        </td>
+
+                        <!-- Category -->
+                        <td>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                {{ est.category.name|default:"غير مصنف" }}
+                            </span>
+                        </td>
+
+                        <!-- Rating -->
+                        <td>
+                            {% if est.live_avg_rating %}
+                            <div class="d-flex align-items-center">
+                                <span class="rating-stars me-1">
+                                    <i class="fas fa-star"></i>
+                                </span>
+                                <span class="fw-bold">{{ est.live_avg_rating|floatformat:1 }}</span>
+                                <small class="text-muted ms-1">({{ est.reviews_count }})</small>
+                            </div>
+                            {% else %}
+                            <span class="text-muted small">لا تقييمات</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            {% if est.is_suspended %}
+                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3">
+                                <i class="fas fa-ban me-1"></i>موقوفة
+                            </span>
+                            {% elif est.approval_status == 'pending' %}
+                            <span class="badge bg-warning-subtle text-warning rounded-pill px-3">
+                                <i class="fas fa-clock me-1"></i>معلقة
+                            </span>
+                            {% elif est.is_active %}
+                            <span class="badge bg-success-subtle text-success rounded-pill px-3">
+                                <i class="fas fa-check-circle me-1"></i>نشطة
+                            </span>
+                            {% else %}
+                            <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3">
+                                <i class="fas fa-pause-circle me-1"></i>غير نشطة
+                            </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Date -->
+                        <td>
+                            <div>{{ est.created_at|date:"Y/m/d" }}</div>
+                            <small class="text-muted">{{ est.created_at|timesince }} مضت</small>
+                        </td>
+
+                        <!-- Actions -->
+                        <td>
+                            <div class="d-flex gap-1">
+                                {% if est.approval_status == 'pending' %}
+                                <form action="{% url 'admin_establishment_approve' est.pk %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success text-white" title="اعتماد">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                                <!-- Preview -->
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#previewModal{{ est.pk }}" title="معاينة">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+
+                                <!-- Visit -->
+                                <a href="{% url 'place_detail' est.pk %}" target="_blank"
+                                    class="btn btn-sm btn-outline-info" title="عرض الصفحة">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+
+                                <!-- Suspend/Unsuspend -->
+                                {% if est.is_suspended %}
+                                <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal"
+                                    data-bs-target="#unsuspendModal{{ est.pk }}" title="تفعيل">
+                                    <i class="fas fa-unlock"></i>
+                                </button>
+                                {% else %}
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                    data-bs-target="#suspendModal{{ est.pk }}" title="تعليق">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Preview Modal -->
+                    <div class="modal fade" id="previewModal{{ est.pk }}" tabindex="-1">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content border-0 shadow">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title">
+                                        <i class="fas fa-building me-2"></i>{{ est.name }}
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white"
+                                        data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body p-0">
+                                    {% if est.cover_image %}
+                                    <img src="{{ est.cover_image.url }}" class="w-100"
+                                        style="max-height: 200px; object-fit: cover;" alt="">
+                                    {% endif %}
+                                    <div class="p-4">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="small text-muted">المالك</label>
+                                                <div class="fw-bold">{{ est.owner.get_full_name|default:est.owner.username }}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="small text-muted">التصنيف</label>
+                                                <div class="fw-bold">{{ est.category.name|default:"غير مصنف" }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="small text-muted">المدينة</label>
+                                                <div class="fw-bold">{{ est.city|default:"—" }}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="small text-muted">التقييم</label>
+                                                <div class="fw-bold">
+                                                    {% if est.live_avg_rating %}
+                                                    <span class="rating-stars"><i class="fas fa-star"></i></span>
+                                                    {{ est.live_avg_rating|floatformat:1 }} ({{ est.reviews_count }}
+                                                    تقييم)
+                                                    {% else %}
+                                                    لا تقييمات
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if est.description %}
+                                        <div class="mb-3">
+                                            <label class="small text-muted">الوصف</label>
+                                            <p class="mb-0">{{ est.description|truncatechars:200 }}</p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">إغلاق</button>
+                                    <a href="{% url 'place_detail' est.pk %}" target="_blank" class="btn btn-primary">
+                                        <i class="fas fa-external-link-alt me-1"></i>عرض الصفحة
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Suspend Modal -->
+                    <div class="modal fade" id="suspendModal{{ est.pk }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow">
+                                <form method="post" action="{% url 'admin_establishment_suspend' est.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="suspend">
+                                    <div class="modal-header bg-danger text-white">
+                                        <h5 class="modal-title">تعليق المنشأة</h5>
+                                        <button type="button" class="btn-close btn-close-white"
+                                            data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="alert alert-warning mb-3">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            سيتم إخفاء المنشأة من العرض العام
+                                        </div>
+                                        <p>هل أنت متأكد من تعليق <strong>{{ est.name }}</strong>؟</p>
+                                        <div class="mb-3">
+                                            <label class="form-label">سبب التعليق</label>
+                                            <textarea name="reason" class="form-control" rows="3" required
+                                                placeholder="اكتب سبب التعليق..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light"
+                                            data-bs-dismiss="modal">إلغاء</button>
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fas fa-ban me-1"></i>تأكيد التعليق
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Unsuspend Modal -->
+                    <div class="modal fade" id="unsuspendModal{{ est.pk }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow">
+                                <form method="post" action="{% url 'admin_establishment_suspend' est.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="unsuspend">
+                                    <div class="modal-header bg-success text-white">
+                                        <h5 class="modal-title">تفعيل المنشأة</h5>
+                                        <button type="button" class="btn-close btn-close-white"
+                                            data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>هل أنت متأكد من إعادة تفعيل <strong>{{ est.name }}</strong>؟</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light"
+                                            data-bs-dismiss="modal">إلغاء</button>
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-unlock me-1"></i>تأكيد التفعيل
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="fas fa-store-slash fa-3x mb-3 opacity-25"></i>
+                            <p class="mb-0">لا توجد منشآت مطابقة للبحث</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <div class="card-footer bg-white border-top-0">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?status={{ current_status }}&category={{ current_category }}&q={{ search_query }}&page={{ page_obj.previous_page_number }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?status={{ current_status }}&category={{ current_category }}&q={{ search_query }}&page={{ page_obj.next_page_number }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleSelectAll() {
+        const selectAll = document.getElementById('selectAll');
+        const checkboxes = document.querySelectorAll('.row-checkbox');
+        checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        updateBulkActions();
+    }
+
+    function updateBulkActions() {
+        const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+        const bulkBar = document.getElementById('bulkActionsBar');
+        const countSpan = document.getElementById('selectedCount');
+
+        if (checkboxes.length > 0) {
+            bulkBar.classList.add('show');
+            countSpan.textContent = checkboxes.length;
+        } else {
+            bulkBar.classList.remove('show');
+        }
+    }
+
+    function bulkAction(action) {
+        const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+        const ids = Array.from(checkboxes).map(cb => cb.value);
+
+        if (ids.length === 0) return;
+
+        const actionText = action === 'activate' ? 'تفعيل' : 'تعليق';
+        if (!confirm(`هل أنت متأكد من ${actionText} ${ids.length} منشأة؟`)) {
+            return;
+        }
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{% url 'admin_establishment_bulk' %}";
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = '{{ csrf_token }}';
+        form.appendChild(csrfInput);
+
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = action;
+        form.appendChild(actionInput);
+
+        ids.forEach(id => {
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'place_ids';
+            idInput.value = id;
+            form.appendChild(idInput);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+{% endblock %}

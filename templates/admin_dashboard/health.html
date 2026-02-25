@@ -1,0 +1,332 @@
+{% extends "management/admin_base.html" %}
+{% load i18n %}
+
+{% block title %}صحة النظام - لوحة الإدارة{% endblock %}
+{% block title_breadcrumb %}صحة النظام{% endblock %}
+
+{% block extra_css %}
+<style>
+    .health-card {
+        border-radius: 16px;
+        border: none;
+        transition: all 0.2s;
+    }
+
+    .health-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .health-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-left: 8px;
+    }
+
+    .status-healthy {
+        background: #28a745;
+    }
+
+    .status-warning {
+        background: #ffc107;
+    }
+
+    .status-error {
+        background: #dc3545;
+    }
+
+    .status-unknown {
+        background: #6c757d;
+    }
+
+    .progress-ring {
+        width: 120px;
+        height: 120px;
+    }
+
+    .stat-box {
+        background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .stat-box h4 {
+        margin-bottom: 0.25rem;
+        font-weight: 700;
+    }
+
+    .log-item {
+        border-left: 3px solid;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .log-item.create {
+        border-color: #28a745;
+    }
+
+    .log-item.update {
+        border-color: #007bff;
+    }
+
+    .log-item.delete {
+        border-color: #dc3545;
+    }
+
+    .log-item.approve {
+        border-color: #ffc107;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+
+    <!-- Last Check Time -->
+    <div class="alert alert-light border-0 shadow-sm mb-4">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <i class="fas fa-sync-alt me-2 text-primary"></i>
+                <strong>آخر فحص:</strong> {{ check_time|date:"Y/m/d H:i:s" }}
+            </div>
+            <a href="{% url 'admin_system_health' %}" class="btn btn-sm btn-primary">
+                <i class="fas fa-redo me-1"></i>تحديث
+            </a>
+        </div>
+    </div>
+
+    <!-- System Status Cards -->
+    <div class="row g-4 mb-4">
+        <!-- Database -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card health-card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="health-icon bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="ms-3 flex-grow-1">
+                            <h6 class="mb-0">قاعدة البيانات</h6>
+                            <span class="status-indicator status-{{ db_status.status }}"></span>
+                            <small class="text-muted">{{ db_status.message }}</small>
+                        </div>
+                    </div>
+                    {% if db_status.tables %}
+                    <div class="text-center">
+                        <span class="badge bg-primary bg-opacity-10 text-primary fs-6">
+                            {{ db_status.tables }} جدول
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Cache -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card health-card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="health-icon bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="ms-3 flex-grow-1">
+                            <h6 class="mb-0">الكاش</h6>
+                            <span class="status-indicator status-{{ cache_status.status }}"></span>
+                            <small class="text-muted">{{ cache_status.message }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Celery -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card health-card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="health-icon bg-warning bg-opacity-10 text-warning">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="ms-3 flex-grow-1">
+                            <h6 class="mb-0">المهام (Celery)</h6>
+                            <span class="status-indicator status-{{ celery_status.status }}"></span>
+                            <small class="text-muted">{{ celery_status.message }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disk -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card health-card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="health-icon bg-info bg-opacity-10 text-info">
+                            <i class="fas fa-hdd"></i>
+                        </div>
+                        <div class="ms-3 flex-grow-1">
+                            <h6 class="mb-0">القرص</h6>
+                            <span class="status-indicator status-{{ disk_usage.status }}"></span>
+                            <small class="text-muted">{{ disk_usage.percent }}% مستخدم</small>
+                        </div>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar {% if disk_usage.percent > 80 %}bg-danger{% elif disk_usage.percent > 60 %}bg-warning{% else %}bg-success{% endif %}"
+                            style="width: {{ disk_usage.percent }}%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2 small text-muted">
+                        <span>{{ disk_usage.used_gb }}GB</span>
+                        <span>{{ disk_usage.total_gb }}GB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Info & Data Counts -->
+    <div class="row g-4 mb-4">
+        <!-- System Info -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-server me-2 text-primary"></i>معلومات النظام
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <td class="text-muted">Python</td>
+                            <td class="fw-bold">{{ system_info.python_version }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Django</td>
+                            <td class="fw-bold">{{ system_info.django_version }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">وضع التطوير</td>
+                            <td>
+                                {% if system_info.debug_mode %}
+                                <span class="badge bg-warning text-dark">DEBUG ON</span>
+                                {% else %}
+                                <span class="badge bg-success">Production</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">المنطقة الزمنية</td>
+                            <td class="fw-bold">{{ system_info.timezone }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">اللغة</td>
+                            <td class="fw-bold">{{ system_info.language }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Counts -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-chart-pie me-2 text-success"></i>إحصائيات البيانات
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-4">
+                            <div class="stat-box">
+                                <h4 class="text-primary">{{ model_counts.users }}</h4>
+                                <small class="text-muted">مستخدم</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-box">
+                                <h4 class="text-success">{{ model_counts.establishments }}</h4>
+                                <small class="text-muted">منشأة</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-box">
+                                <h4 class="text-warning">{{ model_counts.reviews }}</h4>
+                                <small class="text-muted">تقييم</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-box">
+                                <h4 class="text-danger">{{ model_counts.reports }}</h4>
+                                <small class="text-muted">بلاغ</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-box">
+                                <h4 class="text-info">{{ model_counts.favorites }}</h4>
+                                <small class="text-muted">مفضلة</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-box">
+                                <h4 class="text-secondary">{{ model_counts.ads }}</h4>
+                                <small class="text-muted">إعلان</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Audit Log -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 fw-bold">
+                <i class="fas fa-history me-2 text-info"></i>سجل النشاط الأخير
+            </h6>
+            <span class="badge bg-info rounded-pill">{{ recent_logs|length }}</span>
+        </div>
+        <div class="card-body">
+            {% for log in recent_logs %}
+            <div class="log-item {{ log.action }}">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="badge bg-light text-dark me-2">{{ log.get_action_display|default:log.action }}</span>
+                        <strong>{{ log.user.username|default:"النظام" }}</strong>
+                        <span class="text-muted">- {{ log.message|default:log.action }}</span>
+                    </div>
+                    <small class="text-muted">{{ log.timestamp|timesince }} مضت</small>
+                </div>
+                {% if log.target_model %}
+                <small class="text-muted d-block mt-1">
+                    <i class="fas fa-link me-1"></i>{{ log.target_model }}: {{ log.target_id }}
+                </small>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="text-center py-5 text-muted">
+                <i class="fas fa-shield-alt fa-3x mb-3 opacity-25"></i>
+                <p class="mb-0">لا توجد سجلات نشاط حديثة</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

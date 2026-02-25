@@ -1,0 +1,123 @@
+{% extends "partners/base_partner.html" %}
+{% load static %}
+
+{% block title %}{% if form.instance.pk %}تعديل{% else %}إنشاء{% endif %} تنبيه طقس{% endblock %}
+
+{% block partner_content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="mb-4">
+                <a href="{% url 'admin_weather_alerts' %}" class="text-decoration-none">
+                    <i class="fas fa-arrow-right"></i> العودة للتنبيهات
+                </a>
+                <h2 class="mt-2">
+                    <i class="fas fa-cloud-sun-rain text-primary"></i>
+                    {% if form.instance.pk %}تعديل تنبيه{% else %}إنشاء تنبيه جديد{% endif %}
+                </h2>
+            </div>
+
+            <!-- Form Card -->
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="id_title" class="form-label fw-bold">
+                                <i class="fas fa-heading text-primary"></i> عنوان التنبيه
+                            </label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                            <div class="text-danger small">{{ form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_severity" class="form-label fw-bold">
+                                <i class="fas fa-exclamation-triangle text-warning"></i> مستوى الخطورة
+                            </label>
+                            {{ form.severity }}
+                            <div class="form-text">
+                                <span class="badge bg-info me-1">أصفر</span> تحذير خفيف
+                                <span class="badge bg-warning text-dark me-1 ms-2">برتقالي</span> تحذير متوسط
+                                <span class="badge bg-danger me-1 ms-2">أحمر</span> خطر شديد
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label fw-bold">
+                                <i class="fas fa-align-right text-info"></i> الوصف والتعليمات
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger small">{{ form.description.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">أضف وصفاً تفصيلياً للتنبيه والتعليمات للسياح</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="id_expires_at" class="form-label fw-bold">
+                                <i class="fas fa-clock text-secondary"></i> تاريخ انتهاء الصلاحية (اختياري)
+                            </label>
+                            {{ form.expires_at }}
+                            {% if form.expires_at.errors %}
+                            <div class="text-danger small">{{ form.expires_at.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">متى يجب إخفاء هذا التنبيه تلقائياً؟</div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success btn-lg flex-fill">
+                                <i class="fas fa-save"></i>
+                                {% if form.instance.pk %}حفظ التعديلات{% else %}إنشاء التنبيه{% endif %}
+                            </button>
+                            <a href="{% url 'admin_weather_alerts' %}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-times"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Preview Card -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0"><i class="fas fa-eye text-info"></i> معاينة كيف سيظهر التنبيه</h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning d-flex align-items-center" role="alert">
+                        <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                        <div>
+                            <strong id="preview-title">عنوان التنبيه</strong>
+                            <p class="mb-0 small" id="preview-desc">وصف التنبيه سيظهر هنا...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const titleInput = document.querySelector('#id_title');
+        const descInput = document.querySelector('#id_description');
+        const previewTitle = document.querySelector('#preview-title');
+        const previewDesc = document.querySelector('#preview-desc');
+
+        if (titleInput) {
+            titleInput.addEventListener('input', function () {
+                previewTitle.textContent = this.value || 'عنوان التنبيه';
+            });
+        }
+
+        if (descInput) {
+            descInput.addEventListener('input', function () {
+                previewDesc.textContent = this.value || 'وصف التنبيه سيظهر هنا...';
+            });
+        }
+    });
+</script>
+{% endblock %}

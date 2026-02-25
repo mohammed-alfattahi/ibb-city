@@ -1,0 +1,13 @@
+<form method="post" action="{% url 'itinerary_toggle_public' itinerary.pk %}" class="d-inline"
+    hx-post="{% url 'itinerary_toggle_public' itinerary.pk %}"
+    hx-swap="outerHTML">
+    {% csrf_token %}
+    <button type="submit" class="btn {% if itinerary.is_public %}btn-success{% else %}btn-secondary{% endif %}"
+        title="{% if itinerary.is_public %}الخطة عامة - اضغط لجعلها خاصة{% else %}الخطة خاصة - اضغط لنشرها{% endif %}">
+        {% if itinerary.is_public %}
+        <i class="fas fa-globe"></i> عامة
+        {% else %}
+        <i class="fas fa-lock"></i> خاصة
+        {% endif %}
+    </button>
+</form>

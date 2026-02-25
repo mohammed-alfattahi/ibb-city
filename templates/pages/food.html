@@ -1,0 +1,173 @@
+{% extends "base_marketing.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}المأكولات المحلية - دليل إب{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section */
+    .food-hero {
+        height: 400px;
+        position: relative;
+        overflow: hidden;
+        border-bottom-left-radius: 60px;
+        border-bottom-right-radius: 60px;
+        margin-bottom: -50px;
+        z-index: 1;
+    }
+
+    .food-hero-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .food-hero-overlay {
+        background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(30, 41, 59, 0.8) 100%);
+    }
+
+    .dish-card {
+        border: none;
+        border-radius: 24px;
+        overflow: hidden;
+        background: white;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .dish-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .dish-img {
+        height: 220px;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .badge-flavor {
+        background: rgba(251, 146, 60, 0.1);
+        color: #d97706;
+        border: 1px solid rgba(251, 146, 60, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="food-hero shadow-lg">
+    <img src="https://images.unsplash.com/photo-1563284223-28876c125732?w=1950" class="food-hero-img" alt="Ibb Food">
+    <div
+        class="food-hero-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+        <nav aria-label="breadcrumb" class="mb-3 animate__animated animate__fadeInDown">
+            <ol
+                class="breadcrumb justify-content-center bg-white bg-opacity-10 backdrop-blur-sm px-4 py-2 rounded-pill">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}"
+                        class="text-white text-decoration-none">الرئيسية</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'guides_hub' %}"
+                        class="text-white text-decoration-none">الأدلة</a></li>
+                <li class="breadcrumb-item active text-warning" aria-current="page">المأكولات المحلية</li>
+            </ol>
+        </nav>
+        <h1 class="text-white display-4 fw-bold mb-3 animate__animated animate__fadeInUp">المائدة الإبّية الأصيلة</h1>
+        <p class="text-white fs-5 opacity-90 animate__animated animate__fadeInUp animate__delay-1s fw-light"
+            style="max-width: 600px;">
+            رحلة تذوق لا تُنسى لأشهى الأطباق التقليدية التي تشتهر بها المحافظة
+        </p>
+    </div>
+</div>
+
+<div class="container pb-5 position-relative" style="margin-top: 80px; z-index: 10;">
+
+    <!-- Dishes Grid -->
+    <div class="row g-4 mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold text-dark">أطباق ننصح بتجربتها</h2>
+        </div>
+
+        <!-- Salta -->
+        <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="dish-card shadow-sm">
+                <div class="position-relative">
+                    <img src="https://pbs.twimg.com/media/Fj5QkuaWQAE2Y_o.jpg" class="dish-img" alt="Salta"
+                        onError="this.src='https://images.unsplash.com/photo-1547592180-85f173990554?w=500'">
+                    <span
+                        class="position-absolute top-0 start-0 m-3 badge bg-white text-dark shadow-sm rounded-pill px-3 py-2 fw-bold">الأكثر
+                        شهرة</span>
+                </div>
+                <div class="p-4">
+                    <h4 class="fw-bold mb-2">السلتة</h4>
+                    <p class="text-muted small mb-3">سيدة المائدة اليمنية، تتكون من الحلبة والمرق ومكونات أخرى، وتقدم
+                        ساخنة جداً في المقلي الحجري.</p>
+                    <div class="d-flex gap-2">
+                        <span class="badge badge-flavor rounded-pill px-2">بهارات غنية</span>
+                        <span class="badge badge-flavor rounded-pill px-2">ساخن</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bint Sahn -->
+        <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.2s">
+            <div class="dish-card shadow-sm">
+                <div class="position-relative">
+                    <img src="https://www.alyemenalghad.com/wp-content/uploads/2021/01/Bint-al-sahn.jpg"
+                        class="dish-img" alt="Bint Sahn"
+                        onError="this.src='https://images.unsplash.com/photo-1509365465985-25d11c17e812?w=500'">
+                </div>
+                <div class="p-4">
+                    <h4 class="fw-bold mb-2">بنت الصحن</h4>
+                    <p class="text-muted small mb-3">طبق حلو فخري يقدم غالباً في المناسبات، يتكون من طبقات عجين رقيقة مع
+                        السمن والعسل الإبي الأصيل.</p>
+                    <div class="d-flex gap-2">
+                        <span class="badge badge-flavor rounded-pill px-2">حلو</span>
+                        <span class="badge badge-flavor rounded-pill px-2">عسل بلدي</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fahsa -->
+        <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.3s">
+            <div class="dish-card shadow-sm">
+                <div class="position-relative">
+                    <img src="https://modo3.com/thumbs/fit630x300/15024/1435752395/%D8%B7%D8%B1%D9%8A%D9%82%D8%A9_%D8%B9%D9%85%D9%84_%D8%A7%D9%84%D9%81%D8%AD%D8%B3%D8%A9_%D8%A7%D9%84%D9%8A%D9%85%D9%86%D9%8A%D8%A9.jpg"
+                        class="dish-img" alt="Fahsa"
+                        onError="this.src='https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=500'">
+                </div>
+                <div class="p-4">
+                    <h4 class="fw-bold mb-2">الفحسة</h4>
+                    <p class="text-muted small mb-3">لحم عجل مطبوخ بعناية فائقة حتى يذوب، يقدم مع الحلبة والخبز الساخن.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <span class="badge badge-flavor rounded-pill px-2">دسم</span>
+                        <span class="badge badge-flavor rounded-pill px-2">لحم</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restaurants CTA -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="bg-white rounded-4 shadow-lg overflow-hidden d-md-flex align-items-center">
+                <div class="col-md-5">
+                    <img src="{% static 'images/food.jpg' %}" class="w-100 h-100 object-fit-cover"
+                        style="min-height: 250px;" alt="Restaurants"
+                        onError="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500'">
+                </div>
+                <div class="col-md-7 p-4 p-lg-5 text-center text-md-start">
+                    <h3 class="fw-bold mb-3">هل تشعر بالجوع؟</h3>
+                    <p class="text-muted mb-4">استكشف قائمة أفضل المطاعم في إب التي تقدم هذه الأطباق الشهية والمزيد.</p>
+                    <a href="{% url 'place_list' %}?category=Food"
+                        class="btn btn-warning rounded-pill px-5 py-3 fw-bold text-dark shadow-sm">
+                        تصفح المطاعم <i class="fas fa-utensils ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

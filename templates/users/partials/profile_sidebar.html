@@ -1,0 +1,42 @@
+<div id="profile-sidebar" class="card border-0 shadow-sm rounded-4 p-4 text-center h-100 animate__animated animate__fadeIn">
+    <div class="profile-avatar-container mb-3">
+        {% if user.profile_image %}
+        <img src="{{ user.profile_image.url }}" class="profile-avatar">
+        {% else %}
+        <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=random&size=200"
+            class="profile-avatar">
+        {% endif %}
+        <div class="edit-avatar-btn btn-edit-profile">
+            <i class="fas fa-pen text-primary small"></i>
+        </div>
+    </div>
+
+    <h3 class="fw-bold mb-1">{{ user.full_name|default:user.username }}</h3>
+    <p class="text-muted mb-4 small">{{ user.bio|default:"مستكشف في إب الخضراء 🌿" }}</p>
+
+    <div class="d-flex justify-content-center gap-2 mb-4">
+        <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm btn-edit-profile w-100">
+            تعديل الملف
+        </button>
+        <!-- Typically 'Share' or 'Settings' could go here -->
+    </div>
+
+    <hr class="opacity-10 my-4">
+
+    <div class="text-start">
+        <div class="d-flex align-items-center mb-3 text-secondary">
+            <i class="fas fa-envelope me-3 opacity-50"></i>
+            <span>{{ user.email }}</span>
+        </div>
+        {% if user.phone_number %}
+        <div class="d-flex align-items-center mb-3 text-secondary">
+            <i class="fas fa-phone-alt me-3 opacity-50"></i>
+            <span dir="ltr">{{ user.phone_number }}</span>
+        </div>
+        {% endif %}
+        <div class="d-flex align-items-center mb-3 text-secondary">
+            <i class="fas fa-calendar-alt me-3 opacity-50"></i>
+            <span>انضم {{ user.date_joined|date:"M Y" }}</span>
+        </div>
+    </div>
+</div>

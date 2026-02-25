@@ -1,0 +1,33 @@
+<section class="mb-5 {{ block.custom_class }}">
+    <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+        <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+            <h5 class="fw-bold">{{ block.title|default:"معلومات التواصل" }}</h5>
+        </div>
+        <div class="card-body p-4">
+            {% if place.contact_info %}
+            {% for contact in place.contact_info %}
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="bg-light rounded-circle p-2 text-primary">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <span class="dir-ltr fw-bold text-dark">{{ contact.number }}</span>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="text-muted small">لا توجد أرقام تواصل متاحة.</p>
+            {% endif %}
+
+            <hr class="opacity-10">
+
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="bg-light rounded-circle p-2 text-info">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div>
+                    <div class="small fw-bold">حالة المكان</div>
+                    <span class="badge bg-{{ place.status_css_class }}">{{ place.get_operational_status_display }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

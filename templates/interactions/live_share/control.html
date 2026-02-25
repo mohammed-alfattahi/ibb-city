@@ -1,0 +1,85 @@
+{% extends "base_app.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}مشاركة الموقع المباشر{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="card shadow rounded-4 mx-auto" style="max-width: 500px;">
+        <div class="card-body p-5">
+            <h1 class="mb-4">🔴 مشاركة الموقع نشطة</h1>
+
+            <div class="alert alert-success d-flex align-items-center mb-4">
+                <div class="spinner-grow spinner-grow-sm text-success me-2" role="status"></div>
+                <div>جاري إرسال موقعك كل 15 ثانية...</div>
+            </div>
+
+            <p class="text-muted mb-4">شارك هذا الرابط ليتمكن الآخرون من متابعتك:</p>
+
+            <div class="input-group mb-4">
+                <input type="text" class="form-control" id="shareLink"
+                    value="{{ request.scheme }}://{{ request.get_host }}{% url 'live_share_public' session.token %}"
+                    readonly>
+                <button class="btn btn-outline-primary" onclick="copyLink()">نسخ</button>
+            </div>
+
+            <button onclick="stopSharing()" class="btn btn-danger btn-lg w-100 rounded-pill">إيقاف المشاركة</button>
+
+            <p id="statusMsg" class="mt-3 text-muted small"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let watchId;
+    const token = "{{ session.token }}";
+
+    function copyLink() {
+        const copyText = document.getElementById("shareLink");
+        copyText.select();
+        document.execCommand("copy");
+        alert("تم نسخ الرابط!");
+    }
+
+    function stopSharing() {
+        if (!confirm("هل أنت متأكد من إيقاف المشاركة؟")) return;
+
+        navigator.geolocation.clearWatch(watchId);
+        fetch(`/share/stop/${token}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+        }).then(() => {
+            window.location.href = "{% url 'home' %}";
+        });
+    }
+
+    // Start Watching Location
+    if (navigator.geolocation) {
+        watchId = navigator.geolocation.watchPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                document.getElementById('statusMsg').innerText = `تم التحديث: ${new Date().toLocaleTimeString()}`;
+
+                // Ping Server
+                fetch("{% url 'live_share_ping' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: `token=${token}&lat=${lat}&lon=${lon}`
+                });
+            },
+            (error) => {
+                console.error(error);
+                alert("تعذر الوصول للموقع. يرجى تفعيل GPS.");
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    } else {
+        alert("المتصفح لا يدعم تحديد الموقع.");
+    }
+</script>
+{% endblock %}

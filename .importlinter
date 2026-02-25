@@ -1,0 +1,53 @@
+[importlinter]
+root_package = ibb # Root package name (django project root usually)
+
+[importlinter:contract:1]
+name = Places Domain Layers
+type = layers
+layers =
+    views
+    services
+    selectors
+    models
+containers =
+    places
+# This ensures that for the 'places' container:
+# 'views' can import 'services', 'selectors', 'models'
+# 'services' can import 'selectors', 'models'
+# 'selectors' can import 'models'
+# 'models' can import nothing from above.
+
+[importlinter:contract:2]
+name = Interactions Domain Layers
+type = layers
+layers =
+    views
+    services
+    models
+containers =
+    interactions
+
+[importlinter:contract:3]
+name = Users Domain Layers
+type = layers
+layers =
+    views
+    services
+    models
+containers =
+    users
+
+[importlinter:contract:4]
+name = No forbidden imports from Views to Services in Models
+type = forbidden
+source_modules =
+    places.models
+    users.models
+    interactions.models
+forbidden_modules =
+    places.services
+    places.views
+    users.services
+    users.views
+    interactions.services
+    interactions.views

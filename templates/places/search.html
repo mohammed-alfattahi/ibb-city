@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="page-hero">
+    <div class="page-hero-content">
+        <h1><i class="fas fa-search"></i> البحث الذكي</h1>
+        <p>ابحث في أماكن إب السياحية بالعربي أو الإنجليزي</p>
+
+        <!-- Search Form -->
+        <form method="get" action="" style="margin-top:1.5rem;">
+            <div style="display:flex;gap:0.5rem;max-width:600px;margin:0 auto;">
+                <input
+                    type="text" name="q" value="{{ q }}"
+                    placeholder="مثال: مستشفى، مطعم، جامع، متحف…"
+                    style="flex:1;padding:0.85rem 1.25rem;border:none;border-radius:50px;font-size:1rem;outline:none;box-shadow:0 4px 15px rgba(0,0,0,0.15);"
+                    autofocus
+                    id="ml-search-input">
+                <button type="submit" class="btn-primary-gradient" style="padding:0.85rem 2rem;border-radius:50px;font-size:1rem;cursor:pointer;">
+                    <i class="fas fa-search"></i> بحث
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Results Section -->
+<div class="container-custom" style="padding-top:2rem;padding-bottom:3rem;">
+
+    {% if q %}
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-map-marker-alt"></i>
+            نتائج البحث عن: "{{ q }}"
+        </h2>
+        <span style="color:#6b7280;font-size:0.9rem;">
+            {{ results|length }} نتيجة
+        </span>
+    </div>
+
+    {% if results %}
+    <div class="cards-grid" style="grid-template-columns:repeat(auto-fill,minmax(320px,1fr));">
+        {% for r in results %}
+        <div class="modern-card">
+            <div class="modern-card-body">
+                <div style="display:flex;align-items:flex-start;gap:1rem;">
+                    <!-- Icon -->
+                    <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#059669,#047857);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fas fa-map-pin" style="color:white;font-size:1.2rem;"></i>
+                    </div>
+                    <!-- Info -->
+                    <div style="flex:1;min-width:0;">
+                        <h3 style="margin:0 0 0.25rem;font-size:1.1rem;font-weight:700;color:#1f2937;">
+                            {{ r.display_name|default:"—" }}
+                        </h3>
+
+                        {% if r.category %}
+                        <span style="display:inline-block;padding:0.2rem 0.65rem;background:#ecfdf5;color:#059669;border-radius:50px;font-size:0.78rem;font-weight:600;margin-bottom:0.4rem;">
+                            {{ r.category }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <!-- Score Badge -->
+                    <div style="flex-shrink:0;text-align:center;">
+                        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#f0fdf4,#dcfce7);display:flex;align-items:center;justify-content:center;border:2px solid #bbf7d0;">
+                            <span style="font-size:0.7rem;font-weight:700;color:#059669;">
+                                {{ r.score|floatformat:1 }}
+                            </span>
+                        </div>
+                        <span style="font-size:0.65rem;color:#9ca3af;margin-top:2px;display:block;">تطابق</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- No Results -->
+    <div style="text-align:center;padding:4rem 1rem;">
+        <i class="fas fa-search" style="font-size:3rem;color:#d1d5db;margin-bottom:1rem;display:block;"></i>
+        <h3 style="color:#6b7280;font-weight:600;">لا توجد نتائج لـ "{{ q }}"</h3>
+        <p style="color:#9ca3af;">جرّب كلمات مختلفة مثل: مطعم، فندق، جامع، حديقة</p>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Initial State -->
+    <div style="text-align:center;padding:4rem 1rem;">
+        <i class="fas fa-compass" style="font-size:3rem;color:#059669;margin-bottom:1rem;display:block;"></i>
+        <h3 style="color:#374151;font-weight:600;">اكتشف أماكن إب</h3>
+        <p style="color:#6b7280;">اكتب في صندوق البحث أعلاه للبحث في 356 مكان سياحي</p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

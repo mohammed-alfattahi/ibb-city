@@ -1,0 +1,20 @@
+<!-- Reusing generic confirm delete logic provided in views or inline form -->
+<!-- Creating specific file just in case inline JS fails or user navigates directly -->
+{% extends "partners/base_partner.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">Delete Image</div>
+        <div class="card-body">
+            <p>Are you sure you want to delete this image?</p>
+            <img src="{{ object.media_url.url }}" class="img-thumbnail mb-3" style="max-height: 200px;">
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <a href="{% url 'partner_gallery' object.place.pk %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

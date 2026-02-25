@@ -1,0 +1,7 @@
+{# Atomic Badge Component #}
+<span
+    class="badge rounded-pill bg-{{ type|default:'primary' }}-subtle text-{{ type|default:'primary' }} border border-{{ type|default:'primary' }}-subtle {{ class }}"
+    {{ attrs|safe }}>
+    {% if icon %}<i class="{{ icon }} me-1"></i>{% endif %}
+    {{ text }}
+</span>

@@ -1,0 +1,53 @@
+<div class="mb-5 animate__animated animate__fadeInUp">
+    <div class="d-flex align-items-center mb-4">
+        <h4 class="fw-bold mb-0 section-title-custom">الخدمات والوحدات المتاحة</h4>
+    </div>
+
+    <div class="row g-4">
+        {% for unit in units %}
+        <div class="col-md-6 col-lg-4">
+            <div class="unit-card h-100 d-flex flex-column">
+                <!-- Image -->
+                <div class="position-relative" style="height: 200px;">
+                    {% if unit.image %}
+                    <img src="{{ unit.image.url }}" class="w-100 h-100 object-fit-cover">
+                    {% else %}
+                    <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center text-muted">
+                        <i class="fas fa-box fa-3x opacity-25"></i>
+                    </div>
+                    {% endif %}
+                    <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge bg-white text-dark shadow-sm">{{ unit.unit_type }}</span>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-4 flex-grow-1 d-flex flex-column">
+                    <h5 class="fw-bold mb-2">{{ unit.name }}</h5>
+                    {% if unit.description %}
+                    <p class="text-muted small mb-3 flex-grow-1">{{ unit.description|truncatechars:80 }}</p>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top">
+                        <div class="text-primary fw-bold">
+                            {% if unit.price %}
+                            {{ unit.price }} ر.ي
+                            {% else %}
+                            السعر عند الطلب
+                            {% endif %}
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                            تواصل للحجز
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5 text-muted">
+            <i class="fas fa-cubes fa-3x mb-3 opacity-25"></i>
+            <p>لا توجد وحدات معروضة حالياً.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>

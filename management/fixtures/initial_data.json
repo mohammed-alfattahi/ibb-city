@@ -1,0 +1,203 @@
+[
+    {
+        "model": "management.sitesetting",
+        "pk": 1,
+        "fields": {
+            "site_name": "دليل إب السياحي",
+            "primary_color": "#0d6efd",
+            "footer_text": "دليلك الشامل للسياحة في محافظة إب اليمنية",
+            "copyright_text": "جميع الحقوق محفوظة © 2026",
+            "contact_email": "info@ibb-guide.ye",
+            "contact_phone": "+967 123 456 789",
+            "address": "إب، اليمن",
+            "meta_description": "دليلك الشامل للسياحة في محافظة إب اليمنية - اكتشف أجمل المعالم والوجهات السياحية",
+            "keywords": "سياحة، إب، اليمن، معالم، فنادق، مطاعم، طبيعة"
+        }
+    },
+    {
+        "model": "management.homepagesection",
+        "pk": 1,
+        "fields": {
+            "title": "العرض الرئيسي",
+            "section_type": "hero",
+            "content": "",
+            "is_visible": true,
+            "order": 1
+        }
+    },
+    {
+        "model": "management.homepagesection",
+        "pk": 2,
+        "fields": {
+            "title": "الوصول السريع",
+            "section_type": "quick_access",
+            "content": "",
+            "is_visible": true,
+            "order": 2
+        }
+    },
+    {
+        "model": "management.homepagesection",
+        "pk": 3,
+        "fields": {
+            "title": "شبكة المميزات",
+            "section_type": "featured_grid",
+            "content": "",
+            "is_visible": true,
+            "order": 3
+        }
+    },
+    {
+        "model": "management.heroslide",
+        "pk": 1,
+        "fields": {
+            "title": "اكتشف جمال إب",
+            "subtitle": "المدينة الخضراء في قلب اليمن",
+            "button_text": "استكشف الآن",
+            "button_link": "/places/",
+            "is_active": true,
+            "order": 1
+        }
+    },
+    {
+        "model": "management.heroslide",
+        "pk": 2,
+        "fields": {
+            "title": "معالم تاريخية فريدة",
+            "subtitle": "آلاف السنين من الحضارة والثقافة",
+            "button_text": "شاهد المعالم",
+            "button_link": "/places/landmarks/",
+            "is_active": true,
+            "order": 2
+        }
+    },
+    {
+        "model": "management.heroslide",
+        "pk": 3,
+        "fields": {
+            "title": "طبيعة خلابة",
+            "subtitle": "جبال شاهقة وطبيعة ساحرة",
+            "button_text": "اكتشف الطبيعة",
+            "button_link": "/places/nature/",
+            "is_active": true,
+            "order": 3
+        }
+    },
+    {
+        "model": "management.sociallink",
+        "pk": 1,
+        "fields": {
+            "label": "Facebook",
+            "url": "https://facebook.com/ibbguide",
+            "icon": "fab fa-facebook-f",
+            "order": 1,
+            "is_active": true
+        }
+    },
+    {
+        "model": "management.sociallink",
+        "pk": 2,
+        "fields": {
+            "label": "Twitter",
+            "url": "https://twitter.com/ibbguide",
+            "icon": "fab fa-twitter",
+            "order": 2,
+            "is_active": true
+        }
+    },
+    {
+        "model": "management.sociallink",
+        "pk": 3,
+        "fields": {
+            "label": "Instagram",
+            "url": "https://instagram.com/ibbguide",
+            "icon": "fab fa-instagram",
+            "order": 3,
+            "is_active": true
+        }
+    },
+    {
+        "model": "management.menu",
+        "pk": 1,
+        "fields": {
+            "title": "الرئيسية",
+            "url": "/",
+            "location": "header",
+            "order": 1,
+            "is_active": true,
+            "visible_for_guests": true,
+            "visible_for_users": true,
+            "visible_for_admins": true
+        }
+    },
+    {
+        "model": "management.menu",
+        "pk": 2,
+        "fields": {
+            "title": "الأماكن",
+            "url": "/places/",
+            "location": "header",
+            "order": 2,
+            "is_active": true,
+            "visible_for_guests": true,
+            "visible_for_users": true,
+            "visible_for_admins": true
+        }
+    },
+    {
+        "model": "management.menu",
+        "pk": 3,
+        "fields": {
+            "title": "الفعاليات",
+            "url": "/events/",
+            "location": "header",
+            "order": 3,
+            "is_active": true,
+            "visible_for_guests": true,
+            "visible_for_users": true,
+            "visible_for_admins": true
+        }
+    },
+    {
+        "model": "management.publicemergencycontact",
+        "pk": 1,
+        "fields": {
+            "title": "الطوارئ العامة",
+            "number": "199",
+            "icon": "fas fa-ambulance",
+            "color": "danger",
+            "is_hospital": false,
+            "is_primary_card": true,
+            "is_active": true,
+            "order": 1
+        }
+    },
+    {
+        "model": "management.publicemergencycontact",
+        "pk": 2,
+        "fields": {
+            "title": "الإطفاء",
+            "number": "191",
+            "icon": "fas fa-fire-extinguisher",
+            "color": "warning",
+            "is_hospital": false,
+            "is_primary_card": false,
+            "is_active": true,
+            "order": 2
+        }
+    },
+    {
+        "model": "management.publicemergencycontact",
+        "pk": 3,
+        "fields": {
+            "title": "الشرطة",
+            "number": "194",
+            "icon": "fas fa-shield-alt",
+            "color": "primary",
+            "is_hospital": false,
+            "is_primary_card": false,
+            "is_active": true,
+            "order": 3
+        }
+    }
+]

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2 class="display-6 fw-bold">{% trans "مقترحات قريبة منك" %}</h2>
+            <p class="text-muted">{% trans "أماكن مختارة بناءً على اهتماماتك وموقعك الحالي" %}</p>
+        </div>
+    </div>
+
+    {% if needs_location %}
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-geo-alt display-1 text-primary"></i>
+        </div>
+        <p class="lead mb-4">{% trans "للحصول على أفضل التوصيات، يرجى تفعيل الموقع" %}</p>
+        <button id="btn-loc" class="btn btn-primary btn-lg">
+            <i class="bi bi-geo-fill me-2"></i> {% trans "استخدم موقعي الحالي" %}
+        </button>
+        <p class="text-muted mt-3 small">{% trans "سنستخدم موقعك لإيجاد الأماكن الأقرب إليك فقط." %}</p>
+    </div>
+
+    <script>
+        document.getElementById("btn-loc").onclick = () => {
+          if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition((pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                window.location.href = `?lat=${lat}&lon=${lon}`;
+              }, (err) => {
+                console.error(err);
+                alert("{% trans 'تعذر الوصول للموقع. يرجى التحقق من إعدادات المتصفح.' %}");
+              });
+          } else {
+              alert("{% trans 'المتصفح لا يدعم تحديد الموقع.' %}");
+          }
+        };
+    </script>
+
+    {% else %}
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <small class="text-muted">
+            <i class="bi bi-geo-alt-fill"></i> {{ lat|floatformat:4 }}, {{ lon|floatformat:4 }}
+        </small>
+        <button id="refresh" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-clockwise"></i> {% trans "تحديث الموقع" %}
+        </button>
+    </div>
+
+    <script>
+        document.getElementById("refresh").onclick = () => {
+          if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition((pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                window.location.href = `?lat=${lat}&lon=${lon}`;
+              });
+          }
+        };
+    </script>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for it in items %}
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0 place-card">
+                {% if it.image %}
+                <img src="{{ it.image }}" class="card-img-top" alt="{{ it.name_ar }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="bi bi-image text-muted fs-1"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title fw-bold mb-0">
+                            <a href="{% url 'place_detail' it.place_id %}" class="text-decoration-none text-dark stretched-link" onclick="trackClick({{ it.place_id }});">
+                                {{ it.name_ar|default:it.name_en }}
+                            </a>
+                        </h5>
+                        {% if it.score %}
+                        <span class="badge bg-success-subtle text-success rounded-pill">
+                            {{ it.score|floatformat:1 }}%
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <p class="card-text text-muted small mb-2">
+                        <i class="bi bi-tag"></i> {{ it.category }} 
+                        {% if it.district %} • <i class="bi bi-geo"></i> {{ it.district }}{% endif %}
+                    </p>
+                    
+                    {% if it.reason %}
+                    <div class="alert alert-light py-1 px-2 mb-2 small">
+                        <i class="bi bi-stars text-warning"></i> {{ it.reason }}
+                    </div>
+                    {% endif %}
+                    
+                    {% if it.distance_km %}
+                    <div class="text-primary small">
+                        <i class="bi bi-cursor-fill"></i> يبعد {{ it.distance_km|floatformat:1 }} كم
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-search display-4 text-muted mb-3"></i>
+            <p class="lead">{% trans "لا توجد توصيات قريبة حاليًا ضمن النطاق المحدد (15 كم)." %}</p>
+            <button class="btn btn-outline-primary" onclick="window.history.back()">{% trans "رجوع" %}</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        async function trackClick(placeId){
+            // Non-blocking click tracking
+            try{
+                fetch(`/recommendations/${placeId}/click/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken")
+                    },
+                    body: JSON.stringify({})
+                });
+            }catch(e){ console.warn("Track click failed", e); }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+
+    {% endif %}
+</div>
+{% endblock %}

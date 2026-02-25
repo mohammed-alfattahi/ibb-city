@@ -1,0 +1,241 @@
+{% comment %}
+Contact Display Component for Tourist View
+Include with: {% include 'components/contacts_display.html' with contacts=grouped_contacts %}
+{% endcomment %}
+
+<style>
+    /* Yemen Carrier Colors */
+    .carrier-sabafon {
+        color: #00a651;
+    }
+
+    .carrier-yemen-mobile {
+        color: #004a99;
+    }
+
+    .carrier-you {
+        color: #ffc107;
+    }
+
+    .carrier-wai {
+        color: #6f42c1;
+    }
+
+    .carrier-landline {
+        color: #6c757d;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        background: var(--surface-secondary, #f8f9fa);
+        transition: background 0.2s;
+    }
+
+    .contact-item:hover {
+        background: var(--surface-tertiary, #e9ecef);
+    }
+
+    .contact-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 1.2rem;
+    }
+
+    .contact-icon.phone {
+        background: rgba(0, 166, 81, 0.1);
+        color: #00a651;
+    }
+
+    .contact-icon.whatsapp {
+        background: rgba(37, 211, 102, 0.1);
+        color: #25D366;
+    }
+
+    .contact-icon.telegram {
+        background: rgba(0, 136, 204, 0.1);
+        color: #0088cc;
+    }
+
+    .contact-icon.facebook {
+        background: rgba(24, 119, 242, 0.1);
+        color: #1877F2;
+    }
+
+    .contact-icon.instagram {
+        background: linear-gradient(45deg, rgba(245, 96, 64, 0.1), rgba(193, 53, 132, 0.1));
+        color: #E4405F;
+    }
+
+    .contact-icon.email {
+        background: rgba(234, 67, 53, 0.1);
+        color: #EA4335;
+    }
+
+    .contact-icon.website {
+        background: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+    }
+
+    .contact-icon.other {
+        background: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
+    }
+
+    .contact-action-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+</style>
+
+{% load static %}
+{% if contacts.phones or contacts.messaging or contacts.social or contacts.links %}
+<div class="contacts-section mb-4">
+    <h5 class="fw-bold mb-3">
+        <i class="fas fa-address-book me-2 text-primary"></i>
+        جهات الاتصال
+    </h5>
+
+    <div class="row g-3">
+        {% if contacts.phones %}
+        <!-- Phone Numbers -->
+        <div class="col-12">
+            <h6 class="text-muted small mb-2">أرقام الهاتف</h6>
+            <div class="d-flex flex-wrap gap-2">
+                {% for contact in contacts.phones %}
+                <div class="contact-item flex-grow-1 align-items-center">
+                    {% if contact.carrier_icon_path %}
+                    <img src="{% static contact.carrier_icon_path %}" alt="{{ contact.get_carrier_display }}"
+                        class="me-3 rounded-circle shadow-sm" width="40" height="40" style="border: 1px solid #eee;">
+                    {% else %}
+                    <div class="contact-icon phone me-3">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    {% endif %}
+
+                    <div class="flex-grow-1">
+                        <div class="fw-bold fs-5 font-monospace" style="direction: ltr; text-align: right;">{{ contact.value }}</div>
+                        <small class="text-muted d-flex align-items-center gap-1">
+                            {{ contact.get_carrier_display }}
+                            {% if contact.label %}
+                            <span class="badge bg-light text-secondary border rounded-pill fw-normal">{{ contact.label }}</span>
+                            {% endif %}
+                        </small>
+                    </div>
+
+                    <a href="{{ contact.action_url }}" class="btn btn-success btn-sm rounded-pill px-3 ms-2">
+                        <i class="fas fa-phone"></i>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if contacts.messaging %}
+        <!-- Messaging -->
+        <div class="col-12">
+            <h6 class="text-muted small mb-2">المراسلة</h6>
+            <div class="d-flex flex-wrap gap-2">
+                {% for contact in contacts.messaging %}
+                <a href="{{ contact.action_url }}" target="_blank"
+                    class="contact-item flex-grow-1 text-decoration-none text-dark">
+                    <div class="contact-icon {{ contact.type }} me-3">
+                        <i class="{{ contact.icon_class }}"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold">{{ contact.get_type_display }}</div>
+                        <small class="text-muted">{{ contact.value }}</small>
+                    </div>
+                    <span
+                        class="contact-action-btn btn btn-{% if contact.type == 'whatsapp' %}success{% else %}info{% endif %} btn-sm">
+                        <i class="{{ contact.icon_class }} me-1"></i> {{ contact.action_label }}
+                    </span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if contacts.social %}
+        <!-- Social Media -->
+        <div class="col-12">
+            <h6 class="text-muted small mb-2">التواصل الاجتماعي</h6>
+            <div class="d-flex flex-wrap gap-2">
+                {% for contact in contacts.social %}
+                <a href="{{ contact.action_url }}" target="_blank"
+                    class="btn btn-outline-secondary btn-sm rounded-pill">
+                    <i class="{{ contact.icon_class }} me-1"></i>
+                    {{ contact.get_type_display }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if contacts.links %}
+        <!-- Website/Email/Other -->
+        <div class="col-12">
+            <h6 class="text-muted small mb-2">روابط أخرى</h6>
+            <div class="d-flex flex-wrap gap-2">
+                {% for contact in contacts.links %}
+                <a href="{{ contact.action_url }}" target="_blank"
+                    class="contact-item flex-grow-1 text-decoration-none text-dark">
+                    <div class="contact-icon {{ contact.type }} me-3">
+                        <i class="{{ contact.icon_class }}"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold">{{ contact.get_type_display }}</div>
+                        <small class="text-muted text-truncate d-block" style="max-width: 200px;">
+                            {{ contact.value }}
+                        </small>
+                    </div>
+                    <span class="contact-action-btn btn btn-outline-primary btn-sm">
+                        {{ contact.action_label }}
+                    </span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</div>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const placeId = "{{ place.pk }}"; 
+        // Note: 'place' must be available in context. 
+        // place_detail.html passes 'grouped_contacts', but parent context 'place' should be available in include.
+        
+        if (!placeId) return;
+
+        function trackClick(e) {
+            // Send async request
+            fetch(`/places/api/track-click/${placeId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                keepalive: true // Ensure request is sent even if page unloads (e.g. tel: link)
+            }).catch(err => console.error('Tracking error:', err));
+        }
+
+        // Attach to all contact links
+        const contactLinks = document.querySelectorAll('.contact-item, .contact-action-btn, a[href^="tel:"], a[href^="https://wa.me"]');
+        contactLinks.forEach(link => {
+            link.addEventListener('click', trackClick);
+        });
+    });
+</script>

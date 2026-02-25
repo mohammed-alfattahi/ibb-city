@@ -1,0 +1,388 @@
+/* Modern Landing CSS (Majesty & Horizon) */
+
+/* General Landing */
+.landing-hero {
+    height: 60vh;
+    min-height: 500px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    background-size: cover;
+    background-position: center;
+    margin-bottom: var(--space-8);
+}
+
+.landing-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8));
+}
+
+.landing-content {
+    position: relative;
+    z-index: 10;
+    max-width: 800px;
+    padding: var(--space-4);
+}
+
+.landing-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    margin-bottom: var(--space-4);
+    font-family: 'Playfair Display', serif;
+    /* Or similar elegant font */
+}
+
+.landing-subtitle {
+    font-size: 1.5rem;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+/* Majesty Specific */
+.majesty-card {
+    border: none;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    /* Soft luxury shadow */
+    transition: all 0.4s ease;
+}
+
+.majesty-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+.majesty-img-wrapper {
+    height: 250px;
+    position: relative;
+    overflow: hidden;
+}
+
+.majesty-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.majesty-card:hover .majesty-img-wrapper img {
+    transform: scale(1.1);
+}
+
+.majesty-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #1a1a1a;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Horizon Specific */
+.horizon-card {
+    background: #121212;
+    /* Dark luxury base */
+    color: #f0f0f0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.horizon-card:hover {
+    border-color: #d4af37;
+    /* Gold border on hover */
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+.horizon-header {
+    padding: var(--space-6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.horizon-title {
+    font-family: 'Playfair Display', serif;
+    color: #d4af37;
+    /* Gold */
+    font-size: 1.5rem;
+    margin-bottom: var(--space-2);
+}
+
+.horizon-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.horizon-stat-item label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 2px;
+}
+
+.horizon-stat-item div {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.btn-majesty {
+    background: #1a1a1a;
+    color: white;
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+}
+
+.btn-majesty:hover {
+    background: #333;
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-horizon {
+    background: linear-gradient(135deg, #d4af37 0%, #c5a028 100%);
+    color: #121212;
+    border-radius: 4px;
+    /* Sharper corporate feel */
+    padding: 10px 25px;
+    font-weight: 700;
+    transition: all 0.3s;
+}
+
+
+/* Heritage Styles (About Us) */
+.heritage-section {
+    background: #fdfbf7;
+    color: #4a4a4a;
+}
+
+.heritage-card {
+    border: none;
+    background: transparent;
+    text-align: center;
+    padding: var(--space-4);
+}
+
+.heritage-icon {
+    width: 80px;
+    height: 80px;
+    background: #e6dfd1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-4);
+    color: #5c4d3c;
+    font-size: 2rem;
+    transition: transform 0.3s;
+}
+
+.heritage-card:hover .heritage-icon {
+    transform: rotate(15deg);
+    background: #d4c5a9;
+}
+
+/* GreenScape Styles (Nature) */
+.green-hero {
+    height: 70vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: var(--space-8);
+}
+
+.green-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, #0f172a, transparent 60%);
+}
+
+.green-card {
+    border: none;
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    height: 350px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.green-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    z-index: 1;
+}
+
+.green-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s;
+}
+
+.green-card:hover img {
+    transform: scale(1.1);
+}
+
+/* Aura Events (Final Visual Polish) */
+.aura-hero {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    position: relative;
+    padding: var(--space-10) 0;
+    overflow: hidden;
+}
+
+.aura-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    animation: rotateAura 20s linear infinite;
+}
+
+@keyframes rotateAura {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.aura-timeline {
+    position: relative;
+    padding-left: 30px;
+    border-left: 2px solid rgba(79, 70, 229, 0.2);
+}
+
+.aura-card {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-xl);
+    padding: 0;
+    overflow: hidden;
+    margin-bottom: var(--space-6);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.aura-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.aura-date {
+    background: linear-gradient(to bottom, #f3f4f6, white);
+    color: #4f46e5;
+    padding: 15px 10px;
+    text-align: center;
+    width: 80px;
+    flex-shrink: 0;
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.aura-date .day {
+    font-size: 1.8rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+
+.aura-date .month {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #6b7280;
+}
+
+/* Contact Styles */
+.contact-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 80vh;
+}
+
+.contact-info-panel {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: white;
+    padding: var(--space-10);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.contact-form-panel {
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-10);
+}
+
+.contact-glass-card {
+    background: rgba(255, 255, 255, 0.9);
+    padding: var(--space-8);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 500px;
+}
+
+.info-item {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    align-items: center;
+}
+
+.info-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--color-primary-400);
+}
+
+@media (max-width: 900px) {
+    .contact-split {
+        grid-template-columns: 1fr;
+    }
+}

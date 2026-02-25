@@ -1,0 +1,305 @@
+﻿{% extends "base_marketing.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}الفعاليات والمواسم - دليل إب{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/modern_list.css' %}">
+<style>
+    .hero-banner {
+        height: 350px;
+        border-radius: 0 0 40px 40px;
+        overflow: hidden;
+        position: relative;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #8b5cf6 100%);
+    }
+
+    .hero-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-overlay {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
+    }
+
+    .filter-bar {
+        background: white;
+        border-radius: 20px;
+        padding: 20px 24px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        margin-top: -60px;
+        position: relative;
+        z-index: 20;
+    }
+
+    .filter-bar .form-control,
+    .filter-bar .form-select {
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .filter-btn {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 12px 28px;
+        font-weight: 600;
+    }
+
+    .place-card {
+        border-radius: 20px !important;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none !important;
+    }
+
+    .place-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .place-card .card-img-wrapper {
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .place-card .card-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .place-card:hover .card-img-wrapper img {
+        transform: scale(1.1);
+    }
+
+    .date-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        color: #1f2937;
+        border-radius: 12px;
+        padding: 8px 12px;
+        text-align: center;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .date-badge .day {
+        font-size: 1.4rem;
+        font-weight: 800;
+        line-height: 1;
+        color: #7c3aed;
+    }
+
+    .date-badge .month {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: #6b7280;
+    }
+
+    .event-type-tag {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: white;
+        padding: 0.35rem 0.85rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        position: absolute;
+        top: 12px;
+        right: 12px;
+    }
+
+    .season-card {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        border-radius: 20px;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .fade-in {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-banner shadow-lg mb-0">
+    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+        alt="Events">
+    <div
+        class="hero-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+        <div class="mb-3"><i class="fas fa-calendar-star fa-3x text-white opacity-75"></i></div>
+        <h1 class="text-white display-4 fw-bold mb-3" style="text-shadow: 0 4px 15px rgba(0,0,0,0.5);">الفعاليات
+            والمواسم</h1>
+        <p class="text-white fs-5 opacity-90 fw-light">اكتشف احدث الفعاليات والانشطة في محافظة اب</p>
+    </div>
+</div>
+
+<div class="container" style="max-width: 1200px;">
+    <div class="filter-bar mb-4">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-muted">البحث</label>
+                <input type="text" name="search" class="form-control" placeholder="ابحث عن فعالية..."
+                    value="{{ request.GET.search }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted">نوع الفعالية</label>
+                <select name="type" class="form-select">
+                    <option value="">جميع الانواع</option>
+                    <option value="festival" {% if request.GET.type == "festival" %}selected{% endif %}>مهرجانات</option>
+                    <option value="concert" {% if request.GET.type == "concert" %}selected{% endif %}>حفلات</option>
+                    <option value="sports" {% if request.GET.type == "sports" %}selected{% endif %}>رياضة</option>
+                    <option value="tour" {% if request.GET.type == "tour" %}selected{% endif %}>جولات</option>
+                    <option value="cultural" {% if request.GET.type == "cultural" %}selected{% endif %}>ثقافي</option>
+                    <option value="workshop" {% if request.GET.type == "workshop" %}selected{% endif %}>ورش عمل</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-muted">التاريخ</label>
+                <select name="date" class="form-select">
+                    <option value="">الكل</option>
+                    <option value="today" {% if request.GET.date == "today" %}selected{% endif %}>اليوم</option>
+                    <option value="week" {% if request.GET.date == "week" %}selected{% endif %}>هذا الاسبوع</option>
+                    <option value="month" {% if request.GET.date == "month" %}selected{% endif %}>هذا الشهر</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary filter-btn flex-grow-1">
+                    <i class="fas fa-search me-2"></i>بحث
+                </button>
+                <a href="{% url 'events:list' %}" class="btn btn-light border" style="border-radius: 12px;"><i
+                        class="fas fa-undo"></i></a>
+            </div>
+        </form>
+    </div>
+
+    {% if current_season %}
+    <div class="season-card mb-4">
+        <div class="row align-items-center position-relative" style="z-index: 1;">
+            <div class="col-md-8">
+                <span class="text-white-50 text-uppercase small fw-bold">الموسم الحالي</span>
+                <h3 class="fw-bold text-white mb-2">{{ current_season.name }}</h3>
+                <p class="text-white opacity-75 mb-0 small">{{ current_season.description|truncatewords:20 }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4 fade-in">
+        <h5 class="fw-bold text-secondary mb-0"><span style="color: #8b5cf6;">{{ events|length }}</span> فعالية</h5>
+    </div>
+
+    <div class="row g-4 mb-5">
+        {% for event in events %}
+        <div class="col-md-6 col-lg-4 fade-in">
+            <a href="{% url 'events:detail' event.pk %}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm place-card">
+                    <div class="card-img-wrapper">
+                        {% if event.cover_image %}
+                        <img src="{{ event.cover_image.url }}" alt="{{ event.title }}">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400"
+                            alt="{{ event.title }}">
+                        {% endif %}
+                        <div class="date-badge">
+                            <div class="day">{{ event.start_datetime|date:"d" }}</div>
+                            <div class="month">{{ event.start_datetime|date:"M" }}</div>
+                        </div>
+                        <span class="event-type-tag">{{ event.get_event_type_display }}</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <h5 class="card-title fw-bold mb-2 text-dark">{{ event.title }}</h5>
+                        <p class="text-muted small mb-3">{{ event.description|truncatewords:12 }}</p>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+<div class="text-muted small"><i class="fas fa-map-marker-alt text-danger me-1"></i>{{ event.location }}</div>
+                            <div class="fw-bold">
+                                {% if event.price > 0 %}<span class="text-success">{{ event.price|floatformat:0 }}
+                                    ر.ي</span>
+                                {% else %}<span class="text-success">مجانا</span>{% endif %}
+                            </div>
+                        </div>
+                        <div class="btn w-100 rounded-pill py-2 fw-bold shadow-sm text-white"
+                            style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                            <i class="fas fa-ticket-alt me-2"></i>عرض التفاصيل
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12 py-5 text-center fade-in">
+            <div class="bg-light rounded-4 p-5">
+                <i class="far fa-calendar-times fa-3x text-muted opacity-50 mb-3"></i>
+                <h4>لا توجد فعاليات قادمة</h4>
+                <p class="text-muted">تابعنا قريبا لمعرفة احدث الانشطة والفعاليات.</p>
+                <a href="{% url 'home' %}" class="btn rounded-pill px-4 text-white"
+                    style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i
+                        class="fas fa-home me-2"></i>العودة للرئيسية</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <nav class="d-flex justify-content-center mb-5">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">السابق</a></li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="page-item"><a
+                    class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">التالي</a></li>
+                {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach((el) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}نتائج الاستبيان: {{ survey.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">الرئيسية</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'survey_list' %}">الاستبيانات</a></li>
+            <li class="breadcrumb-item active">{{ survey.title }} - النتائج</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold">{{ survey.title }}</h1>
+            <p class="text-muted">تحليل نتائج الاستبيان</p>
+        </div>
+        <div class="d-flex gap-3">
+        <div class="d-flex gap-3 align-items-center">
+            <div class="text-center bg-white p-3 rounded shadow-sm">
+                <h3 class="fw-bold text-primary mb-0">{{ total_responses }}</h3>
+                <small class="text-muted">إجمالي المشاركات</small>
+            </div>
+            
+            <div class="vr mx-2"></div>
+
+            <div class="status-control text-end d-flex flex-column gap-2">
+                <span class="badge bg-{{ survey.status_info.class }} p-2">
+                    <i class="fas fa-{{ survey.status_info.icon }} me-1"></i> {{ survey.status_info.label }}
+                </span>
+                {% if user.is_staff %}
+                <form action="{% url 'survey_toggle_active' survey.pk %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm {% if survey.is_active %}btn-outline-danger{% else %}btn-success{% endif %} rounded-pill w-100">
+                        {% if survey.is_active %}<i class="fas fa-power-off me-1"></i> إيقاف{% else %}<i class="fas fa-play me-1"></i> تفعيل{% endif %}
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+
+            <a href="{% url 'survey_export' survey.pk %}" class="btn btn-outline-success d-flex align-items-center px-4 rounded-pill shadow-sm">
+                <i class="fas fa-file-csv me-2 fa-lg"></i> تصدير CSV
+            </a>
+        </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for result in results %}
+        <div class="col-12">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-light border-0 py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <span class="badge bg-secondary me-2">{{ forloop.counter }}</span>
+                        {{ result.question.question_text }}
+                    </h5>
+                    <span class="badge bg-info bg-opacity-10 text-info">
+                        {{ result.question.get_question_type_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    {% if result.question.question_type == 'rating' %}
+                    <div class="row align-items-center">
+                        <div class="col-md-4 text-center border-end">
+                            <h1 class="display-3 fw-bold text-warning">{{ result.stats.avg|floatformat:1 }}</h1>
+                            <div class="text-warning mb-2 fs-4">
+                                {% with avg=result.stats.avg %}{% include "partials/stars.html" with rating=avg %}{% endwith %}
+                            </div>
+                            <p class="text-muted">متوسط التقييم</p>
+                        </div>
+                        <div class="col-md-8">
+                            <canvas id="chart_{{ result.question.id }}" style="max-height: 200px;"></canvas>
+                        </div>
+                    </div>
+
+                    {% elif result.question.question_type in 'choice yesno select checkbox' %}
+                    <div class="row">
+                        <div class="col-md-6 order-2 order-md-1">
+                            <ul class="list-group list-group-flush">
+                                {% for answer, count in result.stats.distribution.items %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    {{ answer }}
+                                    <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6 order-1 order-md-2 mb-4 mb-md-0">
+                            <div style="max-height: 250px;">
+                                <canvas id="chart_{{ result.question.id }}"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% elif result.question.question_type == 'text' or result.question.question_type == 'number' or result.question.question_type == 'date' %}
+                    <div class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto;">
+                        {% for answer in result.answers %}
+                        <div class="mb-2 pb-2 border-bottom">
+                            <p class="mb-0 text-dark">{{ answer }}</p>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted text-center py-3">لا توجد إجابات بعد.</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% for result in results %}
+            {% if result.stats.distribution %}
+                const ctx_{{ result.question.id }} = document.getElementById('chart_{{ result.question.id }}').getContext('2d');
+                const labels_{{ result.question.id }} = [{% for label in result.stats.distribution.keys %}"{{ label }}",{% endfor %}];
+                const data_{{ result.question.id }} = [{% for val in result.stats.distribution.values %}{{ val }},{% endfor %}];
+                
+                new Chart(ctx_{{ result.question.id }}, {
+                    type: '{% if result.question.question_type == 'rating' %}bar{% else %}pie{% endif %}',
+                    data: {
+                        labels: labels_{{ result.question.id }},
+                        datasets: [{
+                            label: 'إجمالي الردود',
+                            data: data_{{ result.question.id }},
+                            backgroundColor: [
+                                '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
+                                '#858796', '#5a5c69', '#f8f9fc', '#dddfeb'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: {% if result.question.question_type == 'rating' %}false{% else %}true{% endif %},
+                                position: 'right'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                display: {% if result.question.question_type == 'rating' %}true{% else %}false{% endif %},
+                                beginAtZero: true,
+                                ticks: { stepSize: 1 }
+                            }
+                        }
+                    }
+                });
+            {% endif %}
+        {% endfor %}
+    });
+</script>
+{% endblock %}

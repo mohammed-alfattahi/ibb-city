@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ event.title }} - فعاليات إب{% endblock %}
+
+{% block extra_css %}
+<style>
+    .event-detail-bg {
+        background-color: #0f172a;
+        color: #f8fafc;
+        min-height: 100vh;
+    }
+
+    .blur-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        backdrop-filter: blur(20px);
+        background: rgba(15, 23, 42, 0.85);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="event-detail-bg position-relative overflow-hidden">
+    <!-- Background Image Blurred -->
+    {% if event.cover_image %}
+    <div class="position-absolute w-100 h-50 top-0"
+        style="background-image: url('{{ event.cover_image.url }}'); background-size: cover; background-position: center; opacity: 0.5;">
+    </div>
+    {% endif %}
+    <div class="position-absolute w-100 h-50 top-0"
+        style="background: linear-gradient(to bottom, transparent, #0f172a);"></div>
+
+    <div class="container py-5 position-relative z-1">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'events:list' %}"
+                        class="text-white-50 text-decoration-none">الفعاليات</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">{{ event.title }}</li>
+            </ol>
+        </nav>
+
+        <div class="row g-5">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <div
+                    class="rounded-4 overflow-hidden shadow-2xl mb-5 border border-secondary border-opacity-25 bg-dark">
+                    {% if event.cover_image %}
+                    <img src="{{ event.cover_image.url }}" class="w-100 object-fit-cover" style="max-height: 500px;">
+                    {% endif %}
+                </div>
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span class="badge bg-primary px-3 py-2 rounded-pill">{{ event.get_event_type_display }}</span>
+                    {% if event.is_featured %}
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">مميز</span>
+                    {% endif %}
+                </div>
+
+                <h1 class="display-4 fw-bold mb-4">{{ event.title }}</h1>
+
+                <div class="d-flex gap-5 mb-5 border-top border-bottom border-secondary border-opacity-25 py-4">
+                    <div>
+                        <div class="text-white-50 small text-uppercase mb-1">التاريخ</div>
+                        <div class="fw-bold h5 mb-0">{{ event.start_datetime|date:"l, j F Y" }}</div>
+                        <div class="text-primary small">{{ event.start_datetime|date:"g:i A" }}</div>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small text-uppercase mb-1">الموقع</div>
+                        <div class="fw-bold h5 mb-0">{{ event.location }}</div>
+                        <a href="#" class="text-primary small text-decoration-none">عرض الخريطة</a>
+                    </div>
+                    <div>
+                        <div class="text-white-50 small text-uppercase mb-1">التذكرة</div>
+                        <div class="fw-bold h5 mb-0 text-success">
+                            {% if event.price > 0 %}{{ event.price }} ر.ي{% else %}مجاناً{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <h4 class="fw-bold mb-3">عن الفعالية</h4>
+                    <p class="lead opacity-75" style="line-height: 1.8;">
+                        {{ event.description|linebreaksbr }}
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Booking Sidebar -->
+            <div class="col-lg-4">
+                <div class="card bg-white bg-opacity-5 border border-white border-opacity-10 rounded-4 sticky-top text-white"
+                    style="top: 100px; backdrop-filter: blur(10px);">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-4">حجز التذاكر</h4>
+                        <div class="d-flex justify-content-between mb-3 opacity-75">
+                            <span>سعر التذكرة</span>
+                            <span>{{ event.price|default:"0" }} ر.ي</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-4 fw-bold h5">
+                            <span>الإجمالي</span>
+                            <span>{{ event.price|default:"0" }} ر.ي</span>
+                        </div>
+
+                        <button class="btn btn-primary btn-lg w-100 rounded-pill mb-3 fw-bold hover-lift">
+                            شراء التذكرة
+                        </button>
+                        <p class="text-center small text-white-50 mb-0">
+                            الدفع آمن ومضمون 100%
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

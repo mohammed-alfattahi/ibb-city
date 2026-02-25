@@ -1,0 +1,200 @@
+/**
+ * Status Row Styles for List Views
+ * أنماط صفوف الحالة في القوائم
+ */
+
+/* Color-coded rows based on status */
+.status-row-pending {
+    background-color: #fff8e1 !important;
+    border-right: 4px solid #ffc107;
+}
+
+.status-row-approved,
+.status-row-active {
+    background-color: #e8f5e9 !important;
+    border-right: 4px solid #28a745;
+}
+
+.status-row-rejected,
+.status-row-danger {
+    background-color: #ffebee !important;
+    border-right: 4px solid #dc3545;
+}
+
+.status-row-review {
+    background-color: #e3f2fd !important;
+    border-right: 4px solid #17a2b8;
+}
+
+/* Hover action buttons */
+.row-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    display: flex;
+    gap: 8px;
+}
+
+tr:hover .row-actions {
+    opacity: 1;
+}
+
+.row-action-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.row-action-btn.approve {
+    background: #28a745;
+    color: white;
+}
+
+.row-action-btn.reject {
+    background: #dc3545;
+    color: white;
+}
+
+.row-action-btn.edit {
+    background: #17a2b8;
+    color: white;
+}
+
+.row-action-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* RTL Support */
+[dir="rtl"] .status-row-pending,
+[dir="rtl"] .status-row-approved,
+[dir="rtl"] .status-row-active,
+[dir="rtl"] .status-row-rejected,
+[dir="rtl"] .status-row-danger,
+[dir="rtl"] .status-row-review {
+    border-right: none;
+    border-left: 4px solid;
+}
+
+[dir="rtl"] .status-row-pending {
+    border-left-color: #ffc107;
+}
+
+[dir="rtl"] .status-row-approved,
+[dir="rtl"] .status-row-active {
+    border-left-color: #28a745;
+}
+
+[dir="rtl"] .status-row-rejected,
+[dir="rtl"] .status-row-danger {
+    border-left-color: #dc3545;
+}
+
+[dir="rtl"] .status-row-review {
+    border-left-color: #17a2b8;
+}
+
+/* Progress Bar */
+.workflow-progress {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.workflow-step {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    background: #e9ecef;
+    color: #6c757d;
+}
+
+.workflow-step.complete {
+    background: #28a745;
+    color: white;
+}
+
+.workflow-step.current {
+    background: #007bff;
+    color: white;
+    animation: pulse 1.5s infinite;
+}
+
+.workflow-line {
+    width: 20px;
+    height: 3px;
+    background: #e9ecef;
+}
+
+.workflow-line.complete {
+    background: #28a745;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 8px rgba(0, 123, 255, 0);
+    }
+}
+
+/* Enhanced Table Styling */
+#result_list tbody tr {
+    transition: all 0.2s ease;
+}
+
+#result_list tbody tr:hover {
+    background-color: #f8f9fa !important;
+    transform: scale(1.002);
+}
+
+/* Quick Search Widget */
+.quick-search-widget {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    color: white;
+}
+
+.quick-search-widget h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.quick-search-widget input {
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.quick-search-widget button {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-search-widget button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}

@@ -1,0 +1,32 @@
+{% extends "partners/base_partner.html" %}
+
+{% block title %}تأكيد الحذف - {{ object.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animate__animated animate__fadeIn">
+    <div class="col-md-6 text-center">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-5">
+                <div class="mb-4 text-danger opacity-75">
+                    <i class="fas fa-trash-alt fa-4x"></i>
+                </div>
+
+                <h3 class="fw-bold mb-3">هل أنت متأكد؟</h3>
+                <p class="text-muted mb-4">
+                    أنت على وشك حذف العرض <strong>"{{ object.title }}"</strong>.<br>
+                    لا يمكن التراجع عن هذا الإجراء.
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <a href="{% url 'partner_offer_list' place_pk=object.establishment.pk %}"
+                            class="btn btn-light rounded-pill px-4">إلغاء</a>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4">تأكيد الحذف</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

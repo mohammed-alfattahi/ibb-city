@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}الطقس في إب - دليل إب السياحي{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justifying-content-center">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-bold mb-3">حالة الطقس في إب</h1>
+            <p class="lead text-muted mb-5">توقعات الطقس للأيام القادمة في اللواء الأخضر</p>
+
+            <!-- Weather Card -->
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-primary text-white" 
+                 style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); min-height: 400px;">
+                <div class="card-body p-5 d-flex flex-column justify-content-center align-items-center" id="weather-display">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3">جاري تحميل بيانات الطقس...</p>
+                </div>
+            </div>
+            
+            <div class="mt-4 text-muted small">
+                <i class="fas fa-info-circle me-1"></i> يتم تحديث البيانات كل 15 دقيقة
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const lat = {{ default_lat|default:13.9667 }};
+        const lon = {{ default_lon|default:44.1833 }};
+        const container = document.getElementById('weather-display');
+
+        fetch(`/places/weather/?lat=${lat}&lon=${lon}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const current = data.current;
+                    const forecast = data.forecast; // Array of days
+
+                    let html = `
+                        <div class="mb-4">
+                            <img src="https://openweathermap.org/img/wn/${current.icon}@4x.png" alt="${current.condition}">
+                            <h2 class="display-1 fw-bold mb-0">${current.temp}°</h2>
+                            <p class="fs-4 mb-0 opacity-75">${current.condition}</p>
+                            <div class="d-flex gap-4 justify-content-center mt-3 opacity-75">
+                                <span><i class="fas fa-wind me-1"></i> ${current.wind_speed || 0} km/h</span>
+                                <span><i class="fas fa-tint me-1"></i> ${current.humidity || 0}%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="row w-100 g-3 border-top border-white border-opacity-25 pt-4 mt-2">
+                    `;
+
+                    // Show next 4 days (skipping today if needed, or showing all)
+                    // Assuming API returns forecast including today or next days.
+                    forecast.slice(1, 5).forEach(day => {
+                        const dateObj = new Date(day.date);
+                        const dayName = dateObj.toLocaleDateString('ar-SA', { weekday: 'long' });
+                        
+                        html += `
+                            <div class="col-3">
+                                <div class="text-center">
+                                    <p class="mb-1 small fw-bold text-uppercase opacity-75">${dayName}</p>
+                                    <img src="https://openweathermap.org/img/wn/${day.icon}.png" width="40" height="40">
+                                    <p class="mb-0 fw-bold">${day.temp}°</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    html += `</div>`;
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = `<div class="text-white-50"><i class="fas fa-exclamation-triangle fa-2x mb-3"></i><br>تعذر تحميل بيانات الطقس</div>`;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                container.innerHTML = `<div class="text-white-50"><i class="fas fa-exclamation-triangle fa-2x mb-3"></i><br>خطأ في الاتصال</div>`;
+            });
+    });
+</script>
+{% endblock %}

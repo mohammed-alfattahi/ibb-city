@@ -1,0 +1,100 @@
+{% extends "management/admin_base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="h3 fw-bold mb-4">{% trans "مراقبة صحة النظام" %} (System Health)</h2>
+
+    <div class="row g-4 mb-4">
+        <!-- CPU Usage -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <h5 class="text-muted mb-3">CPU Usage</h5>
+                    <div class="position-relative d-inline-block">
+                        <div
+                            class="display-4 fw-bold {% if cpu_percent > 80 %}text-danger{% else %}text-primary{% endif %}">
+                            {{ cpu_percent }}%
+                        </div>
+                    </div>
+                    <div class="progress mt-3" style="height: 10px;">
+                        <div class="progress-bar {% if cpu_percent > 80 %}bg-danger{% else %}bg-primary{% endif %}"
+                            role="progressbar" style="width: {{ cpu_percent }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RAM Usage -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <h5 class="text-muted mb-3">RAM Usage</h5>
+                    <div class="display-4 fw-bold {% if ram_percent > 80 %}text-danger{% else %}text-info{% endif %}">
+                        {{ ram_percent }}%
+                    </div>
+                    <p class="text-muted small mb-0">{{ ram_used }}GB / {{ ram_total }}GB</p>
+                    <div class="progress mt-3" style="height: 10px;">
+                        <div class="progress-bar {% if ram_percent > 80 %}bg-danger{% else %}bg-info{% endif %}"
+                            role="progressbar" style="width: {{ ram_percent }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DB Status -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h5 class="text-muted mb-3">Database Status</h5>
+                    {% if db_status %}
+                    <div class="text-success display-1">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p class="fw-bold text-success mt-2">Connected</p>
+                    {% else %}
+                    <div class="text-danger display-1">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <p class="fw-bold text-danger mt-2">Disconnected</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Logs -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-danger text-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{% trans "سجل الأخطاء الحديثة" %} (Recent Errors)</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Path</th>
+                        <th>Error</th>
+                        <th>User</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for error in recent_errors %}
+                    <tr>
+                        <td class="small">{{ error.timestamp|date:"Y-m-d H:i:s" }}</td>
+                        <td class="small text-break">{{ error.method }} {{ error.path }}</td>
+                        <td class="text-danger small text-break">{{ error.error_message|truncatechars:100 }}</td>
+                        <td class="small">{{ error.user.username|default:"Anonymous" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-3 text-muted">{% trans "لا يوجد أخطاء مسجلة حديثاً." %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

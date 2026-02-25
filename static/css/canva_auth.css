@@ -1,0 +1,239 @@
+/* Canva-Style Auth CSS */
+:root {
+    --primary-color: #10b981;
+    --primary-hover: #059669;
+    --surface-color: #ffffff;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+    --radius-modal: 24px;
+    --input-radius: 12px;
+}
+
+body {
+    background-color: #f3f4f6;
+    margin: 0;
+    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.canva-auth-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: #f8f9fc; /* Light background */
+}
+
+.canva-modal {
+    background: var(--surface-color);
+    width: 100%;
+    max-width: 1100px;
+    min-height: 650px;
+    border-radius: var(--radius-modal);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+/* Right Side (In RTL) - Form */
+.modal-form-side {
+    flex: 1;
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 550px;
+    width: 100%;
+    z-index: 2;
+    background: white;
+}
+
+/* Left Side (In RTL) - Image */
+.modal-image-side {
+    flex: 1;
+    position: relative;
+    background-color: #f0fdf4;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-cover-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.auth-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(5, 150, 105, 0.8));
+    z-index: 2;
+}
+
+.auth-content-overlay {
+    position: relative;
+    z-index: 3;
+    color: white;
+    text-align: center;
+    padding: 40px;
+}
+
+.auth-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: var(--text-main);
+}
+
+.auth-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+/* Form Styling */
+.form-floating > .form-control {
+    border-radius: var(--input-radius);
+    border: 1px solid var(--border-color);
+    padding-top: 1.625rem;
+    padding-bottom: 0.625rem;
+    height: calc(3.5rem + 2px);
+    font-size: 1rem;
+}
+
+.form-floating > .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.form-floating > label {
+    padding-right: 1.2rem; /* Adjust for RTL */
+    padding-left: 0;
+}
+
+.btn-primary-canva {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50px; /* Pill shape */
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    width: 100%;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-primary-canva:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+}
+
+.social-login-btn {
+    border: 1px solid #e5e7eb;
+    background: white;
+    color: #374151;
+    font-weight: 600;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    transition: all 0.2s;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.social-login-btn:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.divider-text {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #9ca3af;
+    margin: 20px 0;
+    font-size: 0.9rem;
+}
+
+.divider-text::before,
+.divider-text::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.divider-text::before {
+    margin-left: 10px;
+}
+
+.divider-text::after {
+    margin-right: 10px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .canva-auth-wrapper {
+        align-items: flex-start; /* Allow scrolling on small screens if content is tall */
+        padding: 10px;
+    }
+
+    .canva-modal {
+        flex-direction: column;
+        max-width: 100%;
+        width: 100%; 
+        min-height: auto;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        border-radius: 16px;
+    }
+
+    .modal-image-side {
+        display: none; /* Hide image on mobile to focus on form */
+    }
+    
+    .modal-form-side {
+        padding: 25px 20px; /* Smaller padding */
+        max-width: 100%;
+    }
+    
+    .auth-title {
+        font-size: 1.75rem;
+    }
+    
+    .btn-primary-canva {
+        padding: 14px 20px; /* Larger touch target */
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .modal-form-side {
+        padding: 20px 15px;
+    }
+    
+    .auth-title {
+        font-size: 1.5rem;
+    }
+}

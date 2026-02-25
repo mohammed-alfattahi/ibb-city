@@ -1,0 +1,5 @@
+{% for item in items %}
+  {% with data=item.render_data %}
+    {% include item.component.template_path with data=data item=item %}
+  {% endwith %}
+{% endfor %}

@@ -1,0 +1,35 @@
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row g-4 justify-content-center text-center">
+            <div class="col-6 col-md-2" onclick="window.location='{% url 'place_list' %}'" style="cursor: pointer;">
+                <div class="bg-white p-4 rounded-circle shadow-sm d-inline-block mb-3 hover-scale transition-all"
+                    style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-map-marked-alt fa-2x text-success"></i>
+                </div>
+                <h6 class="fw-bold text-dark">دليل الأماكن</h6>
+            </div>
+            <div class="col-6 col-md-2" onclick="window.location='{% url 'map_explore' %}'" style="cursor: pointer;">
+                <div class="bg-white p-4 rounded-circle shadow-sm d-inline-block mb-3 hover-scale transition-all"
+                    style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-globe-asia fa-2x text-primary"></i>
+                </div>
+                <h6 class="fw-bold text-dark">الخريطة</h6>
+            </div>
+            <div class="col-6 col-md-2" onclick="window.location='{% url 'investment_list' %}'"
+                style="cursor: pointer;">
+                <div class="bg-white p-4 rounded-circle shadow-sm d-inline-block mb-3 hover-scale transition-all"
+                    style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-chart-line fa-2x text-warning"></i>
+                </div>
+                <h6 class="fw-bold text-dark">استثمار</h6>
+            </div>
+            <div class="col-6 col-md-2" onclick="window.location='{% url 'about' %}'" style="cursor: pointer;">
+                <div class="bg-white p-4 rounded-circle shadow-sm d-inline-block mb-3 hover-scale transition-all"
+                    style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-info-circle fa-2x text-info"></i>
+                </div>
+                <h6 class="fw-bold text-dark">من نحن</h6>
+            </div>
+        </div>
+    </div>
+</div>

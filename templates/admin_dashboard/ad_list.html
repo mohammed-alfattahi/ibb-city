@@ -1,0 +1,527 @@
+{% extends "management/admin_base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}إدارة الإعلانات - لوحة الإدارة{% endblock %}
+{% block title_breadcrumb %}الإعلانات{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-mini {
+        padding: 1rem;
+        border-radius: 12px;
+        text-align: center;
+        transition: all 0.2s;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+
+    .stat-mini:hover {
+        transform: translateY(-2px);
+    }
+
+    .stat-mini.active {
+        border-color: currentColor;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-mini h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-mini small {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .preview-thumb {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .preview-thumb:hover {
+        transform: scale(1.1);
+    }
+
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .invoice-detail {
+        font-size: 0.8rem;
+        background: #f8f9fa;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        margin-top: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+
+    <!-- Stats Summary Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3 col-lg">
+            <a href="?status=pending" class="text-decoration-none">
+                <div
+                    class="stat-mini bg-warning bg-opacity-10 text-warning {% if current_status == 'pending' %}active{% endif %}">
+                    <h3>{{ stats.pending }}</h3>
+                    <small>قيد المراجعة</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 col-lg">
+            <a href="?status=active" class="text-decoration-none">
+                <div
+                    class="stat-mini bg-success bg-opacity-10 text-success {% if current_status == 'active' %}active{% endif %}">
+                    <h3>{{ stats.active }}</h3>
+                    <small>نشط</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 col-lg">
+            <a href="?status=paused" class="text-decoration-none">
+                <div
+                    class="stat-mini bg-secondary bg-opacity-10 text-secondary {% if current_status == 'paused' %}active{% endif %}">
+                    <h3>{{ stats.paused }}</h3>
+                    <small>متوقف</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 col-lg">
+            <a href="?status=rejected" class="text-decoration-none">
+                <div
+                    class="stat-mini bg-danger bg-opacity-10 text-danger {% if current_status == 'rejected' %}active{% endif %}">
+                    <h3>{{ stats.rejected }}</h3>
+                    <small>مرفوض</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 col-lg">
+            <a href="?status=expired" class="text-decoration-none">
+                <div
+                    class="stat-mini bg-dark bg-opacity-10 text-dark {% if current_status == 'expired' %}active{% endif %}">
+                    <h3>{{ stats.expired }}</h3>
+                    <small>منتهي</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 col-lg">
+            <a href="?status=all" class="text-decoration-none">
+                <div
+                    class="stat-mini bg-primary bg-opacity-10 text-primary {% if current_status == 'all' %}active{% endif %}">
+                    <h3>{{ stats.total }}</h3>
+                    <small>الكل</small>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Revenue Card -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm bg-gradient"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="opacity-75 mb-1">إجمالي الإيرادات (الإعلانات النشطة)</h6>
+                            <h2 class="fw-bold mb-0">{{ total_revenue|floatformat:0 }} ر.ي</h2>
+                        </div>
+                        <div class="opacity-50">
+                            <i class="fas fa-money-bill-wave fa-3x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- Search Box -->
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center">
+                    <form method="get" class="w-100">
+                        <input type="hidden" name="status" value="{{ current_status }}">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input type="text" name="q" class="form-control border-0 bg-light"
+                                placeholder="بحث بالعنوان، المنشأة، أو الشريك..." value="{{ search_query }}">
+                            <button type="submit" class="btn btn-primary px-4">بحث</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ads Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
+            <h6 class="mb-0 fw-bold">
+                <i class="fas fa-bullhorn me-2 text-primary"></i>
+                {% if current_status == 'pending' %}الإعلانات المعلقة
+                {% elif current_status == 'active' %}الإعلانات النشطة
+                {% elif current_status == 'rejected' %}الإعلانات المرفوضة
+                {% elif current_status == 'expired' %}الإعلانات المنتهية
+                {% elif current_status == 'paused' %}الإعلانات المتوقفة
+                {% else %}جميع الإعلانات
+                {% endif %}
+            </h6>
+            <span class="badge bg-primary rounded-pill">{{ ads|length }} إعلان</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 100px;">المعاينة</th>
+                        <th>العنوان</th>
+                        <th>المنشأة / الشريك</th>
+                        <th>النوع</th>
+                        <th>المدة</th>
+                        <th>السعر</th>
+                        <th>الحالة</th>
+                        <th>التاريخ</th>
+                        <th style="width: 180px;">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ad in ads %}
+                    <tr>
+                        <!-- Preview Thumbnail -->
+                        <td>
+                            {% if ad.image %}
+                            <img src="{{ ad.image.url }}" class="preview-thumb shadow-sm" data-bs-toggle="modal"
+                                data-bs-target="#previewModal{{ ad.pk }}" alt="معاينة">
+                            {% else %}
+                            <div
+                                class="preview-thumb bg-light d-flex align-items-center justify-content-center text-muted border">
+                                <i class="fas fa-image fa-lg"></i>
+                            </div>
+                            {% endif %}
+                        </td>
+
+                        <!-- Title -->
+                        <td>
+                            <div class="fw-bold text-dark">{{ ad.title|default:"بدون عنوان"|truncatechars:25 }}</div>
+                            <small class="text-muted">{{ ad.description|truncatechars:40 }}</small>
+                        </td>
+
+                        <!-- Place & Owner -->
+                        <td>
+                            <div class="fw-semibold">{{ ad.place.name|truncatechars:20 }}</div>
+                            <small class="text-muted">
+                                <i class="fas fa-user me-1"></i>{{ ad.owner.username|default:"—" }}
+                            </small>
+                        </td>
+
+                        <!-- Type -->
+                        <td>
+                            <span class="badge bg-info bg-opacity-10 text-info status-badge">
+                                {{ ad.get_ad_type_display }}
+                            </span>
+                        </td>
+
+                        <!-- Duration -->
+                        <td>
+                            <div class="fw-bold">{{ ad.duration_days }} يوم</div>
+                            {% if ad.start_date and ad.end_date %}
+                            <small class="text-muted">{{ ad.start_date|date:"d/m" }} - {{ ad.end_date|date:"d/m" }}</small>
+                            {% endif %}
+                        </td>
+
+                        <!-- Price -->
+                        <td>
+                            <div class="fw-bold text-success">{{ ad.price|default:0 }} ر.ي</div>
+                            {% if ad.invoice %}
+                            <div class="invoice-detail">
+                                <i class="fas fa-receipt me-1"></i>
+                                فاتورة #{{ ad.invoice.pk }}
+                                {% if ad.invoice.is_paid %}
+                                <span class="text-success ms-1"><i class="fas fa-check-circle"></i></span>
+                                {% else %}
+                                <span class="text-warning ms-1"><i class="fas fa-clock"></i></span>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            {% if ad.status == 'pending' %}
+                            <span class="badge bg-warning text-dark status-badge">قيد المراجعة</span>
+                            {% elif ad.status == 'active' %}
+                            <span class="badge bg-success status-badge">نشط</span>
+                            {% elif ad.status == 'paused' %}
+                            <span class="badge bg-secondary status-badge">متوقف</span>
+                            {% elif ad.status == 'rejected' %}
+                            <span class="badge bg-danger status-badge">مرفوض</span>
+                            {% elif ad.status == 'expired' %}
+                            <span class="badge bg-dark status-badge">منتهي</span>
+                            {% elif ad.status == 'payment_issue' %}
+                            <span class="badge bg-warning status-badge">مشكلة دفع</span>
+                            {% else %}
+                            <span class="badge bg-light text-dark status-badge">{{ ad.status }}</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Date -->
+                        <td>
+                            <div>{{ ad.created_at|date:"Y/m/d" }}</div>
+                            <small class="text-muted">{{ ad.created_at|timesince }} مضت</small>
+                        </td>
+
+                        <!-- Actions -->
+                        <td>
+                            <div class="d-flex gap-1 flex-wrap">
+                                {% if ad.status == 'pending' %}
+                                <!-- Approve -->
+                                <form action="{% url 'admin_ad_approve' ad.pk %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success action-btn"
+                                        onclick="return confirm('هل أنت متأكد من اعتماد هذا الإعلان؟')" title="موافقة">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+
+                                <!-- Reject -->
+                                <button type="button" class="btn btn-danger action-btn" data-bs-toggle="modal"
+                                    data-bs-target="#rejectModal{{ ad.pk }}" title="رفض">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                {% endif %}
+
+                                {% if ad.status == 'active' %}
+                                <!-- Pause -->
+                                <form action="{% url 'admin_ad_pause' ad.pk %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-warning action-btn" title="إيقاف مؤقت">
+                                        <i class="fas fa-pause"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+
+                                {% if ad.status == 'paused' %}
+                                <!-- Resume -->
+                                <form action="{% url 'admin_ad_resume' ad.pk %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success action-btn" title="استئناف">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+
+                                <!-- Preview -->
+                                <button type="button" class="btn btn-outline-primary action-btn" data-bs-toggle="modal"
+                                    data-bs-target="#previewModal{{ ad.pk }}" title="معاينة">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Preview Modal -->
+                    <div class="modal fade" id="previewModal{{ ad.pk }}" tabindex="-1">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content border-0 shadow">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title">
+                                        <i class="fas fa-eye me-2"></i>معاينة الإعلان
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white"
+                                        data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body p-0">
+                                    {% if ad.image %}
+                                    <img src="{{ ad.image.url }}" class="w-100" alt="Banner"
+                                        style="max-height: 300px; object-fit: cover;">
+                                    {% endif %}
+                                    <div class="p-4">
+                                        <h4 class="fw-bold">{{ ad.title }}</h4>
+                                        <p class="text-muted">{{ ad.description }}</p>
+
+                                        <hr>
+
+                                        <div class="row text-center">
+                                            <div class="col-md-3">
+                                                <div class="text-muted small">المنشأة</div>
+                                                <div class="fw-bold">{{ ad.place.name }}</div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="text-muted small">النوع</div>
+                                                <div class="fw-bold">{{ ad.get_ad_type_display }}</div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="text-muted small">المدة</div>
+                                                <div class="fw-bold">{{ ad.duration_days }} يوم</div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="text-muted small">السعر</div>
+                                                <div class="fw-bold text-success">{{ ad.price }} ر.ي</div>
+                                            </div>
+                                        </div>
+
+                                        {% if ad.invoice %}
+                                        <hr>
+                                        <div class="bg-light rounded p-3">
+                                            <h6 class="fw-bold mb-2">
+                                                <i class="fas fa-receipt me-2"></i>تفاصيل الفاتورة
+                                            </h6>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <small class="text-muted">رقم الفاتورة:</small>
+                                                    <div>#{{ ad.invoice.pk }}</div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted">حالة الدفع:</small>
+                                                    <div>
+                                                        {% if ad.invoice.is_paid %}
+                                                        <span class="text-success"><i
+                                                                class="fas fa-check-circle me-1"></i>مدفوعة</span>
+                                                        {% else %}
+                                                        <span class="text-warning"><i class="fas fa-clock me-1"></i>غير
+                                                            مدفوعة</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+
+                                        {% if ad.admin_notes %}
+                                        <hr>
+                                        <div class="alert alert-info mb-0">
+                                            <strong>ملاحظات الإدارة:</strong> {{ ad.admin_notes }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">إغلاق</button>
+                                    {% if ad.status == 'pending' %}
+                                    <form action="{% url 'admin_ad_approve' ad.pk %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-check me-1"></i>موافقة
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reject Modal -->
+                    <div class="modal fade" id="rejectModal{{ ad.pk }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content shadow border-0">
+                                <form action="{% url 'admin_ad_reject' ad.pk %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="modal-header bg-danger text-white">
+                                        <h5 class="modal-title">رفض الإعلان</h5>
+                                        <button type="button" class="btn-close btn-close-white"
+                                            data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">نوع الإجراء</label>
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="action"
+                                                        value="reject" id="rejectOpt{{ ad.pk }}" checked>
+                                                    <label class="form-check-label" for="rejectOpt{{ ad.pk }}">
+                                                        <i class="fas fa-ban text-danger me-1"></i>رفض نهائي
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="action"
+                                                        value="payment_issue" id="paymentOpt{{ ad.pk }}">
+                                                    <label class="form-check-label" for="paymentOpt{{ ad.pk }}">
+                                                        <i
+                                                            class="fas fa-exclamation-triangle text-warning me-1"></i>مشكلة
+                                                        في الدفع
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">السبب</label>
+                                            <textarea name="reason" class="form-control" rows="3" required
+                                                placeholder="اكتب سبب الرفض..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light"
+                                            data-bs-dismiss="modal">إلغاء</button>
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fas fa-times me-1"></i>تأكيد
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">
+                            <i class="fas fa-bullhorn fa-3x mb-3 opacity-25"></i>
+                            <p class="mb-0">لا توجد إعلانات في هذه الفئة</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj %}
+        <div class="card-footer bg-white border-top-0">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?status={{ current_status }}&page={{ page_obj.previous_page_number }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?status={{ current_status }}&page={{ page_obj.next_page_number }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+<button class="btn {% if following %}btn-primary{% else %}btn-light{% endif %} px-4 py-3 rounded-pill fw-bold shadow-lg ms-2 transition-all"
+        id="followBtn-{{ place.pk }}"
+        hx-post="{% url 'toggle_follow' place.pk %}"
+        hx-swap="outerHTML"
+        hx-target="#followBtn-{{ place.pk }}">
+    {% if following %}
+    <i class="fas fa-bell text-white me-2"></i> متابع
+    {% else %}
+    <i class="far fa-bell text-primary me-2"></i> متابعة
+    {% endif %}
+    {% if followers_count > 0 %}
+    <span class="badge bg-white text-primary rounded-pill ms-2 shadow-sm">{{ followers_count }}</span>
+    {% endif %}
+</button>

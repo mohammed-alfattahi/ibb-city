@@ -1,0 +1,18 @@
+{% if featured_partners %}
+<div class="container py-5 mb-5 overflow-hidden">
+    <h5 class="text-muted fw-bold text-center mb-5 opacity-50">شركاء النجاح</h5>
+    <div class="row justify-content-center opacity-50 grayscale hover-grayscale-0 transition-all">
+        {% for partner in featured_partners %}
+        <div class="col-4 col-md-2 text-center">
+            {% if partner.cover_image %}
+            <img src="{{ partner.cover_image.url }}" class="img-fluid rounded-3"
+                style="max-height: 60px; filter: grayscale(100%); transition: all 0.3s;"
+                onmouseover="this.style.filter='grayscale(0%)'" onmouseout="this.style.filter='grayscale(100%)'">
+            {% else %}
+            <i class="fas fa-building fa-3x text-muted"></i>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,444 @@
+/* Canva-Style Modern Home CSS */
+:root {
+  --canva-purple: #7c3aed;
+  --canva-blue: #2563eb;
+  --canva-emerald: #10b981;
+  --canva-gold: #f59e0b;
+  --canva-rose: #f43f5e;
+  --canva-indigo: #4338ca;
+  
+  --canva-bg-gradient: linear-gradient(
+    135deg,
+    #4c1d95 0%,
+    #5b21b6 50%,
+    #7c3aed 100%
+  );
+  
+  --canva-card-bg: #ffffff;
+  --canva-text-main: #0f172a;
+  --canva-text-muted: #64748b;
+  --canva-radius: 20px;
+  --canva-radius-sm: 12px;
+  --canva-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --canva-hover-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+}
+
+body {
+  background-color: #f8f9fa; /* Light grey bg for content contrast */
+  font-family:
+    "Cairo",
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+/* ================= Hero Section ================= */
+.canva-hero {
+  background: var(--canva-bg-gradient);
+  border-radius: 0 0 24px 24px;
+  padding: 8rem 1.5rem 6rem; /* Increased top padding for header overlap */
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.canva-hero::before {
+  /* Subtle pattern or noise overlay could go here */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.1;
+  background-image:
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(255, 255, 255, 0.3) 0%,
+      transparent 20%
+    ),
+    radial-gradient(
+      circle at 80% 30%,
+      rgba(255, 255, 255, 0.3) 0%,
+      transparent 20%
+    );
+  pointer-events: none;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  line-height: 1.3;
+}
+
+.search-container {
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1.2rem 3rem 1.2rem 1.5rem;
+  border-radius: var(--canva-radius);
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1.5rem; /* In RTL, this might change, assuming LTR classes or dir="rtl" handling */
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--canva-purple);
+  font-size: 1.2rem;
+}
+/* RTL Adjustments for Search */
+[dir="rtl"] .search-input {
+  padding: 1.2rem 1.5rem 1.2rem 3rem;
+}
+[dir="rtl"] .search-icon {
+  left: auto;
+  right: 1.5rem;
+}
+
+/* ================= Category Pills ================= */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 3rem;
+}
+
+@media (min-width: 768px) {
+    .categories-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+}
+
+.cat-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cat-pill:hover {
+  transform: translateY(-8px) scale(1.05);
+  color: white;
+}
+
+.cat-icon-box {
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  font-size: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Category Specific Colors */
+.cat-pill[data-category="all"] .cat-icon-box { background: linear-gradient(135deg, #6366f1, #4338ca); }
+.cat-pill[data-category="hotels"] .cat-icon-box { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.cat-pill[data-category="restaurants"] .cat-icon-box { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.cat-pill[data-category="parks"] .cat-icon-box { background: linear-gradient(135deg, #10b981, #047857); }
+.cat-pill[data-category="nature"] .cat-icon-box { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+.cat-pill[data-category="landmarks"] .cat-icon-box { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.cat-pill[data-category="investment"] .cat-icon-box { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+.cat-pill[data-category="safety"] .cat-icon-box { background: linear-gradient(135deg, #64748b, #334155); }
+.cat-pill[data-category="cafes"] .cat-icon-box { background: linear-gradient(135deg, #92400e, #78350f); }
+.cat-pill[data-category="events"] .cat-icon-box { background: linear-gradient(135deg, #ec4899, #be185d); }
+.cat-pill[data-category="photos"] .cat-icon-box { background: linear-gradient(135deg, #a855f7, #7e22ce); }
+.cat-pill[data-category="map"] .cat-icon-box { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+
+.cat-pill:hover .cat-icon-box {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.cat-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ================= Section Layout ================= */
+.content-section {
+  padding: 2rem 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0 1.5rem; /* Match container generally */
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--canva-text-main);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.section-link {
+  color: var(--canva-purple);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+/* ================= Card Scroller ================= */
+.cards-scroller-container {
+  padding: 0 1.5rem; /* Side padding */
+}
+
+.cards-scroller {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 2rem; /* Space for shadow */
+  padding-top: 0.5rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.canva-card {
+  flex: 0 0 300px;
+  background: white;
+  border-radius: var(--canva-radius);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.canva-card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+  border-color: var(--canva-purple);
+}
+
+.card-image-wrap {
+  height: 180px;
+  position: relative;
+  background-color: #f0f2f5;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-badges {
+  position: absolute;
+  top: 10px;
+  right: 10px; /* Adjust for RTL */
+  display: flex;
+  gap: 5px;
+}
+[dir="rtl"] .card-badges {
+  right: auto;
+  left: 10px;
+}
+
+.c-badge {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    color: var(--canva-text-main);
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-content {
+  padding: 1.25rem;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--canva-text-main);
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--canva-text-muted);
+}
+
+.rating-star {
+  color: #fbbf24;
+}
+
+/* ================= Bottom Mobile Nav (Optional) ================= */
+.mobile-nav-spacer {
+  height: 70px;
+}
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  justify-content: space-around;
+  padding: 0.8rem 0;
+  border-top: 1px solid #eee;
+}
+.nav-item-m {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #9ca3af;
+  text-decoration: none;
+  font-size: 0.75rem;
+}
+.nav-item-m.active {
+  color: var(--canva-purple);
+}
+.nav-item-m i {
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+  }
+}
+
+/* ================= Navbar Overrides (Mobile) ================= */
+.navbar-toggler {
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.navbar-toggler:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.55)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Adjust brand spacing on mobile */
+@media (max-width: 576px) {
+  .navbar-brand {
+    font-size: 1.25rem !important; /* Slightly smaller on mobile */
+  }
+  
+  .navbar-custom {
+    padding: 0.5rem 1rem !important; /* Tighter padding */
+  }
+}
+
+/* Hide redundant navbar search icon on home page */
+.navbar-custom .btn-icon .fa-search {
+  display: none !important;
+}
+
+/* Mobile Fixes */
+@media (max-width: 768px) {
+  .canva-card {
+    flex: 0 0 85vw; /* Show bigger cards on mobile */
+  }
+  
+  .hero-title {
+    font-size: 1.8rem; /* Smaller title */
+  }
+  
+  /* Ensure images never overflow */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Fix container padding */
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* ================= Favorite Button HTMX ================= */
+.favorite-btn-htmx {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 50% !important;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: #64748b; /* text-muted fallback */
+    padding: 0;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.favorite-btn-htmx:hover {
+    transform: scale(1.15);
+    background: white;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    color: var(--canva-rose);
+}
+
+.favorite-btn-htmx.is-active {
+    color: #f43f5e !important; /* Canva Rose */
+    background: white;
+    border-color: #f43f5e;
+    animation: heartBeat 0.4s ease-in-out;
+}
+
+@keyframes heartBeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+.favorite-btn-htmx.is-active i {
+    filter: drop-shadow(0 0 4px rgba(244, 63, 94, 0.4));
+}

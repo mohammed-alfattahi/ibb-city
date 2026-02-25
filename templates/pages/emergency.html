@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}أرقام الطوارئ والسلامة - دليل إب{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Hero Header -->
+    <div class="text-center mb-5 animate__animated animate__fadeIn">
+        <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle mb-3"
+            style="width: 64px; height: 64px;">
+            <i class="fas fa-shield-alt fa-2x"></i>
+        </div>
+        <h1 class="fw-extrabold text-gray-900 mb-2">الطوارئ والسلامة</h1>
+        <p class="text-muted fs-5">دليل شامل لأرقام الطوارئ وإرشادات السلامة لضمان رحلة آمنة</p>
+    </div>
+
+    <!-- Emergency Numbers Grid -->
+    <div class="row g-4 mb-5">
+        {% for contact in primary_contacts %}
+        <div class="col-md-4">
+            <div
+                class="card border-0 shadow-sm h-100 position-relative overflow-hidden group hover-lift transition-all">
+                <div class="position-absolute top-0 end-0 p-3 opacity-10">
+                    <i class="{{ contact.icon }} fa-5x text-{{ contact.color }}"></i>
+                </div>
+                <div class="card-body p-4 text-center position-relative z-1">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-{{ contact.color }} text-white rounded-circle mb-3 shadow-primary"
+                        style="width: 50px; height: 50px;">
+                        <i class="{{ contact.icon }} fs-4"></i>
+                    </div>
+                    <h3 class="fw-bold text-gray-800">{{ contact.title }}</h3>
+                    <div class="display-4 fw-black text-{{ contact.color }} my-3 tracking-tight">{{ contact.number }}
+                    </div>
+                    <p class="text-muted mb-0">{{ contact.description }}</p>
+                    <a href="tel:{{ contact.number }}"
+                        class="btn btn-{{ contact.color }} w-100 rounded-pill mt-3 stretched-link">
+                        <i class="fas fa-phone-alt me-2"></i> اتصال
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted">جاري تحديث أرقام الطوارئ...</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row g-4">
+        <!-- Hospitals List -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-white border-0 py-3 px-4 d-flex align-items-center gap-2">
+                    <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-3">
+                        <i class="fas fa-hospital-alt"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0 text-gray-800">أهم المستشفيات في إب</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for hospital in hospitals %}
+                        <div
+                            class="list-group-item border-0 p-3 hover-bg-light transition-all d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="https://ui-avatars.com/api/?name={{ hospital.title|slice:':1' }}&background=random&color=fff"
+                                    class="rounded-3 shadow-sm" width="48" height="48">
+                                <div>
+                                    <h6 class="fw-bold mb-1 text-gray-900">{{ hospital.title }}</h6>
+                                    <p class="small text-muted mb-0"><i class="fas fa-map-marker-alt me-1"></i> {{ hospital.description }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column align-items-end">
+                                <span
+                                    class="badge bg-{{ hospital.color }} bg-opacity-10 text-{{ hospital.color }} rounded-pill px-3 py-2 mb-1">
+                                    {{ hospital.number }}
+                                </span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="p-4 text-center text-muted">لا توجد بيانات مستشفيات حالياً</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Safety Guidelines -->
+        <div class="col-lg-5">
+            <div class="d-flex flex-column gap-3">
+                {% for guideline in safety_guidelines %}
+                <div
+                    class="card border-0 shadow-sm border-start border-4 border-{{ guideline.color }} hover-lift transition-all">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start gap-3">
+                            <div
+                                class="bg-{{ guideline.color }} bg-opacity-10 text-{{ guideline.color }} p-3 rounded-3">
+                                <i class="{{ guideline.icon }} fa-lg"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-gray-900">{{ guideline.title }}</h6>
+                                <p class="text-muted small mb-0">{{ guideline.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-4 text-muted">جاري إضافة إرشادات السلامة...</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .fw-black {
+        font-weight: 900;
+    }
+
+    .tracking-tight {
+        letter-spacing: -2px;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+    }
+
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+
+    .shadow-primary {
+        box-shadow: 0 4px 14px 0 rgba(197, 48, 48, 0.39) !important;
+    }
+</style>
+{% endblock %}

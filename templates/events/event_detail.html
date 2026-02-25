@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ event.title }} - {% trans "فعاليات إب" %}{% endblock %}
+
+{% block content %}
+<!-- Cover Image logic -->
+<div class="position-relative aura-hero-detail"
+    style="height: 450px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+    {% if event.image %}
+    <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-100 h-100"
+        style="object-fit: cover; opacity: 0.6; mix-blend-mode: overlay;">
+    <div class="position-absolute top-0 start-0 w-100 h-100"
+        style="background: linear-gradient(to bottom, rgba(79, 70, 229, 0.4), rgba(15, 23, 42, 0.9));"></div>
+    {% else %}
+    <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+        <i class="fas fa-calendar-alt fa-5x text-white opacity-25"></i>
+    </div>
+    {% endif %}
+
+    <div class="position-absolute bottom-0 start-0 w-100 p-4 pb-5 text-white">
+        <div class="container">
+            <span class="badge bg-warning text-dark mb-2 px-3 py-2 rounded-pill shadow-sm">{{ event.get_event_type_display }}</span>
+            <h1 class="display-4 fw-bold mb-2">{{ event.title }}</h1>
+            <div class="d-flex align-items-center gap-4 text-white-50">
+                <span><i class="fas fa-clock me-2"></i> {{ event.start_date|date:"d M Y" }} - {{ event.end_date|date:"d M Y" }}</span>
+                <span><i class="fas fa-map-marker-alt me-2"></i> {{ event.location_name }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5" style="margin-top: -40px; position: relative; z-index: 10;">
+    <div class="row g-4">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4 animate__animated animate__fadeInUp">
+                <div class="card-body p-4 p-md-5">
+                    <h4 class="fw-bold mb-4">تفاصيل الفعالية</h4>
+                    <div class="lead text-muted lh-lg mb-0 text-justify">
+                        {{ event.description|linebreaks }}
+                    </div>
+                </div>
+            </div>
+
+            {% if event.related_place %}
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <div class="d-flex align-items-center">
+                    <img src="{{ event.related_place.get_main_image_url }}" class="rounded-circle me-3"
+                        style="width: 80px; height: 80px; object-fit: cover;">
+                    <div>
+                        <small class="text-uppercase text-muted fw-bold">المكان المستضيف</small>
+                        <h5 class="fw-bold mb-1">{{ event.related_place.name }}</h5>
+                        <a href="{% url 'place_detail' event.related_place.pk %}"
+                            class="btn btn-sm btn-outline-primary rounded-pill mt-1">عرض المكان</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 p-4 sticky-top" style="top: 100px;">
+                <h5 class="fw-bold mb-4">معلومات سريعة</h5>
+
+                <div class="mb-3 pb-3 border-bottom">
+                    <label class="small text-muted fw-bold mb-1">الحالة</label>
+                    <div class="fw-bold text-dark fs-5">
+                        {% if event.status == 'upcoming' %}
+                        <span class="text-primary"><i class="fas fa-hourglass-start me-2"></i>قادمة</span>
+                        {% elif event.status == 'ongoing' %}
+                        <span class="text-success"><i class="fas fa-play-circle me-2"></i>جارية الآن</span>
+                        {% else %}
+                        <span class="text-muted"><i class="fas fa-check-circle me-2"></i>منتهية</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3 pb-3 border-bottom">
+                    <label class="small text-muted fw-bold mb-1">الموقع</label>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>{{ event.location_name }}</span>
+                        {% if event.location_coords %}
+                        <a href="https://maps.google.com/?q={{ event.location_coords }}" target="_blank"
+                            class="btn btn-sm btn-light rounded-circle shadow-sm">
+                            <i class="fas fa-directions text-primary"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <button class="btn btn-success w-100 rounded-pill py-3 fw-bold shadow-sm mb-3">
+                    <i class="fas fa-share-alt me-2"></i> مشاركة الفعالية
+                </button>
+
+                <div class="alert alert-info border-0 bg-info bg-opacity-10 small mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    تخضع المواعيد للتغيير حسب الظروف الجوية.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

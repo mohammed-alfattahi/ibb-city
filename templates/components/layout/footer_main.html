@@ -1,0 +1,56 @@
+{% load static i18n %}
+<footer class="bg-dark text-white pt-5 pb-3 mt-5 d-none d-lg-block">
+        <div class="container">
+            <div class="row">
+                <!-- Company Info -->
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-leaf text-success me-2"></i> {{ site_config.site_name|default:"إب الخضراء" }}</h5>
+                    <p class="text-white-50 small">دليلك السياحي الشامل لاستكشاف جمال الطبيعة وسحر التاريخ في محافظة إب.
+                    </p>
+                    <div class="d-flex gap-3">
+                        {% if site_config.facebook_url %}<a href="{{ site_config.facebook_url }}"
+                            class="text-white-50 hover-text-white"><i class="fab fa-facebook fa-lg"></i></a>{% endif %}
+                        {% if site_config.twitter_url %}<a href="{{ site_config.twitter_url }}"
+                            class="text-white-50 hover-text-white"><i class="fab fa-twitter fa-lg"></i></a>{% endif %}
+                        {% if site_config.instagram_url %}<a href="{{ site_config.instagram_url }}"
+                            class="text-white-50 hover-text-white"><i class="fab fa-instagram fa-lg"></i></a>{% endif %}
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-md-2 col-6 mb-4">
+                    <h6 class="fw-bold mb-3">استكشف</h6>
+                    <ul class="list-unstyled">
+                        {% for item in footer_explore %}
+                        <li><a href="{% if '/' in item.url %}{{ item.url }}{% else %}{% url item.url %}{% endif %}"
+                                class="text-white-50 text-decoration-none small d-block mb-2 hover-text-white">{{ item.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="col-md-2 col-6 mb-4">
+                    <h6 class="fw-bold mb-3">السياحة</h6>
+                    <ul class="list-unstyled">
+                        {% for item in footer_tourism %}
+                        <li><a href="{% if '/' in item.url %}{{ item.url }}{% else %}{% url item.url %}{% endif %}"
+                                class="text-white-50 text-decoration-none small d-block mb-2 hover-text-white">{{ item.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="col-md-2 col-6 mb-4">
+                    <h6 class="fw-bold mb-3">الشركة</h6>
+                    <ul class="list-unstyled">
+                        {% for item in footer_company %}
+                        <li><a href="{% if '/' in item.url %}{{ item.url }}{% else %}{% url item.url %}{% endif %}"
+                                class="text-white-50 text-decoration-none small d-block mb-2 hover-text-white">{{ item.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary opacity-25">
+            <div class="text-center text-muted small">
+                © {% now "Y" %} {{ site_config.site_name|default:"إب الخضراء" }}. جميع الحقوق محفوظة.
+            </div>
+        </div>
+    </footer>

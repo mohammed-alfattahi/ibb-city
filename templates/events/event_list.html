@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}ChronoCraft - الفعاليات والمواسم{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/modern_landing.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="aura-hero">
+    <div class="container position-relative z-10">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <span class="badge bg-white text-primary rounded-pill px-3 py-2 fw-bold mb-3 shadow-sm">
+                    <i class="fas fa-calendar-alt me-2"></i> الموسم السياحي 2026
+                </span>
+                <h1 class="display-3 fw-bold mb-4" style="font-family: serif; text-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    مواسم إب الخضراء</h1>
+                <p class="lead text-white-90 mb-5">
+                    اكتشف سحر "Aura" في مهرجانات إب. تجربة بصرية وحسية لا تُنسى في قلب الطبيعة.
+                </p>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-light rounded-pill px-4 py-2 fw-bold shadow-lg text-primary">الفعاليات
+                        القادمة</button>
+                    <button class="btn btn-outline-light rounded-pill px-4 py-2 backdrop-blur-sm">أرشيف الصور</button>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <!-- Featured Carousel -->
+                <div
+                    class="card border-0 overflow-hidden shadow-2xl rounded-4 text-white hover-scale transition-transform duration-500">
+                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80"
+                        class="card-img" style="height: 400px; object-fit: cover;">
+                    <div class="card-img-overlay d-flex align-items-end p-0">
+                        <div class="w-100 p-4"
+                            style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                            <h3 class="fw-bold">ليالي إب الفنية</h3>
+                            <p class="mb-0 text-white-90">يوليو 2026 - مسرح الهواء الطلق</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-5" style="min-height: 60vh;">
+    <div class="container">
+        <h3 class="border-bottom pb-3 mb-5 fw-bold text-dark">الجدول الزمني للفعاليات</h3>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="aura-timeline">
+                    {% for event in events %}
+                    <div class="aura-card d-flex">
+                        <div class="aura-date">
+                            <div class="day">{{ event.start_date|date:"d" }}</div>
+                            <div class="month">{{ event.start_date|date:"M" }}</div>
+                        </div>
+                        <div class="p-4 flex-grow-1">
+                            <h5 class="fw-bold mb-1 text-dark">{{ event.title }}</h5>
+                            <p class="text-muted small mb-2"><i class="far fa-clock me-1 text-primary"></i> {{ event.start_date|time:"H:i" }} - {{ event.location }}</p>
+                            <p class="text-secondary small mb-3">{{ event.description|truncatechars:100 }}</p>
+                            <a href="{% url 'events:detail' event.pk %}"
+                                class="btn btn-sm btn-outline-primary rounded-pill">التفاصيل</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <!-- Static Placeholder for Demo -->
+                    <div class="aura-card d-flex">
+                        <div class="aura-date">
+                            <div class="day">15</div>
+                            <div class="month">MAR</div>
+                        </div>
+                        <div class="p-4 flex-grow-1">
+                            <h5 class="fw-bold mb-1 text-dark">ماراثون إب الدولي</h5>
+                            <p class="text-muted small mb-2"><i class="far fa-clock me-1 text-primary"></i> 08:00 AM -
+                                الستين</p>
+                            <p class="text-secondary small mb-3">سباق مفتوح للهواة والمحترفين وسط الطبيعة الخلابة.</p>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill">التفاصيل</button>
+                        </div>
+                    </div>
+
+                    <div class="aura-card d-flex">
+                        <div class="aura-date">
+                            <div class="day">22</div>
+                            <div class="month">APR</div>
+                        </div>
+                        <div class="p-4 flex-grow-1">
+                            <h5 class="fw-bold mb-1 text-dark">معرض الحرف اليدوية</h5>
+                            <p class="text-muted small mb-2"><i class="far fa-clock me-1 text-primary"></i> 10:00 AM -
+                                المركز
+                                الثقافي</p>
+                            <p class="text-secondary small mb-3">عرض لأجمل المشغولات اليدوية.</p>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill">التفاصيل</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="bg-white p-4 rounded-4 shadow-sm border sticky-top" style="top: 100px;">
+                    <h5 class="fw-bold mb-4 text-dark">تصفية حسب الموسم</h5>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-light text-start text-dark hover-bg-gray-100 border-0"><i
+                                class="fas fa-cloud-rain me-2 text-info"></i> موسم الأمطار (الصيف)</button>
+                        <button class="btn btn-light text-start text-dark hover-bg-gray-100 border-0"><i
+                                class="fas fa-leaf me-2 text-success"></i> موسم الحصاد (الخريف)</button>
+                        <button class="btn btn-light text-start text-dark hover-bg-gray-100 border-0"><i
+                                class="fas fa-store me-2 text-warning"></i> التسوق (رمضان)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

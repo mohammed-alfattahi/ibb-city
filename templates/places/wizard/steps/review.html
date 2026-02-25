@@ -1,0 +1,111 @@
+<div class="row justify-content-center">
+    <div class="col-md-9">
+        <div class="text-center mb-5">
+            <i class="fas fa-clipboard-check fa-3x text-success mb-3"></i>
+            <h3>مراجعة وإرسال الطلب</h3>
+            <p class="text-muted">نحن في الخطوة الأخيرة! يرجى مراجعة البيانات قبل إرسالها للموافقة.</p>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+            <div class="card-header bg-success text-white p-3 border-0">
+                <h5 class="mb-0"><i class="fas fa-store me-2"></i> ملخص المنشأة</h5>
+            </div>
+
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <!-- Basic Info -->
+                    <div class="col-md-12">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                {% if draft.establishment.cover_image %}
+                                <img src="{{ draft.establishment.cover_image.url }}" class="rounded shadow-sm"
+                                    style="width: 80px; height: 80px; object-fit: cover;">
+                                {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center text-muted"
+                                    style="width: 80px; height: 80px;">
+                                    <i class="fas fa-image fa-2x"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="ms-3">
+                                <h4 class="mb-1">{{ draft.establishment.name }}</h4>
+                                <span class="badge bg-light text-dark border">{{ draft.establishment.category }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Details Grid -->
+                    <div class="col-md-6">
+                        <label class="small text-muted text-uppercase fw-bold mb-1">العنوان</label>
+                        <p class="mb-0">{{ draft.establishment.address_text|default:"-" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small text-muted text-uppercase fw-bold mb-1">المديرية</label>
+                        <p class="mb-0">{{ draft.establishment.get_directorate_display }}</p>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="small text-muted text-uppercase fw-bold mb-1">الوصف</label>
+                        <p class="mb-0 text-muted">{{ draft.establishment.description|default:"لا يوجد وصف" }}</p>
+                    </div>
+
+                    <!-- Status Checks -->
+                    <div class="col-12 mt-4">
+                        <div class="card bg-light border-0">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">حالة البيانات</h6>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="d-flex align-items-center text-success">
+                                        <i class="fas fa-check-circle me-2"></i> جهات الاتصال ({{ draft.establishment.contacts.count }})
+                                    </div>
+                                    <div
+                                        class="d-flex align-items-center {% if draft.establishment.hours.exists or draft.establishment.opening_hours_text %}text-success{% else %}text-warning{% endif %}">
+                                        <i
+                                            class="fas fa-{% if draft.establishment.hours.exists or draft.establishment.opening_hours_text %}check{% else %}exclamation{% endif %}-circle me-2"></i>
+                                        ساعات العمل
+                                    </div>
+                                    <div class="d-flex align-items-center text-success">
+                                        <i class="fas fa-check-circle me-2"></i> الموقع على الخريطة
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Action -->
+        <div class="alert alert-warning border-warning d-flex align-items-start shadow-sm rounded-3">
+            <i class="fas fa-shield-alt fa-2x text-warning me-3 mt-1"></i>
+            <div>
+                <h6 class="fw-bold">سياسة المراجعة</h6>
+                <p class="mb-0 small text-muted">بإرسال هذا الطلب، فإنك تؤكد صحة كافة البيانات المدخلة. سيقوم فريقنا
+                    بمراجعة الطلب خلال 24 ساعة.</p>
+            </div>
+        </div>
+
+        <div class="d-grid mt-4">
+            <form method="post" action="{% url 'wizard_submit' draft.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success btn-lg shadow rounded-pill p-3 fw-bold w-100">
+                    <i class="fas fa-paper-plane me-2"></i> اعتماد وإرسال للمراجعة
+                </button>
+            </form>
+            <p class="text-muted small text-center mt-2">يمكنك العودة وتعديل البيانات في أي وقت قبل الإرسال.</p>
+        </div>
+
+    </div>
+</div>
+
+<!-- Hide default footer buttons since we have custom submit here -->
+<style>
+    /* Very hacky way to hide the form next button on review page, 
+       since wizard_base includes generic buttons. 
+       Ideally wizard_base should handle is_review condition. 
+    */
+    #wizard-form .card-footer .btn-primary {
+        display: none;
+    }
+</style>

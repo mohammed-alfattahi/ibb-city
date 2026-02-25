@@ -1,0 +1,151 @@
+{% load i18n %}
+<div class="row g-3">
+
+    <div class="col-md-6">
+        <label class="form-label fw-bold">{{ form.directorate.label }}</label>
+        {{ form.directorate }}
+    </div>
+    <div class="col-md-6">
+        <label class="form-label fw-bold">{{ form.classification.label }}</label>
+        <select name="{{ form.classification.name }}" class="form-select">
+            {% for x, y in form.fields.classification.choices %}
+            <option value="{{ x }}" {% if form.classification.value == x %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-12 mt-4">
+        <label class="form-label fw-bold mb-2">
+            <i class="fas fa-map-marker-alt text-danger me-2"></i> موقع المنشأة على الخريطة
+        </label>
+
+        <div class="alert alert-light border shadow-sm rounded-3 mb-3 d-flex align-items-center">
+            <i class="fas fa-info-circle text-primary me-3 fa-lg"></i>
+            <small class="text-muted">قم بتحريك الدبوس لتحديد موقع المنشأة بدقة، أو استخدم زر "موقعي الحالي".</small>
+        </div>
+
+        <div id="wizard-map-picker" class="rounded-4 border shadow-sm position-relative"
+            style="height: 400px; z-index: 1;"></div>
+
+        <div class="row g-2 mt-2">
+            <div class="col-6">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-light text-muted fw-bold">Lat</span>
+                    <input type="number" step="any" id="id_latitude" name="{{ form.latitude.name }}"
+                        class="form-control" placeholder="Latitude" value="{{ form.latitude.value|default:'' }}">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-light text-muted fw-bold">Lng</span>
+                    <input type="number" step="any" id="id_longitude" name="{{ form.longitude.name }}"
+                        class="form-control" placeholder="Longitude" value="{{ form.longitude.value|default:'' }}">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 mt-3">
+        <label class="form-label fw-bold">{{ form.address_text.label }}</label>
+        <textarea name="{{ form.address_text.name }}" class="form-control" rows="2"
+            placeholder="أدخل العنوان النصي التفصيلي...">{{ form.address_text.value|default:'' }}</textarea>
+    </div>
+</div>
+
+<!-- Leaflet CSS & JS (Ensure loaded once) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const latInput = document.getElementById('id_latitude');
+        const lngInput = document.getElementById('id_longitude');
+
+        // Ibb Center Default
+        let defaultLat = 13.9667;
+        let defaultLng = 44.1833;
+        let zoom = 13;
+
+        if (latInput.value && lngInput.value) {
+            defaultLat = parseFloat(latInput.value);
+            defaultLng = parseFloat(lngInput.value);
+            zoom = 16;
+        }
+
+        const map = L.map('wizard-map-picker').setView([defaultLat, defaultLng], zoom);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Custom Icon
+        const redIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        let marker;
+        if (latInput.value && lngInput.value) {
+            marker = L.marker([defaultLat, defaultLng], { draggable: true, icon: redIcon }).addTo(map);
+            bindMarkerEvents(marker);
+        }
+
+        function updateInputs(lat, lng) {
+            latInput.value = lat;
+            lngInput.value = lng;
+        }
+
+        function bindMarkerEvents(marker) {
+            marker.on('dragend', function (e) {
+                const pos = e.target.getLatLng();
+                updateInputs(pos.lat.toFixed(6), pos.lng.toFixed(6));
+                map.panTo(pos);
+            });
+        }
+
+        map.on('click', function (e) {
+            const lat = e.latlng.lat.toFixed(6);
+            const lng = e.latlng.lng.toFixed(6);
+            updateInputs(lat, lng);
+
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng, { draggable: true, icon: redIcon }).addTo(map);
+                bindMarkerEvents(marker);
+            }
+        });
+
+        // "Locate Me" Control
+        const locateBtn = L.control({ position: 'topright' });
+        locateBtn.onAdd = function (map) {
+            const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+            div.innerHTML = '<button type="button" class="btn btn-light btn-sm shadow-sm fw-bold border" style="background: white;"><i class="fas fa-location-arrow text-primary"></i> موقعي</button>';
+            div.style.cursor = 'pointer';
+            div.onclick = function (e) {
+                e.preventDefault();
+                map.locate({ setView: true, maxZoom: 16 });
+            }
+            return div;
+        };
+        locateBtn.addTo(map);
+
+        map.on('locationfound', function (e) {
+            const lat = e.latlng.lat.toFixed(6);
+            const lng = e.latlng.lng.toFixed(6);
+            updateInputs(lat, lng);
+            if (marker) marker.setLatLng(e.latlng);
+            else {
+                marker = L.marker(e.latlng, { draggable: true, icon: redIcon }).addTo(map);
+                bindMarkerEvents(marker);
+            }
+        });
+
+        // Invalidate size on tab switch or visibility change to fix grey tiles
+        setTimeout(() => map.invalidateSize(), 500);
+    });
+</script>

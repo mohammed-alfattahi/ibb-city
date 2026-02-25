@@ -1,0 +1,70 @@
+<tr id="establishment-row-{{ place.pk }}">
+    <td>{{ place.id }}</td>
+    <td>
+        {% if place.cover_image %}
+        <img src="{{ place.cover_image.url }}" class="rounded-3 border shadow-sm" width="60" height="60"
+            style="object-fit: cover;">
+        {% else %}
+        <div class="d-flex align-items-center justify-content-center bg-light rounded-3 border" style="width: 60px; height: 60px;">
+            <i class="fas fa-image text-muted opacity-50"></i>
+        </div>
+        {% endif %}
+    </td>
+    <td class="text-start">
+        <div class="d-flex flex-column justify-content-center h-100">
+            <div class="fw-bold text-dark mb-1">{{ place.name }}</div>
+            <span class="badge bg-light text-muted border fw-normal">{{ place.category.name }}</span>
+        </div>
+    </td>
+    <td>
+        {% if place.is_active %}
+            <span class="badge bg-success-subtle text-success border border-success px-2" title="المنشأة نشطة">نشط</span>
+        {% else %}
+            <span class="badge bg-secondary-subtle text-secondary border px-2" title="المنشأة غير نشطة">غير نشط</span>
+        {% endif %}
+        
+        <div class="mt-1">
+            {% if place.is_open_now %}
+                <span class="badge bg-success rounded-pill" title="يستقبل الزوار الآن">مفتوح الآن</span>
+            {% else %}
+                <span class="badge bg-secondary rounded-pill" title="مغلق حالياً">مغلق</span>
+            {% endif %}
+        </div>
+    </td>
+    <td>
+        <span class="badge bg-info-subtle text-info border border-info px-2">ساري</span>
+    </td>
+    <td>
+        <div class="fw-bold text-warning"><i class="fas fa-star"></i> {{ place.avg_rating }}</div>
+    </td>
+    <td>{{ place.view_count }}</td>
+    <td>
+        <div class="dropdown">
+            <button class="btn btn-sm btn-light border shadow-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-cog me-1"></i> إدارة
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                <li><h6 class="dropdown-header small text-uppercase">الوصول السريع</h6></li>
+                <li><a class="dropdown-item" href="{{ place.get_absolute_url }}" target="_blank"><i class="fas fa-external-link-alt me-2 text-muted"></i>عرض في الموقع</a></li>
+                <li><a class="dropdown-item" href="{% url 'wizard_edit' place.pk %}"><i class="fas fa-edit me-2 text-primary"></i>تعديل البيانات</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><h6 class="dropdown-header small text-uppercase">المحتوى</h6></li>
+                <li><a class="dropdown-item" href="{% url 'partner_unit_list' place.pk %}"><i class="fas fa-door-open me-2 text-success"></i>الوحدات</a></li>
+                <li><a class="dropdown-item" href="{% url 'partner_gallery' place.pk %}"><i class="fas fa-images me-2 text-info"></i>معرض الصور</a></li>
+                <li><a class="dropdown-item" href="{% url 'partner_offer_list' place.pk %}"><i class="fas fa-tags me-2 text-warning"></i>العروض</a></li>
+                <li><a class="dropdown-item" href="{% url 'partner_contact_list' place.pk %}"><i class="fas fa-address-book me-2 text-secondary"></i>جهات الاتصال</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item text-danger" href="#" 
+                       hx-post="{% url 'toggle_establishment_status' place.pk %}"
+                       hx-target="#establishment-row-{{ place.pk }}"
+                       hx-swap="outerHTML"
+                       hx-confirm="هل أنت متأكد من تغيير حالة (مفتوح/مغلق) للمنشأة؟">
+                       <i class="fas fa-power-off me-2"></i>
+                       {% if place.is_open_now %}إغلاق المنشأة{% else %}فتح المنشأة{% endif %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </td>
+</tr>

@@ -1,0 +1,29 @@
+<div class="card-body" id="day-{{ day_num }}-body" hx-swap-oob="true">
+    {% if items %}
+    <div class="list-group list-group-flush">
+        {% for item in items %}
+        <div class="list-group-item d-flex justify-content-between align-items-center animate__animated animate__fadeIn">
+            <div>
+                <span class="badge bg-primary me-2">{{ item.order }}</span>
+                <strong>{{ item.place.name }}</strong>
+                {% if item.notes %}
+                <small class="text-muted d-block">{{ item.notes }}</small>
+                {% endif %}
+            </div>
+            <form method="post" action="{% url 'itinerary_item_delete' item.pk %}" class="d-inline"
+                hx-post="{% url 'itinerary_item_delete' item.pk %}"
+                hx-target="closest .list-group-item"
+                hx-swap="outerHTML swap:1s"
+                hx-confirm="حذف هذا المكان؟">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-times"></i>
+                </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted text-center mb-0">لا توجد أماكن لهذا اليوم</p>
+    {% endif %}
+</div>

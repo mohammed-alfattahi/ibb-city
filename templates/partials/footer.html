@@ -1,0 +1,144 @@
+<footer class="bg-white text-dark pt-5 pb-4 mt-5 position-relative overflow-hidden border-top">
+    <!-- Decorative overlay -->
+    <div class="position-absolute top-0 start-0 w-100 h-100" 
+         style="background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(16, 185, 129, 0.03) 100%); pointer-events: none;"></div>
+    
+    <div class="container position-relative z-1">
+        <div class="row g-4 justify-content-between">
+            <!-- Brand Column -->
+            <div class="col-lg-4 col-md-6">
+                <h5 class="fw-bold mb-4 d-flex align-items-center gap-2 text-dark">
+                    {% if site_settings.logo %}
+                    <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" width="45" height="45" class="rounded-circle shadow-sm border border-2 border-white">
+                    {% else %}
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 45px; height: 45px;">
+                        <i class="fas fa-tree fa-lg"></i>
+                    </div>
+                    {% endif %}
+                    <span class="fs-4 text-success fw-bolder">دليل إب السياحي</span>
+                </h5>
+                <p class="text-muted mb-4" style="line-height: 1.8;">
+                    دليلك الشامل للسياحة في محافظة إب اليمنية. نأخذك في رحلة لاستكشاف سحر الطبيعة وعبق التاريخ في اللواء الأخضر.
+                </p>
+                
+                <!-- Social Links -->
+                <div class="d-flex gap-2">
+                    {% for link in social_links %}
+                    {% if link.is_active %}
+                    <a href="{{ link.url }}" class="btn btn-light btn-sm rounded-circle d-flex align-items-center justify-content-center shadow-sm text-success hover-bg-success hover-text-white transition-all" 
+                       style="width: 38px; height: 38px;" target="_blank">
+                        <i class="{{ link.icon|default:'fas fa-link' }}"></i>
+                    </a>
+                    {% endif %}
+                    {% empty %}
+                    <a href="#" class="btn btn-light btn-sm rounded-circle d-flex align-items-center justify-content-center shadow-sm text-secondary hover-text-primary transition-all" style="width: 38px; height: 38px;"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="btn btn-light btn-sm rounded-circle d-flex align-items-center justify-content-center shadow-sm text-secondary hover-text-info transition-all" style="width: 38px; height: 38px;"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="btn btn-light btn-sm rounded-circle d-flex align-items-center justify-content-center shadow-sm text-secondary hover-text-danger transition-all" style="width: 38px; height: 38px;"><i class="fab fa-instagram"></i></a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Links Column -->
+            <div class="col-lg-3 col-md-6">
+                <h5 class="fw-bold text-dark mb-4 position-relative d-inline-block">
+                    روابط مهمة
+                    <span class="position-absolute bottom-0 start-0 w-50 bg-success" style="height: 3px; border-radius: 2px;"></span>
+                </h5>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <a href="{% url 'about' %}" class="text-secondary text-decoration-none transition-colors hover-text-success fw-medium">
+                            من نحن
+                        </a>
+                    </li>
+                    <li class="mb-3">
+                        <a href="{% url 'contact' %}" class="text-secondary text-decoration-none transition-colors hover-text-success fw-medium">
+                            اتصل بنا
+                        </a>
+                    </li>
+                    <li class="mb-3">
+                        <a href="{% url 'place_list' %}" class="text-secondary text-decoration-none transition-colors hover-text-success fw-medium">
+                            استكشف الأماكن
+                        </a>
+                    </li>
+                    <li class="mb-3">
+                        <a href="{% url 'events:list' %}" class="text-secondary text-decoration-none transition-colors hover-text-success fw-medium">
+                            الفعاليات والمواسم
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contact Column -->
+            <div class="col-lg-4 col-md-6">
+                <h5 class="fw-bold text-dark mb-4 position-relative d-inline-block">
+                    تواصل معنا
+                    <span class="position-absolute bottom-0 start-0 w-50 bg-success" style="height: 3px; border-radius: 2px;"></span>
+                </h5>
+                <ul class="list-unstyled">
+                    <li class="mb-3 d-flex gap-3">
+                        <div class="flex-shrink-0 bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-0">العنوان</h6>
+                            <p class="text-muted mb-0 small">محافظة إب، اليمن</p>
+                        </div>
+                    </li>
+                    <li class="mb-3 d-flex gap-3">
+                        <div class="flex-shrink-0 bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-0">الهاتف</h6>
+                            <p class="text-muted mb-0 small" dir="ltr">+967-4-123456</p>
+                        </div>
+                    </li>
+                    <li class="mb-3 d-flex gap-3">
+                        <div class="flex-shrink-0 bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-0">البريد الإلكتروني</h6>
+                            <p class="text-muted mb-0 small">info@ibbguide.com</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="my-4 border-secondary opacity-10">
+
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="text-muted small mb-0 fw-medium">
+                    &copy; 2026 دليل إب السياحي - جميع الحقوق محفوظة
+                </p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <p class="text-muted small mb-0 fw-medium">
+                    صُنع بـ <i class="fas fa-heart text-danger mx-1 animate__animated animate__pulse animate__infinite"></i> في اليمن
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        .hover-text-success:hover {
+            color: #10b981 !important;
+            padding-right: 5px;
+        }
+        .hover-bg-success:hover {
+            background-color: #10b981 !important;
+            border-color: #10b981 !important;
+        }
+        .hover-text-white:hover {
+            color: white !important;
+        }
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+        .transition-colors {
+            transition: color 0.3s ease, padding 0.3s ease;
+        }
+    </style>
+</footer>

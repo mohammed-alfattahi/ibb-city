@@ -1,0 +1,22 @@
+{% if item.children.exists %}
+<li class="nav-item dropdown">
+    <a class="nav-link rounded-pill px-3 dropdown-toggle" href="#" data-bs-toggle="dropdown">
+        {{ item.title }}
+    </a>
+    <ul class="dropdown-menu border-0 shadow rounded-3 text-end">
+        {% for child in item.children.all %}
+        {% if child.is_active %}
+        <!-- Simplistic check for child visibility - can be recursive but let's keep it 1 level deep for now as per typical bootstrap nav -->
+        <li><a class="dropdown-item" href="{{ child.url }}">{{ child.title }}</a></li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+</li>
+{% else %}
+<li class="nav-item">
+    <a class="nav-link rounded-pill px-3 {% if request.path == item.url %}active fw-bold text-success bg-light{% endif %}"
+        href="{% if '/' in item.url %}{{ item.url }}{% else %}{% url item.url %}{% endif %}">
+        {{ item.title }}
+    </a>
+</li>
+{% endif %}

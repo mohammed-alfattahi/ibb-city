@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}المفضلة - دليل إب{% endblock %}
+
+{% block extra_css %}
+<style>
+    .favorites-hero {
+        height: 400px;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+        position: relative;
+        border-bottom-left-radius: 80px;
+        border-bottom-right-radius: 80px;
+        overflow: hidden;
+        margin-bottom: -120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+    }
+
+    .favorites-hero::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+        z-index: 1;
+    }
+
+    .favorites-hero::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm56-76c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 35c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm57-13c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM58 58c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM6 66c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        z-index: 0;
+    }
+
+    .favorites-container {
+        position: relative;
+        z-index: 10;
+        padding-bottom: 5rem;
+    }
+
+    /* Category Chips */
+    .category-chips {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        padding: 10px 5px;
+        margin-bottom: 30px;
+        scrollbar-width: none;
+    }
+    .category-chips::-webkit-scrollbar { display: none; }
+
+    .chip {
+        padding: 10px 24px;
+        border-radius: 50px;
+        background: white;
+        color: #64748b;
+        font-weight: 600;
+        white-space: nowrap;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .chip.active {
+        background: #10b981;
+        color: white;
+        border-color: #10b981;
+        box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+    }
+
+    .chip:hover:not(.active) {
+        transform: translateY(-2px);
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+
+    /* Undo Toast */
+    .undo-toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #1e293b;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 16px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transform: translateY(150px);
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .undo-toast.active { transform: translateY(0); }
+    .undo-btn {
+        color: #10b981;
+        font-weight: 700;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Selection Styles */
+    .fav-checkbox-container {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 20;
+    }
+    .fav-checkbox {
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        accent-color: #10b981;
+        border: 2px solid white;
+        border-radius: 6px;
+    }
+    
+    .bulk-action-bar {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(150px);
+        background: white;
+        padding: 12px 24px;
+        border-radius: 50px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .bulk-action-bar.active {
+        transform: translateX(-50%) translateY(0);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="favorites-hero">
+    <div class="container animate__animated animate__fadeInUp">
+        <h1 class="display-3 fw-bold mb-3 text-shadow">المفضلة</h1>
+        <p class="fs-4 opacity-90">الأماكن التي نالت إعجابك وتود زيارتها</p>
+    </div>
+</div>
+
+<div class="container favorites-container">
+    <div class="category-chips animate__animated animate__fadeIn">
+        <a href="{% url 'favorite_list' %}" class="chip {% if not active_category %}active{% endif %}">
+            <i class="fas fa-th-large"></i> الكل
+        </a>
+        {% for cat in favorite_categories %}
+        <a href="?category={{ cat.id }}" class="chip {% if active_category == cat.id|stringformat:'s' %}active{% endif %}">
+            <i class="fas fa-tag"></i> {{ cat.name }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+        <div class="form-check custom-checkbox d-flex align-items-center">
+            <input class="form-check-input fav-checkbox me-2" type="checkbox" id="selectAllFavs">
+            <label class="form-check-label fw-bold text-slate-700" for="selectAllFavs">
+                تحديد الكل
+            </label>
+        </div>
+        <div class="badge bg-slate-100 text-slate-600 px-3 py-2 rounded-pill border">
+            {{ favorites.count }} أماكن مفضلة
+        </div>
+    </div>
+
+    <form id="bulkDeleteForm" method="POST" action="{% url 'bulk_delete_favorites' %}">
+        {% csrf_token %}
+        <div class="row g-4 justify-content-center">
+            {% for favorite in favorites %}
+            <div class="col-md-6 col-lg-4 animate__animated animate__fadeInUp"
+                style="animation-delay: {{ forloop.counter0|add:1 }}00ms;"
+                id="fav-card-{{ favorite.place.pk }}">
+                <div class="position-relative card-hover-shadow rounded-4 h-100 overflow-hidden border shadow-sm bg-white transition-all hover-translate-y">
+                    <div class="fav-checkbox-container">
+                        <input type="checkbox" name="place_ids" value="{{ favorite.place.pk }}" class="fav-checkbox">
+                    </div>
+                    {% include "components/molecules/place_card.html" with place=favorite.place class="h-100 border-0 shadow-none" %}
+                    <button type="button" class="btn btn-danger btn-icon rounded-circle position-absolute bottom-0 end-0 m-3 shadow-lg"
+                        style="z-index: 10; width: 40px; height: 40px; background: rgba(239, 68, 68, 0.9); backdrop-filter: blur(4px);"
+                        title="إزالة من المفضلة"
+                        hx-post="{% url 'favorite_toggle' favorite.place.pk %}"
+                        hx-target="#fav-card-{{ favorite.place.pk }}"
+                        hx-swap="outerHTML swap:400ms"
+                        data-name="{{ favorite.place.name }}">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="bg-white p-5 rounded-4 shadow-sm mx-auto" style="max-width: 600px;">
+                    <i class="far fa-heart fa-5x text-muted opacity-25 mb-4"></i>
+                    <h3 class="fw-bold mb-3">قائمة المفضلة فارغة</h3>
+                    <p class="text-muted mb-4 fs-5">لم تقم بإضافة أي أماكن للمفضلة بعد. استكشف دليل إب واحفظ الأماكن التي تعجبك!</p>
+                    <a href="{% url 'place_list' %}" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-sm">
+                        تصفح الأماكن
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </form>
+
+    {% if is_paginated %}
+    <div class="d-flex justify-content-center mt-5">
+        <nav aria-label="Page navigation">
+            <ul class="pagination pagination-lg">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link rounded-pill px-4 ms-2" href="?page={{ page_obj.previous_page_number }}">السابق</a>
+                </li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link rounded-pill px-4">{{ page_obj.number }}</span></li>
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link rounded-pill px-4 me-2" href="?page={{ page_obj.next_page_number }}">التالي</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Bulk Action Bar -->
+<div class="bulk-action-bar" id="bulkActionBar">
+    <div class="d-flex align-items-center">
+        <span class="badge bg-primary rounded-pill me-2 px-3 py-2" id="selectedCount">0</span>
+        <span class="text-slate-700 fw-bold">عناصر محددة</span>
+    </div>
+    <div class="vr mx-2 text-slate-300"></div>
+    <button type="button" class="btn btn-danger rounded-pill px-4 fw-bold" onclick="submitBulkDelete()">
+        <i class="fas fa-trash-alt me-2"></i> حذف
+    </button>
+    <button type="button" class="btn btn-link text-slate-500 text-decoration-none fw-bold" onclick="clearSelection()">
+        إلغاء
+    </button>
+</div>
+
+<!-- Undo Toast -->
+<div class="undo-toast" id="undoToast">
+    <div class="d-flex align-items-center gap-3">
+        <i class="fas fa-check-circle text-success fs-5"></i>
+        <span>تم الحذف</span>
+    </div>
+    <button type="button" class="btn btn-link undo-btn p-0" id="undoBtn">تراجع</button>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const selectAll = document.getElementById('selectAllFavs');
+    const checkboxes = document.querySelectorAll('.fav-checkbox');
+    const actionBar = document.getElementById('bulkActionBar');
+    const selectedCountSpan = document.getElementById('selectedCount');
+    const bulkForm = document.getElementById('bulkDeleteForm');
+
+    function updateActionBar() {
+        const checkedCount = document.querySelectorAll('.fav-checkbox:checked').length;
+        selectedCountSpan.textContent = checkedCount;
+        
+        if (checkedCount > 0) {
+            actionBar.classList.add('active');
+        } else {
+            actionBar.classList.remove('active');
+            selectAll.checked = false;
+        }
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', function() {
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+            });
+            updateActionBar();
+        });
+    }
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateActionBar);
+    });
+
+    function submitBulkDelete() {
+        if (confirm('هل أنت متأكد من حذف الأماكن المحددة من المفضلة؟')) {
+            bulkForm.submit();
+        }
+    }
+
+    function clearSelection() {
+        checkboxes.forEach(cb => cb.checked = false);
+        if (selectAll) selectAll.checked = false;
+        updateActionBar();
+    }
+
+    // Modern HTMX deletion with Toast & Undo logic
+    document.body.addEventListener('htmx:beforeSwap', function(evt) {
+        if (evt.detail.target.id && evt.detail.target.id.includes('fav-card')) {
+            const placeName = evt.detail.elt.getAttribute('data-name');
+            const placeId = evt.detail.target.id.split('-').pop();
+            showUndoToast(placeName, placeId);
+        }
+    });
+
+    let toastTimer;
+    function showUndoToast(name, id) {
+        const toast = document.getElementById('undoToast');
+        const undoBtn = document.getElementById('undoBtn');
+        
+        toast.querySelector('span').textContent = `تم إزالة "${name}"`;
+        toast.classList.add('active');
+        
+        undoBtn.onclick = function() {
+            // Logic to undo (re-add)
+            fetch(`/places/${id}/favorite-toggle/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'HX-Request': 'true'
+                }
+            }).then(() => {
+                window.location.reload(); // Simplest way to bring it back in correct position
+            });
+            toast.classList.remove('active');
+        };
+
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+            toast.classList.remove('active');
+        }, 6000);
+    }
+</script>
+{% endblock %}

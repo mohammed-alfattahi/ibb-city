@@ -1,0 +1,41 @@
+<div id="reviews-list" class="d-flex flex-column gap-3 mt-4">
+    {% for review in reviews %}
+        <div id="review-{{ review.pk }}" class="card border-0 shadow-sm rounded-4 p-4 transition-all hover-shadow-md mb-3 animate__animated animate__fadeIn">
+            <div class="d-flex gap-3">
+                <div class="flex-shrink-0">
+                    <img src="https://ui-avatars.com/api/?name={{ review.user.username }}&background=random" class="review-avatar" width="48" height="48" style="border-radius: 12px;">
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h6 class="fw-bold mb-0 text-dark">{{ review.user.username }}</h6>
+                            <small class="text-muted">{{ review.created_at|timesince }} ago</small>
+                        </div>
+                        <div class="d-flex gap-1 text-warning small">
+                            {% with ''|center:review.rating as range %}
+                            {% for _ in range %}<i class="fas fa-star"></i>{% endfor %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    <p class="text-secondary mb-3">{{ review.comment }}</p>
+                    
+                    {% if user == review.user or user.is_staff %}
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                                hx-post="{% url 'review_delete' place.pk review.pk %}"
+                                hx-target="#reviews-list"
+                                hx-confirm="هل أنت متأكد من حذف التقييم؟">
+                            <i class="fas fa-trash-alt me-1"></i> حذف
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% empty %}
+    <div class="text-center py-5 bg-light rounded-4">
+        <i class="far fa-comments fa-3x text-muted opacity-25 mb-3"></i>
+        <h5 class="text-muted fw-bold">لا توجد تقييمات بعد</h5>
+    </div>
+    {% endfor %}
+</div>

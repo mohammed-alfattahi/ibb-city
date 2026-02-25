@@ -1,0 +1,42 @@
+/* Inline Actions */
+.action-buttons {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-start;
+}
+
+.action-buttons .button {
+    border-radius: 4px;
+    font-size: 11px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+}
+
+.action-buttons .button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    opacity: 0.9;
+}
+
+/* Enhancing Tables for Data Entry */
+#result_list td.field-is_active input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+#result_list tr:hover td {
+    background-color: #f1f3f5;
+}
+
+/* User Admin Specifics */
+.field-role_badge span {
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}

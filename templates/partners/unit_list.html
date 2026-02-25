@@ -1,0 +1,89 @@
+{% extends "partners/base_partner.html" %}
+
+{% block title %}وحدات المنشأة - {{ establishment.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0 animate__animated animate__fadeIn">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1 text-dark">وحدات المنشأة</h2>
+            <p class="text-muted mb-0">إدارة الغرف، الطاولات، أو الأصناف التابعة لـ <span class="fw-bold text-primary">{{ establishment.name }}</span></p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'partner_establishment_list' %}"
+                class="btn btn-outline-secondary rounded-pill px-3 fw-bold d-flex align-items-center gap-2">
+                <i class="fas fa-arrow-right"></i> عودة
+            </a>
+            <a href="{% url 'partner_unit_create' establishment.pk %}"
+                class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold d-flex align-items-center gap-2">
+                <i class="fas fa-plus"></i>
+                <span class="d-none d-md-inline">إضافة وحدة</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Units Grid -->
+    <div class="row g-4">
+        {% for unit in units %}
+        <div class="col-md-6 col-xl-4">
+            <div class="elite-card p-0 d-flex flex-column h-100">
+                <!-- Image -->
+                <div class="position-relative bg-gray-100" style="height: 200px;">
+                    {% if unit.image %}
+                    <img src="{{ unit.image.url }}" alt="{{ unit.name }}"
+                        class="w-100 h-100 object-fit-cover transition-transform hover-scale">
+                    {% else %}
+                    <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted opacity-25">
+                        <i class="fas fa-box fa-3x"></i>
+                    </div>
+                    {% endif %}
+
+                    <div class="position-absolute top-0 start-0 m-3">
+                        <span class="badge bg-white text-dark shadow-sm border fw-normal">{{ unit.unit_type }}</span>
+                    </div>
+                </div>
+
+                <div class="p-4 flex-grow-1 d-flex flex-column">
+                    <h5 class="fw-bold mb-1 text-dark">{{ unit.name }}</h5>
+                    <p class="text-success fw-bold mb-3 fs-5">
+                        {% if unit.price %}{{ unit.price }} ر.ي{% else %}<span class="text-muted small fs-6">السعر عند
+                            الطلب</span>{% endif %}
+                    </p>
+
+                    <div class="d-flex gap-2 mt-auto pt-3 border-top">
+                        <a href="{% url 'partner_unit_update' unit.pk %}"
+                            class="btn btn-light flex-grow-1 rounded-pill fw-bold border hover-bg-gray-50 text-dark">
+                            <i class="fas fa-pen me-2 text-muted"></i> تعديل
+                        </a>
+                        <button hx-post="{% url 'partner_unit_delete' unit.pk %}"
+                                hx-confirm="هل أنت متأكد من حذف هذه الوحدة؟"
+                                hx-target="closest .col-md-6"
+                                hx-swap="outerHTML"
+                                class="btn btn-danger bg-opacity-10 text-danger border-0 rounded-circle d-flex align-items-center justify-content-center hover-bg-danger hover-text-white transition-all shadow-sm"
+                                style="width: 38px; height: 38px;" title="حذف">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 py-5 text-center">
+            <div class="mb-4">
+                <div class="bg-gray-100 rounded-circle d-inline-flex align-items-center justify-content-center"
+                    style="width: 100px; height: 100px;">
+                    <i class="fas fa-cubes fa-3x text-muted opacity-25"></i>
+                </div>
+            </div>
+            <h4 class="text-dark fw-bold">لا توجد وحدات مضافة</h4>
+            <p class="text-muted mb-4">أضف غرف، طاولات، أو منتجات لعرضها للزوار في هذه المنشأة.</p>
+            <a href="{% url 'partner_unit_create' establishment.pk %}"
+                class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow-sm">
+                إضافة وحدة جديدة
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

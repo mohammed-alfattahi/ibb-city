@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}تم التحقق بنجاح{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle" style="font-size: 4rem; color: #27ae60;"></i>
+                    </div>
+
+                    <h2 class="mb-3 text-success">تم التحقق بنجاح!</h2>
+
+                    <p class="mb-4">
+                        تم تأكيد بريدك الإلكتروني بنجاح.
+                        <br>
+                        يمكنك الآن تسجيل الدخول والاستمتاع بجميع مميزات دليل إب السياحي.
+                    </p>
+
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        تسجيل الدخول
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

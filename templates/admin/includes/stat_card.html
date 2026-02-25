@@ -1,0 +1,16 @@
+<div class="stat-card {{ color }}">
+    <div class="stat-icon">
+        <i class="fas {{ icon }}"></i>
+    </div>
+    <div class="stat-content">
+        <div class="stat-value">{{ value }}</div>
+        <div class="stat-title">{{ title }}</div>
+        {% if subtitle %}
+        <div class="stat-subtitle">{{ subtitle }}</div>
+        {% endif %}
+        {% if trend is not None %}
+        <div class="stat-trend {% if trend > 0 %}positive{% elif trend < 0 %}negative{% endif %}">
+            {% if trend > 0 %}↑{% elif trend < 0 %}↓{% else %}→{% endif %} {{ trend|floatformat:1 }}% </div>
+                {% endif %}
+        </div>
+    </div>

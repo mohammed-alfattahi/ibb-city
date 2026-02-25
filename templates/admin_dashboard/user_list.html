@@ -1,0 +1,347 @@
+{% extends "management/admin_base.html" %}
+{% load static %}
+
+{% block title %}إدارة المستخدمين - لوحة الإدارة{% endblock %}
+{% block title_breadcrumb %}المستخدمين{% endblock %}
+
+{% block extra_css %}
+<style>
+    .user-stat {
+        text-align: center;
+        padding: 1rem;
+        border-radius: 12px;
+        transition: all 0.2s;
+    }
+
+    .user-stat:hover {
+        transform: translateY(-2px);
+    }
+
+    .user-stat h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .user-stat small {
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+
+    .user-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .activity-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+    }
+
+    .role-pill {
+        font-size: 0.7rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .filter-btn {
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .new-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 10px;
+        height: 10px;
+        background: #28a745;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="?type=all" class="text-decoration-none">
+                <div
+                    class="user-stat bg-primary bg-opacity-10 text-primary {% if current_type == 'all' %}border border-2 border-primary{% endif %}">
+                    <h2>{{ stats.total }}</h2>
+                    <small>إجمالي</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="?type=partners" class="text-decoration-none">
+                <div
+                    class="user-stat bg-success bg-opacity-10 text-success {% if current_type == 'partners' %}border border-2 border-success{% endif %}">
+                    <h2>{{ stats.partners }}</h2>
+                    <small>شركاء</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="?type=tourists" class="text-decoration-none">
+                <div
+                    class="user-stat bg-info bg-opacity-10 text-info {% if current_type == 'tourists' %}border border-2 border-info{% endif %}">
+                    <h2>{{ stats.tourists }}</h2>
+                    <small>سياح</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="?type=staff" class="text-decoration-none">
+                <div
+                    class="user-stat bg-warning bg-opacity-10 text-warning {% if current_type == 'staff' %}border border-2 border-warning{% endif %}">
+                    <h2>{{ stats.staff }}</h2>
+                    <small>موظفين</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="?type=inactive" class="text-decoration-none">
+                <div
+                    class="user-stat bg-danger bg-opacity-10 text-danger {% if current_type == 'inactive' %}border border-2 border-danger{% endif %}">
+                    <h2>{{ stats.inactive }}</h2>
+                    <small>معطلين</small>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="user-stat bg-dark bg-opacity-5 text-dark">
+                <h2>{{ stats.new_this_week }}</h2>
+                <small>جدد هذا الأسبوع</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body py-3">
+            <form method="get" class="row g-3 align-items-center">
+                <input type="hidden" name="type" value="{{ current_type }}">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" name="q" value="{{ search_query }}" class="form-control border-0 bg-light"
+                            placeholder="بحث بالاسم، البريد، أو رقم الهاتف...">
+                        <button type="submit" class="btn btn-primary">بحث</button>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{% url 'admin_users_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-redo me-1"></i>إعادة تعيين
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
+            <h6 class="mb-0 fw-bold">
+                <i class="fas fa-users me-2 text-primary"></i>قائمة المستخدمين
+            </h6>
+            <span class="badge bg-primary rounded-pill">{{ users|length }} مستخدم</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 50px;">#</th>
+                        <th>المستخدم</th>
+                        <th>البريد / الهاتف</th>
+                        <th>النوع</th>
+                        <th>النشاط</th>
+                        <th>تاريخ التسجيل</th>
+                        <th>الحالة</th>
+                        <th style="width: 130px;">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <!-- ID -->
+                        <td><span class="text-muted">{{ user.id }}</span></td>
+
+                        <!-- User Info -->
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="position-relative me-3">
+                                    {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture.url }}" class="user-avatar" alt="">
+                                    {% else %}
+                                    <div class="user-avatar bg-primary bg-opacity-10 text-primary">
+                                        {{ user.username|slice:":1"|upper }}
+                                    </div>
+                                    {% endif %}
+                                    {% if user.date_joined|timesince < "7 days" %} <span class="new-badge"></span>
+                                        {% endif %}
+                                </div>
+                                <div>
+                                    <div class="fw-bold">{{ user.username }}</div>
+                                    {% if user.first_name or user.last_name %}
+                                    <small class="text-muted">{{ user.first_name }} {{ user.last_name }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Contact -->
+                        <td>
+                            <div class="small">{{ user.email|default:"—" }}</div>
+                            {% if user.phone_number %}
+                            <small class="text-muted" dir="ltr">{{ user.phone_number }}</small>
+                            {% endif %}
+                        </td>
+
+                        <!-- Type -->
+                        <td>
+                            {% if user.is_superuser %}
+                            <span class="role-pill bg-danger text-white">
+                                <i class="fas fa-crown me-1"></i>مسؤول
+                            </span>
+                            {% elif user.is_staff %}
+                            <span class="role-pill bg-warning text-dark">
+                                <i class="fas fa-user-shield me-1"></i>موظف
+                            </span>
+                            {% elif user.partner_profile %}
+                            <span class="role-pill bg-success text-white">
+                                <i class="fas fa-handshake me-1"></i>شريك
+                            </span>
+                            {% else %}
+                            <span class="role-pill bg-info text-white">
+                                <i class="fas fa-user me-1"></i>سائح
+                            </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Activity -->
+                        <td>
+                            <div class="d-flex flex-column gap-1">
+                                <span class="activity-badge bg-warning bg-opacity-10 text-warning">
+                                    <i class="fas fa-star"></i>{{ user.reviews_count }} تقييم
+                                </span>
+                                <span class="activity-badge bg-danger bg-opacity-10 text-danger">
+                                    <i class="fas fa-heart"></i>{{ user.favorites_count }} مفضلة
+                                </span>
+                            </div>
+                        </td>
+
+                        <!-- Date -->
+                        <td>
+                            <div>{{ user.date_joined|date:"Y/m/d" }}</div>
+                            <small class="text-muted">{{ user.date_joined|timesince }} مضت</small>
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            {% if user.is_active %}
+                            <span class="badge bg-success-subtle text-success rounded-pill px-3">
+                                <i class="fas fa-check-circle me-1"></i>نشط
+                            </span>
+                            {% else %}
+                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3">
+                                <i class="fas fa-ban me-1"></i>معطل
+                            </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Actions -->
+                        <td>
+                            <div class="d-flex gap-1">
+                                {% if not user.is_superuser %}
+                                <form action="{% url 'admin_user_toggle' user.pk %}" method="post" class="d-inline"
+                                    onsubmit="return confirm('هل أنت متأكد من {{ user.is_active|yesno:'تعطيل,تفعيل' }} هذا الحساب؟');">
+                                    {% csrf_token %}
+                                    {% if user.is_active %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="تعطيل">
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                    {% else %}
+                                    <button type="submit" class="btn btn-sm btn-outline-success" title="تفعيل">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    {% endif %}
+                                </form>
+                                {% endif %}
+
+                                <a href="{% url 'admin:users_user_change' user.pk %}"
+                                    class="btn btn-sm btn-outline-secondary" title="تعديل" target="_blank">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                {% if user.partner_profile %}
+                                <a href="#" class="btn btn-sm btn-outline-primary" title="عرض ملف الشريك">
+                                    <i class="fas fa-briefcase"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="fas fa-users-slash fa-3x mb-3 opacity-25"></i>
+                            <p class="mb-0">لا يوجد مستخدمون مطابقون للبحث</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="card-footer bg-white border-top-0">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?page={{ page_obj.previous_page_number }}&type={{ current_type }}&q={{ search_query }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?page={{ page_obj.next_page_number }}&type={{ current_type }}&q={{ search_query }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

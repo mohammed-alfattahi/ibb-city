@@ -1,0 +1,50 @@
+{% load i18n %}
+<div class="row g-4 justify-content-center">
+    <div class="col-md-10">
+        <div class="text-center mb-4">
+            <i class="far fa-clock fa-3x text-primary mb-3"></i>
+            <h3>ساعات العمل</h3>
+            <p class="text-muted">حدد أوقات العمل الخاصة بمنشأتك لتسهيل زيارة الضيوف لك في الوقت المناسب.</p>
+        </div>
+
+        <!-- Open Now Toggle -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <div class="form-check form-switch d-flex align-items-center justify-content-between p-0">
+                    <div>
+                        <label class="form-check-label h5 mb-1" for="isOpenNow">
+                            مفتوح للزوار الآن؟
+                        </label>
+                        <div class="text-muted small">قم بتفعيل هذا الخيار إذا كانت المنشأة تستقبل الزوار في هذه اللحظة.
+                        </div>
+                    </div>
+                    <input class="form-check-input ms-0" type="checkbox" role="switch" id="isOpenNow"
+                        style="width: 3em; height: 1.5em;" name="{{ form.is_open_now.name }}" {{ form.is_open_now.value|yesno:"checked,," }}>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opening Hours Text -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <label class="form-label fw-bold mb-2">وصف ساعات العمل</label>
+                <textarea name="{{ form.opening_hours_text.name }}" class="form-control form-control-lg"
+                    placeholder="مثال: يوماً من 8 صباحاً حتى 10 مساءً، ما عدا الجمعة."
+                    rows="3">{{ form.opening_hours_text.value|default:'' }}</textarea>
+                <div class="form-text mt-2">
+                    <i class="fas fa-info-circle me-1"></i>
+                    اكتب وصفاً مختصراً لأوقات الدوام. يمكنك إضافة تفاصيل أكثر لاحقاً من لوحة التحكم.
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Editor Teaser -->
+        <div class="alert alert-light border-info d-flex align-items-center" role="alert">
+            <i class="fas fa-calendar-alt fa-2x text-info me-3"></i>
+            <div>
+                <strong>الجدول الأسبوعي المفصل</strong>
+                <p class="mb-0 text-muted small">قريباً ستتمكن من تحديد ساعات العمل لكل يوم بشكل منفصل.</p>
+            </div>
+        </div>
+    </div>
+</div>

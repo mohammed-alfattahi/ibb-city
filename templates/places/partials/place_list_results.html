@@ -1,0 +1,156 @@
+{% load static %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Places Grid -->
+    <div id="place-results" class="row g-4 mb-5 animate__animated animate__fadeIn">
+        {% for place in places %}
+        
+        {% if forloop.counter == 4 %}
+        <!-- In-feed Ad (Lazy Loaded) -->
+        <div class="col-md-6 col-lg-4"
+             hx-get="{% url 'ad_slot' 'sidebar' %}"
+             hx-trigger="load"
+             hx-swap="innerHTML"></div>
+        {% endif %}
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm place-card">
+                <!-- Image -->
+                <a href="{% url 'place_detail' place.pk %}" class="card-img-wrapper d-block text-decoration-none">
+                    {% if place.cover_image %}
+                        <img src="{{ place.cover_image.url }}" alt="{{ place.name }}"
+                             onerror="this.onerror=null;this.src='{% static 'images/placeholder.jpg' %}';">
+                    {% else %}
+                        {% with place.category.name as cat %}
+                        {% if 'فندق' in cat or 'إقامة' in cat %}
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400" alt="{{ place.name }}">
+                        {% elif 'مطعم' in cat or 'مقهى' in cat %}
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400" alt="{{ place.name }}">
+                        {% elif 'حديقة' in cat or 'منتزه' in cat %}
+                        <img src="https://images.unsplash.com/photo-1496347312912-9e5896e3e5af?w=400" alt="{{ place.name }}">
+                        {% elif 'تاريخ' in cat or 'معلم' in cat %}
+                        <img src="https://images.unsplash.com/photo-1565620731358-e8cb2252a126?w=400" alt="{{ place.name }}">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400" alt="{{ place.name }}">
+                        {% endif %}
+                        {% endwith %}
+                    {% endif %}
+
+                    <!-- Category Badge -->
+                    <span
+                        class="position-absolute top-0 start-0 m-3 badge bg-white text-dark shadow-sm rounded-pill px-3 py-2">
+                        {{ place.category.name|default:"عام" }}
+                    </span>
+
+                    <!-- Rating Badge -->
+                    {% if place.avg_rating > 0 %}
+                    <div
+                        class="position-absolute bottom-0 end-0 m-3 badge bg-white text-dark shadow-sm rounded-pill d-flex align-items-center gap-1 px-3 py-2">
+                        <i class="fas fa-star text-warning"></i>
+                        <span class="fw-bold">{{ place.avg_rating }}</span>
+                    </div>
+                    {% endif %}
+                </a>
+
+                <!-- Content -->
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <a href="{% url 'place_detail' place.pk %}" class="text-decoration-none">
+                            <h5 class="card-title fw-bold mb-0 text-dark">{{ place.name }}</h5>
+                        </a>
+                        {% if place.establishment and place.establishment.is_badged %}
+                        <span class="badge bg-success rounded-pill px-2 py-1 small" data-bs-toggle="tooltip" title="منشأة تم التحقق منها">
+                            <i class="fas fa-check-circle me-1"></i>موثقة
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="text-muted small mb-3">
+                        <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                        {{ place.get_directorate_display|default:"إب" }}
+                    </div>
+
+                    <!-- Price -->
+                    <div class="mb-3">
+                        {% if place.price_range == 'high' %}
+                        <span class="fw-bold text-dark fs-5">5000+ ر.ي</span>
+                        {% elif place.price_range == 'medium' %}
+                        <span class="fw-bold text-dark fs-5">2500 ر.ي</span>
+                        {% else %}
+                        <span class="fw-bold text-dark fs-5">1500 ر.ي</span>
+                        {% endif %}
+                        <small class="text-muted">/ ليلة</small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                         <a href="{% url 'place_detail' place.pk %}"
+                            class="btn btn-primary flex-grow-1 rounded-pill py-2 fw-bold shadow-sm">
+                            عرض التفاصيل
+                        </a>
+                        <!-- HTMX Favorite Button -->
+                        <div id="fav-btn-wrap-{{ place.id }}">
+                            {% include "partials/favorite_button.html" with is_fav=place.is_favorited %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 py-5 text-center">
+            <div class="bg-light rounded-4 p-5">
+                <i class="far fa-folder-open fa-3x text-muted opacity-50 mb-3"></i>
+                <h4>لا توجد نتائج</h4>
+                <p class="text-muted">جرب تعديل خيارات الفلترة للعثور على ما تبحث عنه.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Modern Pagination -->
+    {% if is_paginated %}
+    <nav class="d-flex justify-content-center mb-5">
+        <ul class="pagination modern-pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <button class="page-link"
+                    hx-get="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                    hx-target="#places-results"
+                    hx-push-url="true"
+                    hx-indicator="#global-loading, #places-results">
+                    <i class="fas fa-chevron-right me-1"></i> السابق
+                </button>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} 
+            <li class="page-item">
+                <button class="page-link"
+                    hx-get="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                    hx-target="#places-results"
+                    hx-push-url="true"
+                    hx-indicator="#global-loading, #places-results">{{ num }}</button>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <button class="page-link"
+                    hx-get="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                    hx-target="#places-results"
+                    hx-push-url="true"
+                    hx-indicator="#global-loading, #places-results">
+                    التالي <i class="fas fa-chevron-left ms-1"></i>
+                </button>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}

@@ -1,0 +1,23 @@
+# Render.com deployment configuration
+services:
+  - type: web
+    name: ibb-guide
+    env: python
+    region: frankfurt  # or oregon, singapore, etc.
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn ibb_guide.wsgi:application"
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.13.0"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+
+databases:
+  - name: ibb-db
+    databaseName: ibb_guide
+    user: ibb_user
+    plan: free  # or starter, etc.

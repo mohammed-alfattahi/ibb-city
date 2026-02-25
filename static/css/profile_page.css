@@ -1,0 +1,117 @@
+/* Profile page minimal styling (scoped). */
+
+.profile-hero {
+  height: 300px;
+  position: relative;
+  overflow: hidden;
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+  background-color: #2c3e50;
+}
+
+.profile-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+.profile-avatar-container {
+  margin-top: -75px;
+  position: relative;
+  display: inline-block;
+}
+
+.profile-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+  background-color: #fff;
+}
+
+.edit-avatar-btn {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.edit-avatar-btn:hover {
+  transform: scale(1.1);
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: transform 0.3s;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  height: 100%;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.nav-pills-custom .nav-link {
+  color: #6c757d;
+  background: transparent;
+  border: none;
+  font-weight: 700;
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
+  transition: all 0.3s;
+}
+
+.nav-pills-custom .nav-link.active {
+  color: #fff;
+  background-color: var(--bs-primary);
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+}
+
+.review-item {
+  transition: background-color 0.2s;
+}
+
+.review-item:hover {
+  background-color: #f8f9fa;
+}
+
+.place-card-mini {
+  transition: transform 0.3s;
+}
+
+.place-card-mini:hover {
+  transform: translateY(-5px);
+}
+
+.profile-form-note {
+  background: rgba(13, 110, 253, 0.07);
+  border: 1px solid rgba(13, 110, 253, 0.18);
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: #0f172a;
+  font-size: 0.95rem;
+}
+
+.profile-form-note strong {
+  font-weight: 800;
+}
+
+.profile-field-disabled {
+  opacity: 0.75;
+}

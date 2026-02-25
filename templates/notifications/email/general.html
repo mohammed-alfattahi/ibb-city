@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .logo {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            color: #059669;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            background: #f8fafc;
+            border-right: 4px solid #059669;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .action-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white !important;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .footer {
+            background: #f8fafc;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .footer a {
+            color: #059669;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏔️</div>
+            <h1>{{ site_name|default:"دليل إب السياحي" }}</h1>
+        </div>
+
+        <div class="content">
+            {% if user_name %}
+            <p class="greeting">مرحباً {{ user_name }}،</p>
+            {% endif %}
+
+            <h2>{{ title }}</h2>
+
+            <div class="message">
+                {{ body|linebreaks }}
+            </div>
+
+            {% if action_url %}
+            <p style="text-align: center;">
+                <a href="{{ action_url }}" class="action-btn">عرض التفاصيل</a>
+            </p>
+            {% endif %}
+        </div>
+
+        <div class="footer">
+            <p>تم إرسال هذا البريد من {{ site_name|default:"دليل إب السياحي" }}</p>
+            <p>
+                <a href="{{ site_url|default:'https://ibbguide.com' }}">زيارة الموقع</a> |
+                <a href="{{ site_url|default:'https://ibbguide.com' }}/settings/notifications/">إدارة الإشعارات</a>
+            </p>
+            <p>© 2026 {{ site_name|default:"دليل إب السياحي" }}. جميع الحقوق محفوظة.</p>
+        </div>
+    </div>
+</body>
+
+</html>

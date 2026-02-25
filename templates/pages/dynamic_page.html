@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page.title }} - دليل إب{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-4">
+    <nav aria-label="breadcrumb" class="mb-4 animate__animated animate__fadeInRight">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">الرئيسية</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ page.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden animate__animated animate__fadeInUp">
+        {% if page.cover_image %}
+        <div class="position-relative" style="height: 300px;">
+            <img src="{{ page.cover_image.url }}" class="w-100 h-100 object-fit-cover" alt="{{ page.title }}">
+            <div class="position-absolute bottom-0 start-0 w-100 p-4 bg-gradient-dark text-white"
+                style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                <h1 class="display-5 fw-bold mb-0">{{ page.title }}</h1>
+            </div>
+        </div>
+        {% else %}
+        <div class="card-header bg-white border-0 p-5">
+            <h1 class="display-4 fw-bold text-primary mb-0">{{ page.title }}</h1>
+        </div>
+        {% endif %}
+
+        <div class="card-body p-4 p-md-5">
+            <div class="content-wrapper">
+                {{ page.content|safe }}
+            </div>
+
+            <hr class="my-5">
+            <p class="text-muted small mb-0">آخر تحديث: {{ page.updated_at|date:"d F Y" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+<button 
+    class="btn btn-icon favorite-btn-htmx {% if is_fav %}is-active{% endif %}"
+    hx-post="{% url 'favorite_toggle' place.id %}"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    hx-target="#fav-btn-wrap-{{ place.id }}"
+    hx-swap="innerHTML"
+    title="{% if is_fav %}إزالة من المفضلة{% else %}إضافة للمفضلة{% endif %}"
+    style="transition: all 0.3s ease;"
+>
+    <i class="{% if is_fav %}fas{% else %}far{% endif %} fa-heart"></i>
+</button>

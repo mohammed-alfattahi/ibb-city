@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}ترقية الحساب لشريك{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow border-0">
+                <div class="card-body p-5">
+                    <h2 class="text-center fw-bold mb-4 text-primary">كن شريكاً معنا!</h2>
+                    <p class="text-center text-muted mb-4">
+                        حول حسابك الحالي إلى حساب شريك تجاري وابدأ بإدارة منشآتك السياحية واستقبال الزوار.
+                    </p>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

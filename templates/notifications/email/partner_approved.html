@@ -1,0 +1,15 @@
+{% extends "notifications/email/general.html" %}
+{% block title %}تم اعتماد حسابك كشريك{% endblock %}
+
+{% block content %}
+<div class="message" style="background: #ecfdf5; border-right-color: #10b981;">
+    <h3 style="color: #059669; margin-top: 0;">🎉 مبارك! تم قبول طلب الشراكة</h3>
+    <p>{{ body }}</p>
+    <p>يمكنك الآن:</p>
+    <ul>
+        <li>إضافة منشآتك السياحية</li>
+        <li>إدارة الإعلانات والعروض</li>
+        <li>متابعة التقييمات والتعليقات</li>
+    </ul>
+</div>
+{% endblock %}

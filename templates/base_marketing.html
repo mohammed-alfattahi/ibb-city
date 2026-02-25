@@ -1,0 +1,20 @@
+{% extends "base_core.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block body_content %}
+<!-- Marketing Layout (No Sidebars) -->
+<main class="container py-4">
+    {% if messages %}
+    <div class="mb-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0" role="alert">
+            <i class="fas fa-info-circle me-2"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+</main>
+{% endblock %}

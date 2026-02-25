@@ -1,0 +1,214 @@
+{% extends "management/admin_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "طلبات الاعتماد الموحدة" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4 px-lg-5" dir="rtl">
+    <!-- Breadcrumb & Header Sections -->
+    <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">
+                <i class="fas fa-user-shield text-primary me-2"></i>{% trans "مركز الموافقات الموحد" %}
+            </h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mb-0 small">
+                    <li class="breadcrumb-item"><a href="{% url 'custom_admin_dashboard' %}" class="text-decoration-none text-muted">{% trans "الرئيسية" %}</a></li>
+                    <li class="breadcrumb-item active text-primary fw-bold">{% trans "الموافقات المعلقة" %}</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="stats-badge shadow-sm rounded-pill bg-white border px-4 py-2 d-flex align-items-center">
+            <div class="icon-circle bg-primary bg-opacity-10 text-primary me-3" style="width: 35px; height: 35px; font-size: 1rem;">
+                <i class="fas fa-layer-group"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold mb-0 lh-1">{{ counts.partners|add:counts.establishments|add:counts.changes }}</h5>
+                <div class="text-muted" style="font-size: 0.7rem;">{% trans "إجمالي المعلق" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Section (Modern Pill Style) -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+        <div class="card-body p-2 bg-light bg-opacity-50">
+            <ul class="nav nav-pills nav-fill gap-2" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link rounded-pill py-2 px-4 transition-base {% if current_tab == 'partners' %}active bg-danger shadow-sm{% else %}text-muted{% endif %}" 
+                       href="?tab=partners">
+                        <i class="fas fa-user-tie me-2"></i>{% trans "الشركاء" %}
+                        <span class="badge {% if current_tab == 'partners' %}bg-white text-danger{% else %}bg-danger bg-opacity-10 text-danger{% endif %} ms-2">
+                            {{ counts.partners }}
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded-pill py-2 px-4 transition-base {% if current_tab == 'establishments' %}active bg-warning text-dark shadow-sm{% else %}text-muted{% endif %}" 
+                       href="?tab=establishments">
+                        <i class="fas fa-hotel me-2"></i>{% trans "المنشآت" %}
+                        <span class="badge {% if current_tab == 'establishments' %}bg-dark text-white{% else %}bg-warning bg-opacity-10 text-warning{% endif %} ms-2">
+                            {{ counts.establishments }}
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded-pill py-2 px-4 transition-base {% if current_tab == 'changes' %}active bg-info text-white shadow-sm{% else %}text-muted{% endif %}" 
+                       href="?tab=changes">
+                        <i class="fas fa-edit me-2"></i>{% trans "تغييرات الحقول" %}
+                        <span class="badge {% if current_tab == 'changes' %}bg-white text-info{% else %}bg-info bg-opacity-10 text-info{% endif %} ms-2">
+                            {{ counts.changes }}
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Content Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden min-vh-50">
+        <div class="card-header bg-white py-3 border-bottom-0 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-dark">
+                <i class="fas fa-list-ul me-2 text-primary"></i>
+                {% if current_tab == 'partners' %}{% trans "طلبات الشراكة الجدد" %}
+                {% elif current_tab == 'establishments' %}{% trans "طلبات اعتماد المنشآت" %}
+                {% else %}{% trans "طلبات تعديل البيانات" %}{% endif %}
+            </h5>
+            {% if pending_items %}
+                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3">{{ pending_items|length }} {% trans "طلب" %}</span>
+            {% endif %}
+        </div>
+        
+        <div class="card-body p-0">
+            {% if not pending_items %}
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle fa-5x text-success opacity-10"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">{% trans "لا توجد طلبات معلقة" %}</h5>
+                    <p class="text-muted">{% trans "رائع! لقد قمت بمعالجة جميع الطلبات في هذا القسم." %}</p>
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light bg-opacity-50">
+                            <tr>
+                                {% if current_tab == 'partners' %}
+                                    <th class="py-3 ps-4 border-0 text-muted small uppercase fw-bold">{% trans "الشريك" %}</th>
+                                    <th class="py-3 border-0 text-muted small uppercase fw-bold">{% trans "البريد الإلكتروني" %}</th>
+                                    <th class="py-3 border-0 text-muted small uppercase fw-bold">{% trans "تاريخ التقديم" %}</th>
+                                    <th class="py-3 border-0 text-muted small uppercase fw-bold">{% trans "المستندات" %}</th>
+                                {% elif current_tab == 'establishments' %}
+                                    <th class="py-3 ps-4 border-0 text-muted small uppercase fw-bold">{% trans "اسم المنشأة" %}</th>
+                                    <th class="py-3 border-0 text-muted small uppercase fw-bold">{% trans "المالك" %}</th>
+                                    <th class="py-3 border-0 text-muted small uppercase fw-bold">{% trans "التصنيف" %}</th>
+                                    <th class="py-3 border-0 text-muted small uppercase fw-bold">{% trans "تاريخ الطلب" %}</th>
+                                {% elif current_tab == 'changes' %}
+                                    <th class="py-3 ps-4 border-0 text-muted small uppercase fw-bold">{% trans "المنشأة" %}</th>
+                                    <th class="py-3 border-0 text-muted small uppercase fw-bold">{% trans "الحقل" %}</th>
+                                    <th class="py-3 border-0 text-muted small uppercase fw-bold">{% trans "القيم (جديد/قديم)" %}</th>
+                                    <th class="py-3 border-0 text-muted small uppercase fw-bold">{% trans "بواسطة" %}</th>
+                                {% endif %}
+                                <th class="py-3 pe-4 border-0 text-end">{% trans "الإجراءات" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in pending_items %}
+                            <tr class="transition-base">
+                                {% if current_tab == 'partners' %}
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-danger bg-opacity-10 text-danger rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                                <i class="fas fa-user-tie small"></i>
+                                            </div>
+                                            <span class="fw-bold text-dark">{{ item.user.get_full_name|default:item.user.username }}</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="text-muted small">{{ item.user.email }}</span></td>
+                                    <td><span class="text-muted small">{{ item.created_at|date:"Y-m-d H:i" }}</span></td>
+                                    <td>
+                                        {% if item.id_card_image %}<span class="badge bg-success bg-opacity-10 text-success rounded-pill me-1 small">{% trans "ID" %}</span>{% endif %}
+                                        {% if item.commercial_registry_file %}<span class="badge bg-primary bg-opacity-10 text-primary rounded-pill small">{% trans "Registry" %}</span>{% endif %}
+                                    </td>
+                                {% elif current_tab == 'establishments' %}
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-warning bg-opacity-10 text-warning rounded-3 me-3 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                                <i class="fas fa-store small"></i>
+                                            </div>
+                                            <span class="fw-bold text-dark">{{ item.name }}</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="text-muted small">{{ item.owner.get_full_name|default:item.owner.username }}</span></td>
+                                    <td><span class="badge bg-light text-dark rounded-pill px-2 small">{{ item.category.name|default:"-" }}</span></td>
+                                    <td><span class="text-muted small">{{ item.created_at|date:"Y-m-d" }}</span></td>
+                                {% elif current_tab == 'changes' %}
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-dark">{{ item.establishment.name }}</div>
+                                    </td>
+                                    <td><code class="text-primary bg-light px-2 py-1 rounded small">{{ item.field_name }}</code></td>
+                                    <td>
+                                        <div class="d-flex flex-column" style="max-width: 250px;">
+                                            <del class="text-muted small opacity-50">{{ item.old_value|truncatechars:40 }}</del>
+                                            <span class="text-success small fw-bold mt-1">{{ item.new_value|truncatechars:40 }}</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="small text-muted">{{ item.requested_by.username }}</span></td>
+                                {% endif %}
+                                
+                                <td class="pe-4 text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <!-- Approve Button -->
+                                        <form method="post" 
+                                              action="{% if current_tab == 'partners' %}{% url 'management:approve_partner' item.pk %}{% elif current_tab == 'establishments' %}{% url 'management:approve_establishment' item.pk %}{% else %}{% url 'management:approve_change' item.pk %}{% endif %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold hover-lift shadow-sm">
+                                                <i class="fas fa-check me-1"></i> {% trans "قبول" %}
+                                            </button>
+                                        </form>
+
+                                        <!-- Reject Button -->
+                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-bold hover-lift shadow-sm" 
+                                                data-bs-toggle="modal" data-bs-target="#rejectModal{{ item.pk }}">
+                                            <i class="fas fa-times me-1"></i> {% trans "رفض" %}
+                                        </button>
+                                    </div>
+
+                                    <!-- Reject Modal -->
+                                    <div class="modal fade" id="rejectModal{{ item.pk }}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                                                <form method="post" 
+                                                      action="{% if current_tab == 'partners' %}{% url 'management:reject_partner' item.pk %}{% elif current_tab == 'establishments' %}{% url 'management:reject_establishment' item.pk %}{% else %}{% url 'management:reject_change' item.pk %}{% endif %}">
+                                                    {% csrf_token %}
+                                                    <div class="modal-header bg-danger text-white border-0 py-3">
+                                                        <h5 class="modal-title fw-bold">{% trans "سبب الرفض" %}</h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body p-4 text-start">
+                                                        <div class="alert alert-light border small text-muted mb-3">
+                                                            {% trans "سيتم إرسال هذا السبب إلى مقدم الطلب لمساعدته في تصحيح البيانات." %}
+                                                        </div>
+                                                        <label class="form-label fw-bold small text-muted text-uppercase mb-2">{% trans "السبب" %}</label>
+                                                        <textarea name="reason" class="form-control border-0 bg-light p-3 rounded-3" rows="4" 
+                                                                  placeholder="{% trans 'اذكر سبب الرفض بالتفصيل هنا...' %}" required></textarea>
+                                                    </div>
+                                                    <div class="modal-footer border-0 bg-light py-3">
+                                                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "إلغاء" %}</button>
+                                                        <button type="submit" class="btn btn-danger rounded-pill px-5 fw-bold shadow-sm">{% trans "تأكيد الرفض" %}</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

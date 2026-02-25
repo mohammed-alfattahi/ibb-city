@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}إنشاء خطة جديدة{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">🗺️ إنشاء خطة سياحية جديدة</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="id_title" class="form-label">عنوان الخطة</label>
+                            <input type="text" name="title" id="id_title" class="form-control"
+                                placeholder="مثال: رحلة نهاية الأسبوع" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_start_date" class="form-label">تاريخ البداية</label>
+                            <input type="date" name="start_date" id="id_start_date" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_duration_days" class="form-label">عدد الأيام</label>
+                            <input type="number" name="duration_days" id="id_duration_days" class="form-control"
+                                value="1" min="1" max="30" required>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i> إنشاء الخطة
+                            </button>
+                            <a href="{% url 'itinerary_list' %}" class="btn btn-outline-secondary">
+                                إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

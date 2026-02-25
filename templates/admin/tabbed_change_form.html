@@ -1,0 +1,9 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'admin/css/tabs.css' %}">
+<link rel="stylesheet" href="{% static 'admin/css/button_icons.css' %}">
+<script src="{% static 'admin/js/tabs.js' %}"></script>
+{% endblock %}

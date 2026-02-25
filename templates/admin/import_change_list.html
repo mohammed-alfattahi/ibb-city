@@ -1,0 +1,257 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    @import url("{% static 'admin/css/list_actions.css' %}");
+    @import url("{% static 'admin/css/advanced_layout.css' %}");
+    @import url("{% static 'admin/css/premium_inputs.css' %}");
+
+    /* Enhanced Search Panel */
+    .advanced-search-panel {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .advanced-search-panel h3 {
+        margin: 0 0 16px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #343a40;
+    }
+
+    .search-row {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+    }
+
+    .search-field {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .search-field label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 6px;
+    }
+
+    .search-field input,
+    .search-field select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+    }
+
+    .search-field input:focus,
+    .search-field select:focus {
+        border-color: #28a745;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+    }
+
+    .search-btn {
+        padding: 10px 24px;
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    }
+
+    .reset-btn {
+        padding: 10px 20px;
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    /* Quick Filter Buttons */
+    .quick-filters {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .quick-filter-btn {
+        padding: 8px 16px;
+        background: #fff;
+        border: 2px solid #dee2e6;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        color: #495057;
+    }
+
+    .quick-filter-btn:hover {
+        border-color: #28a745;
+        color: #28a745;
+    }
+
+    .quick-filter-btn.active {
+        background: #28a745;
+        border-color: #28a745;
+        color: white;
+    }
+
+    .quick-filter-btn.pending {
+        border-color: #ffc107;
+    }
+
+    .quick-filter-btn.pending.active,
+    .quick-filter-btn.pending:hover {
+        background: #ffc107;
+        color: #212529;
+    }
+
+    .quick-filter-btn.approved {
+        border-color: #28a745;
+    }
+
+    .quick-filter-btn.approved.active {
+        background: #28a745;
+    }
+
+    .quick-filter-btn.rejected {
+        border-color: #dc3545;
+    }
+
+    .quick-filter-btn.rejected.active,
+    .quick-filter-btn.rejected:hover {
+        background: #dc3545;
+        color: white;
+    }
+
+    /* Results Count */
+    .results-count {
+        background: #e7f5ff;
+        color: #1971c2;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        margin-bottom: 16px;
+        display: inline-block;
+    }
+
+    .results-count strong {
+        font-weight: 700;
+    }
+
+    /* Table Row Colors by Status */
+    #result_list tbody tr[class*="row-pending"],
+    #result_list tbody tr.grp-row:has(td:contains("pending")) {
+        background: #fff8e1 !important;
+    }
+
+    #result_list tbody tr[class*="row-approved"],
+    #result_list tbody tr.grp-row:has(td:contains("معتمد")) {
+        background: #e8f5e9 !important;
+    }
+
+    #result_list tbody tr[class*="row-rejected"] {
+        background: #ffebee !important;
+    }
+</style>
+<script src="{% static 'admin/js/ajax_toggle.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Filter Sidebar Logic
+        const filter = document.getElementById('changelist-filter');
+        if (filter) {
+            // Create Toggle Button
+            const toggleBtn = document.createElement('button');
+            toggleBtn.id = 'changelist-filter-toggle';
+            toggleBtn.innerHTML = '<i class="fas fa-filter"></i>';
+            toggleBtn.title = 'تصفية النتائج';
+            document.body.appendChild(toggleBtn);
+
+            // Create Overlay
+            const overlay = document.createElement('div');
+            overlay.id = 'filter-overlay';
+            document.body.appendChild(overlay);
+
+            // Create Close Button
+            const closeBtn = document.createElement('span');
+            closeBtn.id = 'changelist-filter-close';
+            closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            const filterTitle = filter.querySelector('h2');
+            if (filterTitle) filterTitle.appendChild(closeBtn);
+
+            // Events
+            function toggleFilter() {
+                filter.classList.toggle('active');
+                overlay.classList.toggle('active');
+            }
+
+            toggleBtn.addEventListener('click', toggleFilter);
+            overlay.addEventListener('click', toggleFilter);
+            if (closeBtn) closeBtn.addEventListener('click', toggleFilter);
+        }
+    });
+</script>
+{% endblock %}
+
+{% block object-tools-items %}
+{{ block.super }}
+<li>
+    <a href="import-csv/" class="addlink" style="background: #6f42c1;">
+        <i class="fas fa-file-csv"></i> {% trans "استيراد CSV" %}
+    </a>
+</li>
+{% endblock %}
+
+{% block search %}
+<div class="advanced-search-panel">
+    <h3><i class="fas fa-search"></i> بحث متقدم</h3>
+
+    <!-- Quick Filters -->
+    <div class="quick-filters">
+        <a href="?" class="quick-filter-btn {% if not request.GET %}active{% endif %}">الكل</a>
+        <a href="?approval_status=pending"
+            class="quick-filter-btn pending {% if request.GET.approval_status == 'pending' %}active{% endif %}">⏳ قيد
+            المراجعة</a>
+        <a href="?approval_status=approved"
+            class="quick-filter-btn approved {% if request.GET.approval_status == 'approved' %}active{% endif %}">✅
+            معتمد</a>
+        <a href="?approval_status=rejected"
+            class="quick-filter-btn rejected {% if request.GET.approval_status == 'rejected' %}active{% endif %}">❌
+            مرفوض</a>
+    </div>
+
+    <!-- Search Form -->
+    {{ block.super }}
+</div>
+{% endblock %}
+
+{% block result_list %}
+{% if cl.result_count %}
+<div class="results-count">
+    <i class="fas fa-list"></i> تم العثور على <strong>{{ cl.result_count }}</strong> نتيجة
+</div>
+{% endif %}
+{{ block.super }}
+{% endblock %}

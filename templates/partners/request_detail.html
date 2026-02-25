@@ -1,0 +1,139 @@
+{% extends "partners/base_partner.html" %}
+{% load static %}
+
+{% block title %}تفاصيل الطلب #{{ req.id }}{% endblock %}
+
+{% block partner_content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">تفاصيل الطلب <small class="text-muted">#{{ req.id }}</small></h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'partner_request_list' %}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-right"></i> العودة للسجل
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Request Info Card -->
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">معلومات الطلب</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>نوع الطلب:</strong>
+                        <p>{{ req.get_request_type_display }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>الحالة الحالية:</strong>
+                        <p><span class="badge {{ req.status_badge_class }}">{{ req.get_status_display }}</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>تاريخ التقديم:</strong>
+                        <p>{{ req.created_at|date:"Y-m-d H:i" }}</p>
+                    </div>
+                    {% if req.target_object %}
+                    <div class="col-md-6">
+                        <strong>يخص:</strong>
+                        <p>{{ req.target_object }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <hr>
+
+                <div class="mb-3">
+                    <strong>رسالة الحالة:</strong>
+                    <div class="alert alert-info mt-2">
+                        {{ req.get_status_message }}
+                    </div>
+                </div>
+
+                {% if req.description %}
+                <div class="mb-3">
+                    <strong>الوصف:</strong>
+                    <p class="text-muted">{{ req.description }}</p>
+                </div>
+                {% endif %}
+
+                {% if req.admin_response %}
+                <div class="mb-3">
+                    <strong>رد الإدارة:</strong>
+                    <div class="p-3 bg-light rounded border">
+                        {{ req.admin_response }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Request Data/Changes -->
+        {% if req.changes %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">التغييرات المطلوبة</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>الحقل</th>
+                            <th>القيمة الجديدة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for field, value in req.changes.items %}
+                        <tr>
+                            <td>{{ field }}</td>
+                            <td>{{ value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Timeline Column -->
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0"><i class="fas fa-history text-primary"></i> سجل التتبع</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for log in timeline %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">
+                                {{ log.get_status_icon }} {{ log.to_status }}
+                            </h6>
+                            <small class="text-muted">{{ log.created_at|timesince }}</small>
+                        </div>
+                        <p class="mb-1 text-sm">{{ log.message|default:"تحديث حالة" }}</p>
+                        <small class="text-muted">بواسطة: {{ log.changed_by.get_full_name|default:log.changed_by.username }}</small>
+                    </div>
+                    {% empty %}
+                    <div class="list-group-item text-center text-muted">
+                        لا يوجد سجل تفصيلي لهذا الطلب.
+                    </div>
+                    {% endfor %}
+
+                    <!-- Initial Creation Log (Virtual) -->
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">📤 تم تقديم الطلب</h6>
+                            <small class="text-muted">{{ req.created_at|timesince }}</small>
+                        </div>
+                        <p class="mb-1 text-sm">تم إنشاء الطلب بنجاح.</p>
+                        <small class="text-muted">بواسطة: {{ req.user.get_full_name|default:req.user.username }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

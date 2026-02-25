@@ -1,0 +1,29 @@
+<div id="rating-summary" class="bg-white rounded-4 p-4 mb-4 shadow-sm border border-light animate__animated animate__fadeIn" hx-swap-oob="true">
+    <div class="row align-items-center">
+        <div class="col-md-4 text-center border-start">
+            <div class="display-3 fw-bolder text-dark mb-0 line-height-1">{{ place.avg_rating|floatformat:1 }}</div>
+            <div class="text-warning mb-2 fs-5">
+                {% with ''|center:5 as range %}
+                {% for _ in range %}
+                <i class="fas fa-star {% if forloop.counter <= place.avg_rating %}text-warning{% else %}text-muted opacity-25{% endif %}"></i>
+                {% endfor %}
+                {% endwith %}
+            </div>
+            <div class="text-muted small">بناءً على {{ place.rating_count }} تقييم</div>
+        </div>
+        <div class="col-md-8">
+            <div class="d-flex flex-column gap-2 px-3">
+                {% for item in rating_stats.distribution %}
+                <div class="d-flex align-items-center gap-2">
+                    <span class="small text-muted" style="width: 35px;">{{ item.star }} <i class="fas fa-star text-warning small"></i></span>
+                    <div class="progress flex-grow-1 rounded-pill" style="height: 8px; background-color: #f0f0f0;">
+                        <div class="progress-bar bg-warning rounded-pill" role="progressbar" style="width: {{ item.percent }}%" 
+                             aria-valuenow="{{ item.percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <span class="small text-muted text-end" style="width: 30px;">{{ item.count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

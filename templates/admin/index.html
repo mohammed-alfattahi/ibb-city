@@ -1,0 +1,470 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_dashboard %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="{% static 'admin/css/accordion.css' %}">
+<link rel="stylesheet" href="{% static 'admin/css/status_rows.css' %}">
+<style>
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        gap: 24px;
+        direction: rtl;
+    }
+
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .sidebar-content {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    /* KPI Stats */
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+
+    .stat-card {
+        background: #fff;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.3s ease;
+        border-right: 4px solid;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-card.green {
+        border-color: #28a745;
+    }
+
+    .stat-card.blue {
+        border-color: #17a2b8;
+    }
+
+    .stat-card.yellow {
+        border-color: #ffc107;
+    }
+
+    .stat-card.red {
+        border-color: #dc3545;
+    }
+
+    .stat-info h3 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .stat-info p {
+        margin: 4px 0 0;
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        opacity: 0.15;
+    }
+
+    /* Module Accordion */
+    .module-accordion {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        margin-bottom: 12px;
+    }
+
+    .module-header {
+        display: flex;
+        align-items: center;
+        padding: 14px 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        user-select: none;
+    }
+
+    .module-header:hover {
+        filter: brightness(0.95);
+    }
+
+    .module-header .icon {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        margin-left: 14px;
+        font-size: 16px;
+    }
+
+    .module-header .title {
+        flex: 1;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .module-header .arrow {
+        transition: transform 0.3s ease;
+    }
+
+    .module-header.expanded .arrow {
+        transform: rotate(180deg);
+    }
+
+    /* Module Colors */
+    .module-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+    }
+
+    .module-info {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        color: white;
+    }
+
+    .module-warning {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        color: #212529;
+    }
+
+    .module-purple {
+        background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+        color: white;
+    }
+
+    .module-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+    }
+
+    .module-dark {
+        background: linear-gradient(135deg, #343a40 0%, #212529 100%);
+        color: white;
+    }
+
+    /* Module Content */
+    .module-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-out;
+        background: #f8f9fa;
+    }
+
+    .module-content.open {
+        max-height: 800px;
+    }
+
+    .module-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .action-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 16px 12px;
+        background: #fff;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #495057;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .action-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        border-color: #28a745;
+        color: #28a745;
+    }
+
+    .action-card .icon {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f3f4;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        font-size: 20px;
+        color: #6c757d;
+    }
+
+    .action-card:hover .icon {
+        background: #28a745;
+        color: white;
+    }
+
+    .action-card .label {
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.3;
+    }
+
+    /* Sidebar Widgets */
+    .quick-search-widget {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border-radius: 12px;
+        padding: 16px;
+        color: white;
+    }
+
+    .quick-search-widget h4 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .quick-search-widget input {
+        width: 100%;
+        padding: 10px 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .quick-search-widget button {
+        width: 100%;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .quick-search-widget button:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .status-widget {
+        background: #fff;
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .status-widget-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: #495057;
+    }
+
+    .status-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        margin: 6px 0;
+        border-radius: 8px;
+        font-size: 13px;
+    }
+
+    .status-item.pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-item.approved {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-item.rejected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-item .count {
+        font-weight: 700;
+        font-size: 15px;
+    }
+
+    @media (max-width: 1200px) {
+        .dashboard-container {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% get_dashboard_stats as stats %}
+{% get_chart_data as chart_data %}
+{% get_admin_modules as modules %}
+
+<div class="dashboard-container">
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- KPI Cards -->
+        <div class="dashboard-stats">
+            <div class="stat-card green">
+                <div class="stat-info">
+                    <h3>{{ stats.total_places }}</h3>
+                    <p>إجمالي الأماكن</p>
+                </div>
+                <div class="stat-icon"><i class="fas fa-map-marker-alt text-success"></i></div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-info">
+                    <h3>{{ stats.total_users }}</h3>
+                    <p>إجمالي المستخدمين</p>
+                </div>
+                <div class="stat-icon"><i class="fas fa-users text-info"></i></div>
+            </div>
+            <div class="stat-card yellow">
+                <div class="stat-info">
+                    <h3>{{ stats.pending_requests }}</h3>
+                    <p>طلبات معلقة</p>
+                </div>
+                <div class="stat-icon"><i class="fas fa-clock text-warning"></i></div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-info">
+                    <h3>{{ stats.pending_reviews }}</h3>
+                    <p>تعليقات للمراجعة</p>
+                </div>
+                <div class="stat-icon"><i class="fas fa-comments text-danger"></i></div>
+            </div>
+        </div>
+
+        <!-- Module Accordions -->
+        {% for module in modules %}
+        <div class="module-accordion" data-module="{{ module.id }}">
+            <div class="module-header module-{{ module.color }} {% if module.expanded %}expanded{% endif %}"
+                onclick="toggleModule('{{ module.id }}')">
+                <div class="icon"><i class="fas {{ module.icon }}"></i></div>
+                <div class="title">{{ module.name }}</div>
+                <div class="arrow"><i class="fas fa-chevron-down"></i></div>
+            </div>
+            <div class="module-content {% if module.expanded %}open{% endif %}" id="module-{{ module.id }}">
+                <div class="module-actions">
+                    {% for action in module.actions %}
+                    <a href="{% url action.url %}{{ action.params|default:'' }}{{ action.suffix|default:'' }}"
+                        class="action-card">
+                        <div class="icon"><i class="fas {{ action.icon }}"></i></div>
+                        <div class="label">{{ action.label }}</div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar-content">
+
+        <!-- Quick Search -->
+        <div class="quick-search-widget">
+            <h4><i class="fas fa-search"></i> بحث سريع</h4>
+            <form action="{% url 'admin:places_place_changelist' %}" method="GET">
+                <input type="text" name="q" placeholder="ابحث عن مكان...">
+                <button type="submit">بحث</button>
+            </form>
+        </div>
+
+        <!-- Status Widget -->
+        <div class="status-widget">
+            <div class="status-widget-title"><i class="fas fa-chart-bar"></i> حالة الطلبات</div>
+            <div class="status-item pending">
+                <span>⏳ معلقة</span>
+                <span class="count">{{ stats.pending_requests }}</span>
+            </div>
+            <div class="status-item approved">
+                <span>✅ مقبولة</span>
+                <span class="count">{{ stats.active_places|default:0 }}</span>
+            </div>
+            <div class="status-item rejected">
+                <span>❌ مرفوضة</span>
+                <span class="count">{{ stats.pending_reviews }}</span>
+            </div>
+        </div>
+
+        <!-- System Health -->
+        <div class="status-widget">
+            <div class="status-widget-title"><i class="fas fa-server"></i> صحة النظام</div>
+            {% get_system_health as health %}
+            <div class="status-item {% if health.database %}approved{% else %}rejected{% endif %}">
+                <span>قاعدة البيانات</span>
+                <span>{% if health.database %}{{ health.db_latency }}ms{% else %}خطأ{% endif %}</span>
+            </div>
+            <div class="status-item {% if health.cache %}approved{% else %}rejected{% endif %}">
+                <span>الكاش</span>
+                <span>{% if health.cache %}متصل{% else %}منفصل{% endif %}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Accordion Toggle
+    function toggleModule(moduleId) {
+        const header = document.querySelector(`[data-module="${moduleId}"] .module-header`);
+        const content = document.getElementById(`module-${moduleId}`);
+
+        header.classList.toggle('expanded');
+        content.classList.toggle('open');
+
+        // Save state to localStorage
+        const expanded = JSON.parse(localStorage.getItem('adminModules') || '{}');
+        expanded[moduleId] = content.classList.contains('open');
+        localStorage.setItem('adminModules', JSON.stringify(expanded));
+    }
+
+    // Restore state on load
+    document.addEventListener('DOMContentLoaded', function () {
+        const expanded = JSON.parse(localStorage.getItem('adminModules') || '{}');
+        Object.keys(expanded).forEach(moduleId => {
+            const header = document.querySelector(`[data-module="${moduleId}"] .module-header`);
+            const content = document.getElementById(`module-${moduleId}`);
+            if (header && content) {
+                if (expanded[moduleId]) {
+                    header.classList.add('expanded');
+                    content.classList.add('open');
+                } else {
+                    header.classList.remove('expanded');
+                    content.classList.remove('open');
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock %}

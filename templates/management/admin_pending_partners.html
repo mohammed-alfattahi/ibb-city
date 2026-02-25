@@ -1,0 +1,93 @@
+{% extends "management/admin_base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="{% url 'custom_admin_dashboard' %}">Admin Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Pending Partners</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold">Pending Partner Approvals</h2>
+        </div>
+        <div>
+            <a href="{% url 'admin_export' 'partners' %}" class="btn btn-primary rounded-pill shadow-sm">
+                <i class="fas fa-file-csv me-2"></i> Export All Partners
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3">Partner Name</th>
+                            <th>Contact Info</th>
+                            <th>Details</th>
+                            <th>Documents</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for partner in partners %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-light rounded-circle p-2 me-2">
+                                        <i class="fas fa-user text-muted"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">{{ partner.user.username }}</h6>
+                                        <small class="text-muted">Joined: {{ partner.user.date_joined|date:"M d, Y" }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="small">
+                                    <i class="fas fa-envelope me-1 text-muted"></i> {{ partner.user.email }}<br>
+                                    <i class="fas fa-phone me-1 text-muted"></i> {{ partner.user.phone_number }}
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">CR: {{ partner.commercial_reg_no|default:"N/A" }}</span>
+                            </td>
+                            <td>
+                                {% if partner.id_card_image %}
+                                <a href="{{ partner.id_card_image.url }}" target="_blank"
+                                    class="btn btn-sm btn-outline-info rounded-pill">
+                                    <i class="fas fa-id-card me-1"></i> View ID
+                                </a>
+                                {% else %}
+                                <span class="text-muted small">No ID Uploaded</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                <form action="{% url 'admin_partner_approve' partner.pk %}" method="post"
+                                    class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success rounded-pill px-3"
+                                        onclick="return confirm('Approve this partner account?')">
+                                        <i class="fas fa-check me-1"></i> Approve
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="fas fa-check-circle fa-3x mb-3 text-success opacity-50"></i>
+                                <p class="mb-0">All clear! No pending partner requests.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,275 @@
+{% extends 'partners/base_partner.html' %}
+{% load static %}
+
+{% block title %}إدارة جهات الاتصال - {{ establishment.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold text-dark mb-1">
+                <i class="fas fa-address-book me-2 text-primary"></i>
+                جهات الاتصال
+            </h4>
+            <p class="text-muted mb-0">{{ establishment.name }}</p>
+        </div>
+        <div>
+            <a href="{% url 'partner_contact_create' establishment.pk %}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> إضافة جهة اتصال
+            </a>
+            <a href="{% url 'partner_place_dashboard' establishment.pk %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-right me-1"></i> العودة للمنشأة
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Contact List -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-list me-2"></i>
+                        قائمة جهات الاتصال
+                        <span class="badge bg-primary ms-2">{{ contacts.count }}</span>
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    {% if contacts %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="contacts-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 40px;"></th>
+                                    <th>النوع</th>
+                                    <th>القيمة</th>
+                                    <th>التسمية</th>
+                                    <th class="text-center">الحالة</th>
+                                    <th class="text-center">إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contact-list">
+                                {% for contact in contacts %}
+                                <tr data-id="{{ contact.pk }}">
+                                    <td class="text-muted handle" style="cursor: grab;">
+                                        <i class="fas fa-grip-vertical"></i>
+                                    </td>
+                                    <td>
+                                        <i class="{{ contact.icon_class }} me-2 text-primary"></i>
+                                        {{ contact.get_type_display }}
+                                        {% if contact.carrier %}
+                                        <br>
+                                        <small class="text-muted {{ contact.carrier_icon_class }}">
+                                            {{ contact.get_carrier_display }}
+                                        </small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="font-monospace">{{ contact.value }}</span>
+                                        {% if contact.is_primary %}
+                                        <span class="badge bg-success-subtle text-success ms-1">رئيسي</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ contact.label|default:"-" }}
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button"
+                                            class="btn btn-sm {% if contact.is_visible %}btn-success{% else %}btn-secondary{% endif %} toggle-visibility"
+                                            data-id="{{ contact.pk }}"
+                                            title="{% if contact.is_visible %}مرئي{% else %}مخفي{% endif %}">
+                                            <i
+                                                class="fas {% if contact.is_visible %}fa-eye{% else %}fa-eye-slash{% endif %}"></i>
+                                        </button>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'partner_contact_update' establishment.pk contact.pk %}"
+                                                class="btn btn-outline-primary" title="تعديل">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="post"
+                                                action="{% url 'partner_contact_delete' establishment.pk contact.pk %}"
+                                                class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟')">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-danger" title="حذف">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-address-book fa-4x text-muted opacity-25 mb-3"></i>
+                        <h5 class="text-muted">لا توجد جهات اتصال</h5>
+                        <p class="text-muted">ابدأ بإضافة رقم هاتف أو حساب تواصل اجتماعي</p>
+                        <a href="{% url 'partner_contact_create' establishment.pk %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i> إضافة جهة اتصال
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Add Sidebar -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-bolt me-2 text-warning"></i>
+                        إضافة سريعة
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-3">اختر نوع جهة الاتصال:</p>
+
+                    <div class="d-grid gap-2">
+                        <!-- Phone carriers -->
+                        <div class="mb-2">
+                            <small class="text-muted d-block mb-2">أرقام الهاتف:</small>
+                            <div class="btn-group w-100" role="group">
+                                <a href="{% url 'partner_contact_create' establishment.pk %}?type=phone&carrier=sabafon"
+                                    class="btn btn-outline-success btn-sm">سبأفون</a>
+                                <a href="{% url 'partner_contact_create' establishment.pk %}?type=phone&carrier=yemen_mobile"
+                                    class="btn btn-outline-primary btn-sm">يمن موبايل</a>
+                                <a href="{% url 'partner_contact_create' establishment.pk %}?type=phone&carrier=you"
+                                    class="btn btn-outline-warning btn-sm">يو</a>
+                            </div>
+                        </div>
+
+                        <!-- Messaging -->
+                        <div class="mb-2">
+                            <small class="text-muted d-block mb-2">المراسلة:</small>
+                            <div class="btn-group w-100" role="group">
+                                <a href="{% url 'partner_contact_create' establishment.pk %}?type=whatsapp"
+                                    class="btn btn-outline-success btn-sm">
+                                    <i class="fab fa-whatsapp"></i> واتساب
+                                </a>
+                                <a href="{% url 'partner_contact_create' establishment.pk %}?type=telegram"
+                                    class="btn btn-outline-info btn-sm">
+                                    <i class="fab fa-telegram"></i> تيليجرام
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Social -->
+                        <div class="mb-2">
+                            <small class="text-muted d-block mb-2">التواصل الاجتماعي:</small>
+                            <div class="btn-group w-100" role="group">
+                                <a href="{% url 'partner_contact_create' establishment.pk %}?type=facebook"
+                                    class="btn btn-outline-primary btn-sm">
+                                    <i class="fab fa-facebook"></i>
+                                </a>
+                                <a href="{% url 'partner_contact_create' establishment.pk %}?type=instagram"
+                                    class="btn btn-outline-danger btn-sm">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="{% url 'partner_contact_create' establishment.pk %}?type=tiktok"
+                                    class="btn btn-outline-dark btn-sm">
+                                    <i class="fab fa-tiktok"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Other -->
+                        <div>
+                            <small class="text-muted d-block mb-2">أخرى:</small>
+                            <div class="btn-group w-100" role="group">
+                                <a href="{% url 'partner_contact_create' establishment.pk %}?type=website"
+                                    class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-globe"></i> موقع
+                                </a>
+                                <a href="{% url 'partner_contact_create' establishment.pk %}?type=email"
+                                    class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-envelope"></i> بريد
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="alert alert-info">
+                <h6><i class="fas fa-info-circle me-2"></i>معلومات</h6>
+                <ul class="mb-0 small">
+                    <li>اسحب الصفوف لإعادة ترتيب جهات الاتصال</li>
+                    <li>استخدم زر العين لإخفاء/إظهار جهة الاتصال</li>
+                    <li>جهات الاتصال المخفية لن تظهر للزوار</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+    // Initialize drag-and-drop sorting
+    const contactList = document.getElementById('contact-list');
+    if (contactList) {
+        new Sortable(contactList, {
+            handle: '.handle',
+            animation: 150,
+            onEnd: function (evt) {
+                const order = Array.from(contactList.querySelectorAll('tr')).map(row => row.dataset.id);
+
+                fetch("{% url 'partner_contact_reorder' establishment.pk %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ order: order })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            alert(data.message);
+                        }
+                    });
+            }
+        });
+    }
+
+    // Toggle visibility
+    document.querySelectorAll('.toggle-visibility').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const contactId = this.dataset.id;
+            fetch("{% url 'partner_contact_toggle' establishment.pk '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', contactId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const icon = this.querySelector('i');
+                        if (data.is_visible) {
+                            this.classList.remove('btn-secondary');
+                            this.classList.add('btn-success');
+                            icon.classList.remove('fa-eye-slash');
+                            icon.classList.add('fa-eye');
+                        } else {
+                            this.classList.remove('btn-success');
+                            this.classList.add('btn-secondary');
+                            icon.classList.remove('fa-eye');
+                            icon.classList.add('fa-eye-slash');
+                        }
+                    }
+                });
+        });
+    });
+</script>
+{% endblock %}

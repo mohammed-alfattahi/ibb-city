@@ -1,0 +1,49 @@
+يل نشر تطبيق دليل إب السياحي على Render
+لقد تم رفع الكود بنجاح إلى GitHub على الفرع feature/investment-updates. بما أننا قمنا بإعداد ملف 
+render.yaml
+، فإن عملية النشر ستكون سهلة جداً باستخدام Blueprints.
+
+خطوات النشر (Deployment Steps)
+تسجيل الدخول إلى Render:
+
+اذهب إلى dashboard.render.com.
+سجل الدخول بحسابك (يفضل استخدام GitHub).
+إنشاء Blueprint جديد:
+
+اضغط على زر New + في الزاوية العلوية اليمنى.
+اختر Blueprint.
+ربط المستودع (Repository):
+
+ابحث عن مستودع ibb_guide في القائمة.
+ملاحظة: إذا لم يظهر، تأكد من منح Render صلاحية الوصول لمستودعاتك (Configure GitHub App).
+اضغط Connect.
+إعداد الخدمة:
+
+سيقوم Render تلقائياً باكتشاف ملف 
+render.yaml
+.
+Environment Name: اختر أي اسم (مثلاً ibb-guide-prod).
+Branch: تأكد من اختيار الفرع main.
+سترى الخدمات التي سيتم إنشاؤها:
+ibb-guide (Web Service)
+ibb-db (PostgreSQL Database)
+تطبيق (Apply):
+
+اضغط على زر Apply أو Create Blueprint.
+سيقوم Render ببدء عملية البناء (Build) والنشر تلقائياً.
+ما الذي سيحدث الآن؟
+سيقوم Render بتثبيت المتطلبات من 
+requirements.txt
+.
+سيتم تجميع الملفات الثابتة (Static Files) باستخدام الأمر الموجود في 
+build.sh
+.
+سيتم تطبيق ترحيلات قاعدة البيانات (Migrations).
+سيصبح موقعك متاحاً على الرابط الذي يوفره Render (مثلاً https://ibb-guide.onrender.com).
+ملاحظات هامة
+المتغيرات البيئية (Environment Variables): تم إعداد معظمها تلقائياً، ولكن تأكد من مراجعتها في لوحة تحكم Render إذا واجهت مشاكل.
+قاعدة البيانات: سيقوم Render بإنشاء قاعدة البيانات وربطها تلقائياً بفضل إعدادات DATABASE_URL.
+حساب المسؤول: بعد النشر الناجح، ستحتاج لإنشاء حساب مسؤول للدخول إلى لوحة التحكم. يمكنك فعل ذلك من خلال "Shell" في لوحة تحكم Render عن طريق كتابة:
+python manage.py createsuperuser
+مبروك! تطبيقك الآن جاهز للعمل على الإنترنت.
+

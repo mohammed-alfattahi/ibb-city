@@ -1,0 +1,205 @@
+{% extends "management/admin_base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}إدارة المفضلات - لوحة الإدارة{% endblock %}
+{% block title_breadcrumb %}إدارة المفضلات{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4 px-lg-5">
+    <!-- Header Selection -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div class="d-flex align-items-center">
+            <div class="icon-circle bg-danger bg-opacity-10 text-danger me-3 shadow-sm" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div>
+                <h2 class="fw-bold text-dark mb-0">إدارة المفضلات</h2>
+                <p class="text-muted mb-0 small">إدارة وحذف الرغبات المضافة من قبل المستخدمين</p>
+            </div>
+        </div>
+        
+        <div class="stats-badge shadow-sm rounded-pill bg-white border px-4 py-2 d-flex align-items-center">
+            <div class="icon-circle bg-primary bg-opacity-10 text-primary me-3" style="width: 35px; height: 35px; font-size: 1rem;">
+                <i class="fas fa-database"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold mb-0 lh-1">{{ total_favorites }}</h5>
+                <div class="text-muted" style="font-size: 0.7rem;">إجمالي المفضلات</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-3">
+            <form method="get" class="row g-3">
+                <div class="col-md-10">
+                    <div class="input-group bg-light rounded-pill overflow-hidden border-0">
+                        <span class="input-group-text bg-transparent border-0 ps-4">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" name="q" class="form-control bg-transparent border-0 py-2" 
+                               placeholder="بحث عن مستخدم أو اسم مكان..." value="{{ request.GET.q }}">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary rounded-pill w-100 py-2 fw-bold">
+                        بحث
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <form id="adminBulkDeleteForm" method="POST" action="{% url 'admin_bulk_delete_favorites' %}">
+        {% csrf_token %}
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="selectAllAdmin">
+                    <label class="form-check-label fw-bold text-dark" for="selectAllAdmin">تحديد الكل</label>
+                </div>
+                <div id="adminActionBar" class="d-none">
+                    <button type="button" class="btn btn-danger btn-sm rounded-pill px-4" onclick="confirmAdminBulkDelete()">
+                        <i class="fas fa-trash-alt me-2"></i> حذف المحدد (<span id="adminSelectedCount">0</span>)
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light bg-opacity-50">
+                            <tr>
+                                <th width="40" class="ps-4"></th>
+                                <th class="py-3 text-muted small uppercase fw-bold">المستخدم</th>
+                                <th class="py-3 text-muted small uppercase fw-bold">المكان</th>
+                                <th class="py-3 text-muted small uppercase fw-bold">التصنيف</th>
+                                <th class="py-3 text-muted small uppercase fw-bold">تاريخ الإضافة</th>
+                                <th width="100" class="pe-4 text-end">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fav in favorites_list %}
+                            <tr class="transition-base">
+                                <td class="ps-4">
+                                    <input type="checkbox" name="favorite_pks" value="{{ fav.pk }}" class="admin-fav-checkbox form-check-input">
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-primary bg-opacity-10 text-primary rounded-pill me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-weight: bold;">
+                                            {{ fav.user.username|first|upper }}
+                                        </div>
+                                        <div class="fw-bold text-dark">{{ fav.user.username }}</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-medium text-dark">{{ fav.place.name }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-3">
+                                        {{ fav.place.category.name|default:"-" }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-muted small">{{ fav.created_at|date:"Y/m/d H:i" }}</span>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <button type="button" class="btn btn-sm btn-outline-danger border-0 rounded-circle" 
+                                            onclick="deleteSingleFavorite('{{ fav.pk }}')" title="حذف">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <i class="fas fa-heart-broken fa-4x text-muted opacity-25 mb-3"></i>
+                                    <h5 class="text-muted">لا توجد سجلات مفضلات تطابق بحثك</h5>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            {% if is_paginated %}
+            <div class="card-footer bg-white border-top-0 py-3">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-sm justify-content-center mb-0">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1&q={{ request.GET.q }}">الأولى</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}">السابق</a></li>
+                        {% endif %}
+                        
+                        <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+                        
+                        {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}">التالي</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&q={{ request.GET.q }}">الأخيرة</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<!-- Hidden Single Delete Form -->
+<form id="singleDeleteForm" method="POST" action="{% url 'admin_bulk_delete_favorites' %}" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="favorite_pks" id="singleDeletePk">
+</form>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const selectAll = document.getElementById('selectAllAdmin');
+    const checkboxes = document.querySelectorAll('.admin-fav-checkbox');
+    const actionBar = document.getElementById('adminActionBar');
+    const selectedCountSpan = document.getElementById('adminSelectedCount');
+    const bulkForm = document.getElementById('adminBulkDeleteForm');
+
+    function updateAdminActionBar() {
+        const checkedCount = document.querySelectorAll('.admin-fav-checkbox:checked').length;
+        selectedCountSpan.textContent = checkedCount;
+        
+        if (checkedCount > 0) {
+            actionBar.classList.remove('d-none');
+        } else {
+            actionBar.classList.add('d-none');
+            selectAll.checked = false;
+        }
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', function() {
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+            });
+            updateAdminActionBar();
+        });
+    }
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateAdminActionBar);
+    });
+
+    function confirmAdminBulkDelete() {
+        if (confirm('هل أنت متأكد من حذف المفضلات المحددة نهائياً؟')) {
+            bulkForm.submit();
+        }
+    }
+
+    function deleteSingleFavorite(pk) {
+        if (confirm('هل أنت متأكد من حذف هذه المفضلة؟')) {
+            document.getElementById('singleDeletePk').value = pk;
+            document.getElementById('singleDeleteForm').submit();
+        }
+    }
+</script>
+{% endblock %}

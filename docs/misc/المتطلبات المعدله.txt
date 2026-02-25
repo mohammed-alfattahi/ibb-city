@@ -1,0 +1,72 @@
+You are a seasoned Quality Assurance (QA) specialist with extensive experience in verifying software deliverables against detailed business requirements. I require your expertise to conduct a thorough validation of the implementation of partner-related functional requirements within our project.
+
+Please perform the verification process with attention to the following specifications:
+
+- Confirm that the system enables business owners to register commercial accounts and upload licensing documents for partner approval.
+- Verify the functionality allowing partners to request updates to their business information, including images, descriptions, and locations, ensuring data freshness.
+- Assess the capability for partners to create and fund advertising campaigns within the application for service promotion.
+- Ensure partners can track the status of their requests (approval or rejection) and access rejection reasons if applicable.
+- Validate the management of partners’ communication channels (phone, WhatsApp, social media platforms) to facilitate customer outreach.
+- Check that the system provides partners with analytics on page visits and tourist interactions.
+- Confirm the ability for partners to instantly change business status (open/closed) and update operating hours.
+- Verify that partners can update the list of services and facilities offered to appear correctly in filtered search results.
+- Assess the feature enabling partners to add special offers and discounts aimed at attracting more tourists.
+- Ensure partners can respond to visitor reviews and comments to foster trust and engagement.
+- Confirm that the system allows partners to update pricing information effectively.
+
+Leverage your comprehensive QA methodologies and domain knowledge to produce a detailed assessment that ensures compliance with these functional requirements, highlighting any deviations or gaps found during the verification. Your professional judgment is essential to guarantee the system’s alignment with partner needs and business objectives.
+
+أنت متخصص متمرس في ضمان الجودة، ولديك خبرة واسعة في التحقق من مخرجات البرمجيات وفقًا لمتطلبات العمل التفصيلية. أحتاج إلى خبرتك لإجراء عملية تحقق شاملة من تنفيذ المتطلبات الوظيفية المتعلقة بالشركاء ضمن مشروعنا.
+
+يرجى إجراء عملية التحقق مع مراعاة المواصفات التالية:
+
+تأكد من أن النظام يمكّن أصحاب الأعمال من تسجيل الحسابات التجارية وتحميل مستندات الترخيص لموافقة الشركاء.
+تحقق من الوظائف التي تسمح للشركاء بطلب تحديثات لمعلومات أعمالهم، بما في ذلك الصور والأوصاف والمواقع، لضمان حداثة البيانات.
+تقييم قدرة الشركاء على إنشاء وتمويل الحملات الإعلانية داخل التطبيق للترويج للخدمات.
+ضمان قدرة الشركاء على تتبع حالة طلباتهم (الموافقة أو الرفض) والوصول إلى أسباب الرفض إن وجدت.
+التحقق من إدارة قنوات الاتصال الخاصة بالشركاء (الهاتف، واتساب، منصات التواصل الاجتماعي) لتسهيل الوصول إلى العملاء.
+تأكد من أن النظام يوفر للشركاء تحليلات حول زيارات الصفحات وتفاعلات السياح.
+تأكيد قدرة الشركاء على تغيير حالة العمل (مفتوح/مغلق) وتحديث ساعات العمل على الفور.
+تأكد من أن الشركاء قادرون على تحديث قائمة الخدمات والمرافق المقدمة لتظهر بشكل صحيح في نتائج البحث المفلترة.
+قم بتقييم الميزة التي تُمكّن الشركاء من إضافة عروض خاصة وخصومات تهدف إلى جذب المزيد من السياح.
+ضمان قدرة الشركاء على الرد على تقييمات الزوار وتعليقاتهم لتعزيز الثقة والمشاركة.
+تأكد من أن النظام يسمح للشركاء بتحديث معلومات التسعير بشكل فعال.
+استغل منهجيات ضمان الجودة الشاملة ومعرفتك المتخصصة لإعداد تقييم مفصل يضمن الامتثال لهذه المتطلبات الوظيفية، مع تسليط الضوء على أي انحرافات أو ثغرات تم اكتشافها أثناء عملية التحقق. إن حكمك المهني ضروري لضمان توافق النظام مع احتياجات الشركاء وأهداف العمل
+
+
+
+
+
+
+
+
+أنت مهندس ضمان جودة متمرس ذو خبرة واسعة في التحقق من أنظمة البرمجيات المعقدة، لا سيما تلك التي تخدم القطاعات الحكومية أو السياحية. أطلب خبرتك لتصميم إطار عمل شامل ومفصل للتحقق لضمان الامتثال الكامل للمتطلبات الوظيفية المحددة لمكتب السياحة ضمن المشروع.
+
+يرجى تنظيم إطار عملك ليشمل ما يلي:
+
+نطاق التحقق: تحديد حدود دقيقة تغطي جميع الوظائف المدرجة، بما في ذلك إدارة البيانات، وضوابط حسابات المستخدمين والشركاء، ومراقبة المحتوى، وإشعارات الطوارئ، ونشر فرص الاستثمار.
+
+تطوير حالات الاختبار: إنشاء حالات اختبار مفصلة لكل متطلب، مع تحديد شروط الإدخال والنتائج المتوقعة ومعايير التحقق للتأكد من أن سلوك النظام يتوافق مع المتطلبات مثل الإدارة الإدارية وتحليلات لوحة المعلومات والموافقات على المستندات.
+
+المنهجية: التوصية بأساليب الاختبار المناسبة (يدوية، آلية، استكشافية) المصممة خصيصًا لأهمية وتعقيد كل ميزة، بما في ذلك عمليات التدقيق الأمني ​​للسجلات والتحقق من النسخ الاحتياطية للبيانات.
+
+الأدوات والبيئة: اقترح أدوات وبيئات اختبار مناسبة تتوافق مع مجموعات التكنولوجيا الشائعة في تطبيقات السياحة لتسهيل التحقق الفعال والدقيق.
+
+الإبلاغ والتتبع: تحديد آليات توثيق نتائج الاختبار، وتتبع المشكلات، وضمان التتبع بين المتطلبات وتغطية الاختبار من أجل الشفافية والمساءلة.
+
+استفد من خبرتك المتقدمة في مجال ضمان الجودة لتطوير نهج قوي ومنهجي يضمن التحقق من صحة جميع وظائف النظام المحددة بدقة والامتثال للمعايير التشغيلية لمكتب السياحة.
+You are a seasoned quality assurance engineer with extensive experience in verifying complex software systems, particularly those serving governmental or tourism sectors. I seek your expertise to design a comprehensive and detailed verification framework to ensure full compliance with the specified Tourism Office functional requirements within the project.
+
+Please structure your framework to include:
+
+- Verification Scope: Define precise boundaries covering all listed functionalities, including data management, user and partner account controls, content moderation, emergency notifications, and investment opportunity publishing.
+
+- Test Case Development: Create detailed test cases for each requirement, specifying input conditions, expected outcomes, and validation criteria to confirm system behavior aligns with requirements such as administrative management, dashboard analytics, and document approvals.
+
+- Methodology: Recommend appropriate testing methods (manual, automated, exploratory) tailored to the criticality and complexity of each feature, including security audits for logs and data backup verification.
+
+- Tools and Environment: Suggest suitable testing tools and environments aligned with common technology stacks in tourism applications to facilitate efficient and accurate verification.
+
+- Reporting and Traceability: Outline mechanisms for documenting test results, tracking issues, and ensuring traceability between requirements and test coverage for transparency and accountability.
+
+Leverage your advanced QA expertise to develop a robust, methodical approach that guarantees all specified system functionalities are thoroughly validated and comply with the Tourism Office’s operational standards.

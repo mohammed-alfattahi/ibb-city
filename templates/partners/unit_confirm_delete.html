@@ -1,0 +1,17 @@
+{% extends "partners/base_partner.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-danger text-white">Confirm Deletion</div>
+        <div class="card-body">
+            <p>Are you sure you want to delete the unit "<strong>{{ object.name }}</strong>"?</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <a href="{% url 'partner_unit_list' object.establishment.pk %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

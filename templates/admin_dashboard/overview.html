@@ -1,0 +1,448 @@
+{% extends "management/admin_base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}الرئيسية - لوحة التحكم{% endblock %}
+{% block title_breadcrumb %}لوحة التحكم{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Gradient Header for Stats */
+    /* Premium Stats Cards */
+    .stat-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(0, 0, 0, 0.02);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.05), transparent);
+        z-index: 0;
+    }
+
+    .stat-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        z-index: 1;
+        margin-bottom: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.2;
+    }
+
+    /* THE ICON GRID SYSTEM (Key Requirement) */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .grid-item {
+        background: #fff;
+        border: 1px solid #f1f5f9;
+        border-radius: 16px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        text-decoration: none;
+        color: #475569;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+    }
+
+    .grid-item:hover {
+        background: #fff;
+        border-color: #3b82f6;
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        color: #0f172a;
+    }
+
+    .grid-item i {
+        font-size: 2.8rem;
+        color: #94a3b8;
+        transition: all 0.3s;
+    }
+
+    .grid-item:hover i {
+        color: #3b82f6;
+        transform: scale(1.15) rotate(5deg);
+    }
+
+    .grid-item h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .section-header-premium {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        margin-top: 3rem;
+    }
+
+    .section-header-premium h2 {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Welcome Section (Premium) -->
+    <div class="row mb-5 animate-fade-in">
+        <div class="col-12">
+            <div class="p-5 rounded-5 soft-shadow text-white overflow-hidden position-relative" style="background: var(--premium-gradient);">
+                <div class="position-relative z-1">
+                    <h1 class="display-5 fw-900 mb-2">مرحباً بك، {{ user.username }}!</h1>
+                    <p class="lead opacity-75 fw-600 mb-0">نظام إب السياحي - مراقبة وإدارة الوجهة السياحية في الوقت الفعلي.</p>
+                </div>
+                <div class="position-absolute top-0 end-0 p-5 opacity-10">
+                    <i class="fas fa-kaaba fa-10x translate-middle-y"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Stats Bar -->
+    <div class="row g-4 mb-5 animate-fade-in" style="animation-delay: 0.1s;">
+        <!-- Users -->
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-light-blue"><i class="fas fa-users-viewfinder"></i></div>
+                <div>
+                    <div class="stat-value">{{ total_users }}</div>
+                    <div class="text-slate-500 fw-bold small uppercase">إجمالي المستخدمين</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Partners -->
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-light-green"><i class="fas fa-handshake-angle"></i></div>
+                <div>
+                    <div class="stat-value">{{ total_partners }}</div>
+                    <div class="text-slate-500 fw-bold small uppercase">الشركاء المعتمدون</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Places -->
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-light-yellow"><i class="fas fa-building-circle-check"></i></div>
+                <div>
+                    <div class="stat-value">{{ total_places }}</div>
+                    <div class="text-slate-500 fw-bold small uppercase">المنشآت النشطة</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Surveys -->
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-light-red"><i class="fas fa-square-poll-vertical"></i></div>
+                <div>
+                    <div class="stat-value">{{ total_responses }}</div>
+                    <div class="text-slate-500 fw-bold small uppercase">إجمالي الردود</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK REVIEW SECTION (Premium) -->
+    {% if pending_establishments_list or pending_partners_list %}
+    <div class="row mb-5 animate-fade-in" style="animation-delay: 0.15s;">
+        <!-- Pending Establishments Widget -->
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="card border-0 soft-shadow rounded-5 h-100 overflow-hidden">
+                <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-800 mb-0 text-slate-800"><i class="fas fa-store text-accent me-2"></i>منشآت بانتظار الاعتماد</h6>
+                    <a href="{% url 'admin_establishment_approval' %}" class="btn btn-sm btn-light border-slate-100 rounded-pill px-3">عرض الكل</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for place in pending_establishments_list %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-4 py-3 border-slate-50">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-slate-50 text-accent rounded-4 me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                    <i class="fas fa-hotel"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-slate-700">{{ place.name }}</h6>
+                                    <small class="text-slate-400 fw-600">{{ place.owner.get_full_name|default:place.owner.username }}</small>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'admin_establishment_approve' place.pk %}" class="btn btn-sm btn-success-subtle text-success rounded-pill px-3 fw-bold">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                <a href="{{ place.get_absolute_url }}" class="btn btn-sm btn-light border-slate-100 rounded-pill px-3 text-slate-500" target="_blank">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-check-circle text-success fa-3x mb-3 opacity-25"></i>
+                            <p class="text-slate-400 fw-bold">لا توجد منشآت معلقة</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Partners Widget -->
+        <div class="col-lg-6">
+            <div class="card border-0 soft-shadow rounded-5 h-100 overflow-hidden">
+                <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-800 mb-0 text-slate-800"><i class="fas fa-user-tie text-secondary-accent me-2"></i>طلبات شراكة جديدة</h6>
+                    <a href="{% url 'admin_pending_partners' %}" class="btn btn-sm btn-light border-slate-100 rounded-pill px-3">عرض الكل</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for partner in pending_partners_list %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-4 py-3 border-slate-50">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-slate-50 text-secondary-accent rounded-4 me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                    <i class="fas fa-handshake-simple"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-slate-700">{{ partner.organization_name }}</h6>
+                                    <small class="text-slate-400 fw-600">{{ partner.user.get_full_name|default:partner.user.username }}</small>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <form action="{% url 'admin_partner_approve' partner.pk %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success-subtle text-success rounded-pill px-3 fw-bold" title="اعتماد">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                                <a href="{% url 'admin_pending_partners' %}?q={{ partner.user.username }}" class="btn btn-sm btn-light border-slate-100 rounded-pill px-3 text-slate-500" title="تفاصيل">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-briefcase text-slate-200 fa-3x mb-3 opacity-25"></i>
+                            <p class="text-slate-400 fw-bold">لا توجد طلبات شراكة</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- MAIN CONTROL PANEL (ICON GRID) -->
+    <div class="section-header-premium animate-fade-in" style="animation-delay: 0.2s;">
+        <h2><i class="fas fa-rocket text-accent"></i> العمليات والمهام الذكية</h2>
+        <span class="badge bg-slate-200 text-slate-700 rounded-pill px-3 py-2 fw-bold">نظرة عامة</span>
+    </div>
+
+    <div class="dashboard-grid animate-fade-in" style="animation-delay: 0.3s;">
+
+                <!-- Partner Approvals -->
+                <a href="{% url 'admin_partner_approval' %}" class="grid-item">
+                    {% if pending_partners > 0 %}
+                    <span class="grid-badge" title="جديد">{{ pending_partners }}</span>
+                    {% endif %}
+                    <i class="fas fa-user-check"></i>
+                    <h3>اعتماد الشركاء</h3>
+                </a>
+
+                <!-- Establishment Approvals -->
+                <a href="{% url 'admin_establishment_approval' %}" class="grid-item">
+                    {% if pending_establishments_count %}
+                    <span class="grid-badge">{{ pending_establishments_count }}</span>
+                    {% endif %}
+                    <i class="fas fa-hotel"></i>
+                    <h3>اعتماد المنشآت</h3>
+                </a>
+
+                <!-- Ad Management -->
+                <a href="{% url 'admin_ad_list' %}" class="grid-item">
+                    <i class="fas fa-bullhorn"></i>
+                    <h3>الإعلانات</h3>
+                </a>
+
+                <!-- Reports -->
+                <a href="{% url 'admin_reports_list' %}" class="grid-item">
+                    {% if flagged_content > 0 %}
+                    <span class="grid-badge">{{ flagged_content }}</span>
+                    {% endif %}
+                    <i class="fas fa-flag-checkered"></i>
+                    <h3>البلاغات</h3>
+                </a>
+
+                <!-- Surveys -->
+                <a href="{% url 'survey_list' %}" class="grid-item">
+                    {% if active_surveys > 0 %}
+                    <span class="grid-badge bg-success" title="نشط">{{ active_surveys }}</span>
+                    {% endif %}
+                    <i class="fas fa-poll"></i>
+                    <h3>الاستبيانات</h3>
+                </a>
+
+                <!-- Establishment List -->
+                <a href="{% url 'admin_establishment_list' %}" class="grid-item">
+                    <i class="fas fa-list-alt"></i>
+                    <h3>قائمة المنشآت</h3>
+                </a>
+
+                <!-- Users -->
+                <a href="{% url 'admin_users_list' %}" class="grid-item">
+                    <i class="fas fa-users-cog"></i>
+                    <h3>المستخدمين</h3>
+                </a>
+
+                <!-- Events -->
+                <a href="{% url 'admin_event_list' %}" class="grid-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>الفعاليات</h3>
+                </a>
+
+                <!-- Weather -->
+                <a href="{% url 'admin_weather_alerts' %}" class="grid-item">
+                    <i class="fas fa-cloud-moon-rain"></i>
+                    <h3>الطقس</h3>
+                </a>
+
+                <!-- Broadcast -->
+                <a href="{% url 'admin_create_alert' %}" class="grid-item">
+                    <i class="fas fa-bullhorn"></i>
+                    <h3>تنبيه عام</h3>
+                </a>
+
+                <!-- System Health -->
+                {% if user.is_superuser %}
+                <a href="{% url 'admin_system_health' %}" class="grid-item">
+                    <i class="fas fa-server"></i>
+                    <h3>صحة النظام</h3>
+                </a>
+                {% endif %}
+
+                <!-- Settings (Placeholder) -->
+                <a href="#" class="grid-item opacity-50">
+                    <i class="fas fa-sliders-h"></i>
+                    <h3>الإعدادات</h3>
+                </a>
+
+            </div>
+
+    </div>
+
+
+    <!-- Secondary Section: Charts & Info -->
+    {% include "management/partials/admin_charts.html" %}
+
+    <div class="row g-4 animate-fade-in" style="animation-delay: 0.4s;">
+        <!-- Recent Activity Feed -->
+        <div class="col-lg-8">
+            <div class="section-header-premium mb-3">
+                <h2 class="fs-5"><i class="fas fa-history text-accent"></i> سجل النشاطات الحديثة</h2>
+            </div>
+            <div class="bg-white p-0 rounded-4 soft-shadow overflow-hidden border border-slate-100">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="py-3 px-4 text-slate-500 fw-bold small uppercase">المستخدم</th>
+                                <th class="py-3 text-slate-500 fw-bold small uppercase">النشاط</th>
+                                <th class="py-3 text-slate-500 fw-bold small uppercase">التفاصيل</th>
+                                <th class="py-3 px-4 text-slate-500 fw-bold small uppercase">التوقيت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in recent_logs %}
+                            <tr>
+                                <td class="px-4 fw-bold text-primary">{{ log.user.username }}</td>
+                                <td>
+                                    <span class="badge bg-slate-100 text-slate-700 fw-600 px-3 py-2">{{ log.get_action_display|default:log.action }}</span>
+                                </td>
+                                <td class="text-muted small text-truncate" style="max-width: 200px;">
+                                    {{ log.details|default:"-" }}
+                                </td>
+                                <td class="px-4 text-muted small" dir="ltr">{{ log.timestamp|timesince }} ago</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">لا يوجد نشاط حديث</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Server Status -->
+        <div class="col-lg-4">
+            <div class="section-header-premium mb-3">
+                <h2 class="fs-5"><i class="fas fa-server text-secondary-accent"></i> حالة السيرفر</h2>
+            </div>
+            <div class="bg-white p-4 rounded-4 soft-shadow h-100 border border-slate-100">
+                <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                    <li class="border-bottom pb-3">
+                        <small class="text-muted d-block">إصدار النظام</small>
+                        <span class="fw-bold" dir="ltr">v1.2.0</span>
+                    </li>
+                    <li class="border-bottom pb-3">
+                        <small class="text-muted d-block">حالة قاعدة البيانات</small>
+                        <span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Connected</span>
+                    </li>
+                    <li class="">
+                        <small class="text-muted d-block">آخر نسخة احتياطية</small>
+                        <span class="text-dark">منذ 2 ساعة</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

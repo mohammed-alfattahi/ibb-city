@@ -1,0 +1,13 @@
+<div class="progress-wrapper">
+    {% if label %}
+    <div class="progress-label">
+        <span>{{ label }}</span>
+        <span>{{ current }} / {{ total }}</span>
+    </div>
+    {% endif %}
+    <div class="progress-bar-container">
+        <div class="progress-bar {{ color }}" style="width: {{ percentage }}%;">
+            {{ percentage }}%
+        </div>
+    </div>
+</div>

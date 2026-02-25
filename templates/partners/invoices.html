@@ -1,0 +1,86 @@
+{% extends "partners/base_partner.html" %}
+{% load humanize %}
+
+{% block title %}الفواتير والمدفوعات - شريك النجاح{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+    <div class="col-md-9">
+        <h2 class="fw-bold mb-1 text-dark">
+            <i class="fas fa-file-invoice-dollar text-primary me-2"></i> الفواتير
+        </h2>
+        <p class="text-muted mb-0">سجل المعاملات المالية والفواتير المستحقة.</p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="py-3 px-4 border-0">رقم الفاتورة</th>
+                        <th class="py-3 border-0">تاريخ الإصدار</th>
+                        <th class="py-3 border-0">الخدمة / الإعلان</th>
+                        <th class="py-3 border-0">المبلغ</th>
+                        <th class="py-3 border-0">الحالة</th>
+                        <th class="py-3 px-4 border-0 text-end">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td class="px-4 fw-bold text-dark">#{{ invoice.invoice_number }}</td>
+                        <td class="text-muted">{{ invoice.issue_date|date:"Y-m-d" }}</td>
+                        <td>
+                            {% if invoice.advertisement %}
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-ad text-muted me-2"></i>
+                                <div>
+                                    <div class="fw-bold">{{ invoice.advertisement.title }}</div>
+                                    <small class="text-muted">{{ invoice.advertisement.place.name }}</small>
+                                </div>
+                            </div>
+                            {% else %}
+                            <span class="text-muted">--</span>
+                            {% endif %}
+                        </td>
+                        <td class="fw-bold">{{ invoice.total_amount|intcomma }} ر.ي</td>
+                        <td>
+                            {% if invoice.is_paid %}
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">
+                                <i class="fas fa-check-circle me-1"></i> مدفوعة
+                            </span>
+                            {% else %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3">
+                                <i class="fas fa-clock me-1"></i> بانتظار السداد
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 text-end">
+                            {% if not invoice.is_paid and invoice.advertisement %}
+                            <a href="{% url 'ad_payment' invoice.advertisement.pk %}"
+                                class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm">
+                                <i class="fas fa-credit-card me-1"></i> سداد الان
+                            </a>
+                            {% else %}
+                            <button class="btn btn-sm btn-light rounded-pill px-3 border" disabled>
+                                <i class="fas fa-check me-1"></i> تم
+                            </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="fas fa-file-invoice fa-3x text-muted opacity-25 mb-3"></i>
+                            <p class="text-muted">لا توجد فواتير حالياً.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

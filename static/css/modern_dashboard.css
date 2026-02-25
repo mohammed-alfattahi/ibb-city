@@ -1,0 +1,255 @@
+/* Modern Dashboard CSS */
+
+:root {
+    /* Map Dashboard variables to Global Design Tokens */
+    --dash-primary: var(--color-primary-600);
+    --dash-secondary: var(--color-blue-500, #3b82f6);
+    --dash-success: var(--color-success-500, #10b981);
+    --dash-warning: var(--color-warning-500, #f59e0b);
+    --dash-danger: var(--color-danger-500, #ef4444);
+    --dash-bg: var(--color-gray-50);
+    --card-shadow: var(--shadow-sm);
+}
+
+body {
+    background-color: var(--dash-bg);
+    font-family: var(--font-primary);
+}
+
+/* KPI Cards */
+.kpi-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    box-shadow: var(--card-shadow);
+    transition: transform var(--transition-normal);
+    border: 1px solid var(--color-gray-100);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.kpi-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: var(--space-4);
+}
+
+.kpi-title {
+    color: var(--color-gray-500);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-1);
+}
+
+.kpi-value {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-extrabold);
+    color: var(--color-gray-900);
+    margin-bottom: var(--space-2);
+}
+
+.kpi-trend {
+    font-size: var(--text-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+/* Specific Card Styles */
+.kpi-views .kpi-icon-wrapper {
+    background: var(--color-primary-50);
+    color: var(--dash-primary);
+}
+
+.kpi-rating .kpi-icon-wrapper {
+    background: #fffbeb;
+    /* amber-50 */
+    color: var(--dash-warning);
+}
+
+.kpi-clicks .kpi-icon-wrapper {
+    background: #f0fdf4;
+    /* emerald-50 */
+    color: var(--dash-success);
+}
+
+/* Quick Actions */
+.action-panel {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    box-shadow: var(--card-shadow);
+    margin-bottom: var(--space-8);
+}
+
+.quick-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    background: var(--color-gray-50);
+    color: var(--color-gray-600);
+    text-decoration: none;
+    font-weight: var(--font-semibold);
+    transition: all var(--transition-normal);
+}
+
+.quick-btn:hover {
+    background: var(--color-gray-200);
+    color: var(--color-gray-900);
+}
+
+/* Activity Feed */
+.feed-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 0;
+    box-shadow: var(--card-shadow);
+    margin-bottom: var(--space-6);
+    overflow: hidden;
+    border: 1px solid var(--color-gray-100);
+}
+
+.feed-header {
+    padding: var(--space-4) var(--space-6);
+    border-bottom: 1px solid var(--color-gray-100);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.feed-body {
+    padding: var(--space-6);
+}
+
+.feed-footer {
+    background: var(--color-gray-50);
+    padding: var(--space-3) var(--space-6);
+    border-top: 1px solid var(--color-gray-100);
+    font-size: var(--text-sm);
+}
+
+
+/* EliteConnect Theme Standardization */
+
+/* Main Connect Variables */
+:root {
+    --elite-bg: var(--color-gray-50);
+    --elite-card-bg: #ffffff;
+    --elite-primary: var(--color-primary-800, #1e293b);
+    --elite-accent: var(--color-primary-500, #3b82f6);
+    --elite-text: var(--color-gray-700, #334155);
+    --elite-border: var(--color-gray-200, #e2e8f0);
+}
+
+/* Elite Card standardized */
+.elite-card {
+    background: var(--elite-card-bg);
+    border: 1px solid var(--elite-border);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    overflow: hidden;
+}
+
+.elite-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+    border-color: var(--elite-accent);
+}
+
+/* Stats specific */
+.stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gray-500);
+    font-weight: 700;
+}
+
+.stat-value {
+    font-size: 1.875rem;
+    font-weight: 800;
+    color: var(--elite-primary);
+    line-height: 1.2;
+}
+
+/* Elite Tables */
+.elite-table {
+    width: 100%;
+}
+
+.elite-table thead th {
+    background-color: var(--color-gray-50);
+    color: var(--color-gray-500);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--elite-border);
+    padding: 1rem 1.5rem;
+}
+
+.elite-table tbody td {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--elite-border);
+    color: var(--elite-text);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.elite-table tbody tr:hover td {
+    background-color: var(--color-gray-50);
+}
+
+.elite-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Quick Action Buttons */
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border: 1px solid var(--elite-border);
+    border-radius: var(--radius-lg);
+    color: var(--elite-primary);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.quick-action-btn:hover {
+    background: var(--color-gray-50);
+    border-color: var(--elite-accent);
+    transform: translateX(-4px);
+    /* RTL awareness: move left on hover */
+}
+
+.icon-box {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-lg);
+    background: var(--color-primary-50);
+    color: var(--elite-accent);
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}

@@ -1,0 +1,27 @@
+{# Atomic Input Component #}
+<div class="mb-3 {{ container_class }}">
+    {% if label %}
+    <label for="{{ id }}" class="form-label fw-bold small text-muted">{{ label }}</label>
+    {% endif %}
+
+    <div class="input-group {% if icon %}has-icon{% endif %}">
+        {% if icon %}
+        <span class="input-group-text bg-light border-end-0 text-muted">
+            <i class="{{ icon }}"></i>
+        </span>
+        {% endif %}
+
+        <input type="{{ type|default:'text' }}"
+            class="form-control {{ class }} {% if error %}is-invalid{% endif %} {% if icon %}border-start-0{% endif %}"
+            id="{{ id }}" name="{{ name }}" value="{{ value|default:'' }}" placeholder="{{ placeholder|default:'' }}" {% if required %}required{% endif %} {% if disabled %}disabled{% endif %} {{ attrs|safe }}>
+
+        {% if error %}
+        <div class="invalid-feedback">
+            {{ error }}
+        </div>
+        {% endif %}
+    </div>
+    {% if help_text %}
+    <div class="form-text text-muted small mt-1">{{ help_text }}</div>
+    {% endif %}
+</div>

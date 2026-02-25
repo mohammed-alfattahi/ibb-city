@@ -1,0 +1,120 @@
+{% extends "base_marketing.html" %}
+{% load static %}
+
+{% block title %}دليل السلامة - دليل إب السياحي{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">دليل السلامة والأمان</h1>
+        <p class="lead text-muted">نصائح وإرشادات لضمان رحلة آمنة وممتعة في "اللواء الأخضر"</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Emergency Numbers -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-circle bg-danger bg-opacity-10 text-danger rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-phone-alt fa-2x"></i>
+                    </div>
+                    <h3 class="h5 fw-bold mb-3">أرقام الطوارئ</h3>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><span class="fw-bold">الشرطة:</span> 199</li>
+                        <li class="mb-2"><span class="fw-bold">الإسعاف:</span> 191</li>
+                        <li class="mb-2"><span class="fw-bold">الدفاع المدني:</span> 191</li>
+                        <li><span class="fw-bold">عمليات المرور:</span> 194</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mountain Safety -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-circle bg-success bg-opacity-10 text-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-mountain fa-2x"></i>
+                    </div>
+                    <h3 class="h5 fw-bold mb-3">السياحة الجبلية</h3>
+                    <p class="text-muted small">
+                        تجنب المناطق الوعرة وغير المأهولة بدون دليل سياحي. تأكد من حالة الطقس قبل الانطلاق في رحلات المشي الجبلي، واحذر من الضباب الكثيف في المرتفعات.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health & Hygiene -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-circle bg-info bg-opacity-10 text-info rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-hand-holding-medical fa-2x"></i>
+                    </div>
+                    <h3 class="h5 fw-bold mb-3">الصحة والنظافة</h3>
+                    <p class="text-muted small">
+                        احرص على شرب المياه المعبأة وتجنب الأطعمة المكشوفة. استخدم واقي الشمس عند التجول نهاراً، واحتفظ بحقيبة إسعافات أولية صغيرة معك دائماً.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Respect Local Culture -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-circle bg-warning bg-opacity-10 text-warning rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                    <h3 class="h5 fw-bold mb-3">احترام الثقافة المحلية</h3>
+                    <p class="text-muted small">
+                       تتميز إب بعادات وتقاليد أصيلة. يرجى احترام الخصوصية عند التصوير، والالتزام بالملابس المحتشمة، والاستئذان قبل دخول الممتلكات الخاصة والمزارع.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+         <!-- Road Safety -->
+         <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-circle bg-secondary bg-opacity-10 text-secondary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-car fa-2x"></i>
+                    </div>
+                    <h3 class="h5 fw-bold mb-3">القيادة والطرق</h3>
+                    <p class="text-muted small">
+                        الطرق الجبلية قد تكون ضيقة ومتعرجة. التزم بالسرعة المحددة، واحذر من الانزلاقات أثناء موسم الأمطار. تأكد من سلامة مكابح سيارتك قبل السفر.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rain & Floods -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 text-center">
+                    <div class="icon-circle bg-primary bg-opacity-10 text-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-cloud-showers-heavy fa-2x"></i>
+                    </div>
+                    <h3 class="h5 fw-bold mb-3">موسم الأمطار</h3>
+                    <p class="text-muted small">
+                        ابتعد تماماً عن مجاري السيول والوديان أثناء وكبعد هطول الأمطار. السيول في إب قد تكون مفاجئة وقوية للغاية.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Alert Banner -->
+    <div class="alert alert-warning border-0 shadow-sm rounded-4 mt-5 d-flex align-items-center" role="alert">
+        <i class="fas fa-exclamation-triangle fa-2x me-3 text-warning"></i>
+        <div>
+            <h4 class="alert-heading h6 fw-bold mb-1">تنبيه هام للزوار</h4>
+            <p class="mb-0 small opacity-75">
+                يرجى متابعة نشرات الطقس المحلية باستمرار، خاصة خلال موسم الصيف (الموسم الأخضر)، حيث تكثر الأمطار والضباب. سلامتكم تهمنا!
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

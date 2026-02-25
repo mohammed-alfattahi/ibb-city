@@ -1,0 +1,6 @@
+<section class="mb-5 animate__animated animate__fadeInUp {{ block.custom_class }}">
+    <h3 class="section-title-custom">{{ block.title|default:"نظرة عامة" }}</h3>
+    <div class="bg-white p-4 rounded-4 shadow-sm border border-light text-muted lh-lg">
+        {{ place.description|default:"لا يوجد وصف متاح لهذا المعلم."|linebreaks }}
+    </div>
+</section>

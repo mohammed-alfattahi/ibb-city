@@ -1,0 +1,83 @@
+{% load humanize static %}
+<div class="list-group-item p-3 border-light notification-item {% if not notification.is_read %}bg-light-primary{% else %}bg-white{% endif %} animate__animated animate__fadeIn" 
+     id="notification-{{ notification.pk }}">
+    <div class="d-flex w-100 justify-content-between align-items-start gap-3">
+        <!-- Icon/Type -->
+        <div class="flex-shrink-0">
+            {% if notification.metadata.image %}
+            <img src="{{ notification.metadata.image }}" class="rounded-circle object-fit-cover border" 
+                 style="width: 48px; height: 48px;" alt="Notification Image"
+                 onerror="this.onerror=null; this.src='{% static 'images/default-placeholder.png' %}'; this.parentElement.innerHTML='<div class=\'notification-icon rounded-circle d-flex align-items-center justify-content-center bg-light text-muted\' style=\'width: 48px; height: 48px;\'><i class=\'fas fa-bell\'></i></div>'">
+            {% else %}
+            <div class="notification-icon rounded-circle d-flex align-items-center justify-content-center
+                {% if notification.event_type == 'WEATHER_ALERT' %}
+                    {% if notification.metadata.severity == 'RED' %}bg-danger text-white border border-danger shadow-sm
+                    {% elif notification.metadata.severity == 'ORANGE' %}bg-warning text-dark border border-warning
+                    {% else %}bg-warning-subtle text-warning{% endif %}
+                {% elif 'approved' in notification.notification_type %}bg-success-subtle text-success
+                {% elif 'rejected' in notification.notification_type %}bg-danger-subtle text-danger
+                {% elif 'warning' in notification.notification_type %}bg-warning-subtle text-warning
+                {% else %}bg-primary-subtle text-primary{% endif %}"
+                style="width: 48px; height: 48px;">
+                {% if 'approved' in notification.notification_type %}
+                    <i class="fas fa-check"></i>
+                {% elif 'rejected' in notification.notification_type %}
+                    <i class="fas fa-times"></i>
+                {% elif 'review' in notification.notification_type %}
+                    <i class="fas fa-star"></i>
+                {% elif 'alert' in notification.notification_type or 'weather' in notification.notification_type or notification.event_type == 'WEATHER_ALERT' %}
+                    <i class="fas fa-exclamation-triangle"></i>
+                {% else %}
+                    <i class="fas fa-bell"></i>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Content -->
+        <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-start">
+                <h6 class="mb-1 fw-bold text-dark">{{ notification.title }}</h6>
+                <small class="text-muted text-nowrap">{{ notification.created_at|naturaltime }}</small>
+            </div>
+            <p class="mb-1 text-secondary small">{{ notification.message|truncatechars:150 }}</p>
+            
+            {% if notification.action_url %}
+            <a href="{{ notification.action_url }}" class="btn btn-link btn-sm p-0 text-decoration-none mt-1">
+                عرض التفاصيل <i class="fas fa-arrow-left ms-1"></i>
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        <div class="dropdown">
+            <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
+                {% if not notification.is_read %}
+                <li>
+                    <button class="dropdown-item" 
+                            hx-post="{% url 'mark_notification_read' notification.pk %}"
+                            hx-target="#notification-{{ notification.pk }}"
+                            hx-swap="outerHTML">
+                        <i class="fas fa-check text-success me-2"></i> تحديد كمقروء
+                    </button>
+                </li>
+                {% endif %}
+                
+                {% if allow_delete %}
+                <li>
+                    <button class="dropdown-item text-danger" 
+                            hx-post="{% url 'delete_notification' notification.pk %}"
+                            hx-target="#notification-{{ notification.pk }}"
+                            hx-swap="outerHTML"
+                            hx-confirm="هل أنت متأكد من حذف هذا الإشعار؟">
+                        <i class="fas fa-trash-alt me-2"></i> حذف
+                    </button>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>

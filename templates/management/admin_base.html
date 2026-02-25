@@ -1,0 +1,265 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}لوحة الإدارة - نظام إب السياحي{% endblock %}</title>
+
+    <!-- Bootstrap 5 RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Admin Dashboard Styles (extracted to static file) -->
+    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar soft-shadow" id="sidebar">
+        <!-- Brand -->
+        <div class="sidebar-brand">
+            <div class="brand-icon mb-3">
+                <i class="fas fa-kaaba fa-4x text-primary" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));"></i>
+            </div>
+            <h5>نظام إب السياحي</h5>
+            <small>Premium Admin Portal</small>
+        </div>
+
+        <!-- Navigation -->
+        <div class="accordion-menu">
+            <!-- 1. Dashboard -->
+            <a href="{% url 'custom_admin_dashboard' %}"
+                class="nav-item-btn {% if request.resolver_match.url_name == 'custom_admin_dashboard' %}active{% endif %}">
+                <div class="d-flex align-items-center">
+                    <span class="color-badge bg-primary me-2"><i class="fas fa-home"></i></span>
+                    <span class="fs-6">لوحة التحكم</span>
+                </div>
+            </a>
+
+            <!-- 2. Establishments -->
+            <button class="nav-item-btn" onclick="toggleMenu('menu-establishments')">
+                <div class="d-flex align-items-center">
+                    <span class="color-badge bg-green">{% if pending_establishments_count %}<span
+                            class="position-absolute top-0 start-0 badge rounded-pill bg-danger"
+                            style="font-size: 0.6rem;">{{ pending_establishments_count }}</span>{% endif %}2</span>
+                    <span>إدارة المنشآت</span>
+                </div>
+                <i class="fas fa-chevron-left small opacity-50"></i>
+            </button>
+            <div id="menu-establishments"
+                class="nav-sub-menu {% if 'establishment' in request.resolver_match.url_name %}open{% endif %}">
+                <a href="{% url 'admin_establishment_list' %}" class="sub-link">
+                    <i class="fas fa-list me-2 ms-2 text-muted"></i> كل المنشآت
+                </a>
+                <a href="{% url 'admin_establishment_approval' %}" class="sub-link">
+                    <i class="fas fa-check-double me-2 ms-2 text-muted"></i> طلبات المراجعة
+                </a>
+            </div>
+
+            <!-- 3. Partners -->
+            <button class="nav-item-btn" onclick="toggleMenu('menu-partners')">
+                <div class="d-flex align-items-center">
+                    <span class="color-badge bg-blue">{% if pending_partners_count %}<span
+                            class="position-absolute top-0 start-0 badge rounded-pill bg-danger"
+                            style="font-size: 0.6rem;">{{ pending_partners_count }}</span>{% endif %}3</span>
+                    <span>الشركاء</span>
+                </div>
+                <i class="fas fa-chevron-left small opacity-50"></i>
+            </button>
+            <div id="menu-partners"
+                class="nav-sub-menu {% if 'partner' in request.resolver_match.url_name %}open{% endif %}">
+                <a href="{% url 'admin_pending_partners' %}" class="sub-link">
+                    <i class="fas fa-user-clock me-2 ms-2 text-muted"></i> طلبات الشراكة
+                </a>
+                <a href="{% url 'admin_users_list' %}" class="sub-link">
+                    <i class="fas fa-users me-2 ms-2 text-muted"></i> المستخدمين
+                </a>
+            </div>
+
+            <!-- 4. Content & Requests -->
+            <button class="nav-item-btn" onclick="toggleMenu('menu-content')">
+                <div class="d-flex align-items-center">
+                    <span class="color-badge bg-orange">{% if pending_changes_count %}<span
+                            class="position-absolute top-0 start-0 badge rounded-pill bg-danger"
+                            style="font-size: 0.6rem;">{{ pending_changes_count }}</span>{% endif %}4</span>
+                    <span>المحتوى والطلبات</span>
+                </div>
+                <i class="fas fa-chevron-left small opacity-50"></i>
+            </button>
+            <div id="menu-content"
+                class="nav-sub-menu {% if 'request' in request.resolver_match.url_name or 'ad' in request.resolver_match.url_name %}open{% endif %}">
+                <a href="{% url 'admin_request_list' %}" class="sub-link">
+                    <i class="fas fa-file-signature me-2 ms-2 text-muted"></i> طلبات التعديل
+                </a>
+                <a href="{% url 'admin_pending_changes' %}" class="sub-link">
+                    <i class="fas fa-history me-2 ms-2 text-muted"></i> تغييرات معلقة
+                </a>
+                <a href="{% url 'admin_ad_list' %}" class="sub-link">
+                    <i class="fas fa-bullhorn me-2 ms-2 text-muted"></i> الإعلانات
+                </a>
+                <a href="{% url 'admin_favorite_list' %}" class="sub-link">
+                    <i class="fas fa-heart me-2 ms-2 text-muted"></i> إدارة المفضلة
+                </a>
+                <a href="{% url 'survey_list' %}" class="sub-link">
+                    <i class="fas fa-poll me-2 ms-2 text-muted"></i> الاستبيانات
+                </a>
+            </div>
+
+            <!-- 5. System -->
+            <button class="nav-item-btn" onclick="toggleMenu('menu-system')">
+                <div class="d-flex align-items-center">
+                    <span class="color-badge bg-purple">5</span>
+                    <span>النظام والتقارير</span>
+                </div>
+                <i class="fas fa-chevron-left small opacity-50"></i>
+            </button>
+            <div id="menu-system"
+                class="nav-sub-menu {% if 'weather' in request.resolver_match.url_name or 'report' in request.resolver_match.url_name %}open{% endif %}">
+                <a href="{% url 'admin_reports_list' %}" class="sub-link">
+                    <i class="fas fa-flag me-2 ms-2 text-muted"></i> البلاغات
+                </a>
+                
+                <!-- System Settings -->
+                <a href="{% url 'admin_create_alert' %}" class="sub-link">
+                    <i class="fas fa-bullhorn me-2 ms-2 text-muted"></i> تنبيهات جماعية
+                </a>
+                <a href="{% url 'admin_settings' %}" class="sub-link">
+                    <i class="fas fa-cogs me-2 ms-2 text-muted"></i> الإعدادات
+                </a>
+                <a href="{% url 'admin_weather_alerts' %}" class="sub-link">
+                    <i class="fas fa-cloud me-2 ms-2 text-muted"></i> الطقس
+                </a>
+                {% if user.is_superuser %}
+                <a href="{% url 'admin_system_health' %}" class="sub-link">
+                    <i class="fas fa-heartbeat me-2 ms-2 text-muted"></i> صحة النظام
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Logout -->
+            <a href="{% url 'logout' %}" class="nav-item-btn text-danger mt-3 border-top">
+                <div class="d-flex align-items-center">
+                    <span class="color-badge bg-red"><i class="fas fa-sign-out-alt"></i></span>
+                    <span class="fs-6">تسجيل الخروج</span>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <!-- HEADER -->
+    <header class="main-header glass-panel">
+        <div class="header-title">
+            <button class="btn btn-light btn-sm d-lg-none me-2"
+                onclick="document.getElementById('sidebar').classList.toggle('show')">
+                <i class="fas fa-bars"></i>
+            </button>
+            <i class="fas fa-shield-halved text-accent fa-lg"></i>
+            <span class="d-none d-md-inline fw-bold text-slate-800">بوابة الإدارة المركزية</span>
+        </div>
+
+        <!-- Global Search -->
+        <div class="flex-grow-1 mx-4 d-none d-md-block">
+            <form action="{% url 'admin_global_search' %}" method="get" class="position-relative">
+                <input type="search" name="q" class="form-control rounded-pill border-0 bg-light py-2 ps-5" 
+                       placeholder="بحث عن مستخدم، منشأة، أو مكان..." value="{{ request.GET.q }}">
+                <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+            </form>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dropdown me-3">
+            <button class="btn btn-primary rounded-circle shadow-sm" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-plus"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-2 mt-2">
+                <li><h6 class="dropdown-header fw-bold">إضافة سريع</h6></li>
+                <!-- 
+                <li><a class="dropdown-item rounded-3 mb-1" href="#">
+                    <i class="fas fa-bullhorn text-warning me-2"></i> إعلان جديد
+                </a></li>
+                -->
+                <li><a class="dropdown-item rounded-3 mb-1" href="{% url 'admin_create_alert' %}">
+                    <i class="fas fa-bullhorn text-warning me-2"></i> تنبيه عام
+                </a></li>
+                <li><a class="dropdown-item rounded-3 mb-1" href="{% url 'admin_weather_alert_create' %}">
+                    <i class="fas fa-cloud text-info me-2"></i> تنبيه طقس
+                </a></li>
+                <li><a class="dropdown-item rounded-3 mb-1" href="{% url 'admin_create_alert' %}">
+                    <i class="fas fa-poll-h text-primary me-2"></i> استبيان جديد
+                </a></li> <!-- Future: Link to survey create form when ready -->
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item rounded-3" href="#">
+                    <i class="fas fa-user-plus text-success me-2"></i> مستخدم جديد
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="user-profile dropdown">
+            <div class="d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="text-end d-none d-md-block">
+                    <div class="fw-bold small">{{ user.get_full_name|default:user.username }}</div>
+                    <div class="text-muted" style="font-size: 0.7rem;">{{ user.email }}</div>
+                </div>
+                <div class="user-avatar">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
+                <i class="fas fa-chevron-down small text-muted"></i>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg p-2 rounded-3">
+                <li><a class="dropdown-item rounded-2" href="{% url 'home' %}"><i
+                            class="fas fa-home me-2 text-muted"></i> الموقع الرئيسي</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item rounded-2 text-danger" href="{% url 'logout' %}"><i
+                            class="fas fa-sign-out-alt me-2"></i> خروج</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content-wrapper">
+        <!-- Breadcrumb / Page Title Bar -->
+        <div class="breadcrumb-bar">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="#" class="text-primary text-decoration-none">الرئيسية</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {% block title_breadcrumb %}
+                        لوحة القيادة
+                        {% endblock %}
+                    </li>
+                </ol>
+            </nav>
+            <div id="clock" class="small text-muted fw-bold"></div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show border-0 shadow-sm" role="alert">
+                <i class="fas fa-info-circle me-2"></i> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/admin.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

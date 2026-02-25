@@ -1,0 +1,21 @@
+/* Partner Reviews UI
+   Scoped for partner dashboard.
+*/
+
+.partner-replies {
+  border-radius: 16px;
+}
+
+.partner-reply.is-hidden {
+  opacity: .55;
+  filter: grayscale(1);
+}
+
+.partner-reply .btn.btn-sm {
+  padding: .25rem .6rem;
+}
+
+/* Make review cards closer to "social" style */
+.partner-page-header {
+  gap: 1rem;
+}

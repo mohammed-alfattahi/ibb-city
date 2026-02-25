@@ -1,0 +1,367 @@
+{% extends "partners/base_partner.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}لوحة التحكم | شريك إب{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Main Content Column -->
+    <div class="col-lg-9">
+
+        <!-- KPI Cards -->
+        {% if total_places > 0 %}
+        <div class="row g-3 mb-4">
+            <!-- Active Places -->
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm overflow-hidden h-100">
+                    <div class="card-body p-3 position-relative">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="icon-circle bg-primary bg-opacity-10 text-primary me-2">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <h6 class="card-subtitle text-muted small fw-bold">المنشآت النشطة</h6>
+                        </div>
+                        <h2 class="card-title fw-bold mb-0 text-primary">{{ active_places_count|default:"0" }}</h2>
+                        <div class="position-absolute bottom-0 end-0 p-3 opacity-10">
+                            <i class="fas fa-building fa-4x text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Total Views -->
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm overflow-hidden h-100">
+                    <div class="card-body p-3 position-relative">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="icon-circle bg-success bg-opacity-10 text-success me-2">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <h6 class="card-subtitle text-muted small fw-bold">إجمالي الزيارات</h6>
+                        </div>
+                        <h2 class="card-title fw-bold mb-0 text-success">{{ total_views|default:"0" }}</h2>
+                        <div class="small text-muted mt-1">
+                            <i class="fas fa-arrow-up text-success small"></i> مشاهدة
+                        </div>
+                        <div class="position-absolute bottom-0 end-0 p-3 opacity-10">
+                            <i class="fas fa-chart-line fa-4x text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rating -->
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm overflow-hidden h-100">
+                    <div class="card-body p-3 position-relative">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="icon-circle bg-warning bg-opacity-10 text-warning me-2">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h6 class="card-subtitle text-muted small fw-bold">متوسط التقييم</h6>
+                        </div>
+                        <h2 class="card-title fw-bold mb-0 text-warning">{{ avg_rating|default:"0.0" }}</h2>
+                        <div class="small text-muted mt-1">
+                            من {{ total_reviews|default:"0" }} تقييم
+                        </div>
+                        <div class="position-absolute bottom-0 end-0 p-3 opacity-10">
+                            <i class="fas fa-star fa-4x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Surveys -->
+            <div class="col-md-2">
+                <div class="card border-0 shadow-sm overflow-hidden h-100">
+                    <div class="card-body p-3 position-relative">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="icon-circle bg-danger bg-opacity-10 text-danger me-2">
+                                <i class="fas fa-poll-h"></i>
+                            </div>
+                            <h6 class="card-subtitle text-muted small fw-bold">استبيانات نشطة</h6>
+                        </div>
+                        <h2 class="card-title fw-bold mb-0 text-danger">{{ active_surveys_count|default:"0" }}</h2>
+                        <div class="position-absolute bottom-0 end-0 p-3 opacity-10">
+                            <i class="fas fa-poll fa-4x text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Onboarding Hero Section -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden bg-white text-center py-5 px-3">
+            <div class="mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 mb-3" style="width: 100px; height: 100px;">
+                    <i class="fas fa-store-alt fa-3x text-primary"></i>
+                </div>
+                <h2 class="fw-bold mb-2">مرحباً بك في شريك إب!</h2>
+                <p class="text-muted lead mx-auto" style="max-width: 600px;">
+                    أهلاً بك في منصة شركاء دليل إب. ابدأ رحلتك معنا وسجل منشأتك لتصل إلى آلاف الزوار والعملاء المحتملين بكل سهولة.
+                </p>
+            </div>
+            
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-8 col-lg-6">
+                    <div class="position-relative mx-4 my-2">
+                        <div class="progress" style="height: 2px;">
+                            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <button type="button" class="position-absolute top-0 start-0 translate-middle btn btn-sm btn-primary rounded-circle shadow-sm fw-bold border-2 border-white" style="width: 2.5rem; height:2.5rem;">1</button>
+                        <button type="button" class="position-absolute top-0 start-50 translate-middle btn btn-sm btn-light text-muted border rounded-circle shadow-sm fw-bold border-2 border-white" style="width: 2.5rem; height:2.5rem;">2</button>
+                        <button type="button" class="position-absolute top-0 start-100 translate-middle btn btn-sm btn-light text-muted border rounded-circle shadow-sm fw-bold border-2 border-white" style="width: 2.5rem; height:2.5rem;">3</button>
+                        
+                        <div class="d-flex justify-content-between mt-3 px-3">
+                            <small class="fw-bold text-primary">أضف المنشأة</small>
+                            <small class="text-muted">نراجع الطلب</small>
+                            <small class="text-muted">انطلق!</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <a href="{% url 'wizard_start' %}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm hover-scale animate__animated animate__pulse animate__infinite">
+                <i class="fas fa-plus-circle me-2"></i> إضافة منشأتي الأولى
+            </a>
+            <p class="small text-muted mt-3 mb-0">المراجعة تتم عادة خلال 24 ساعة من تقديم الطلب</p>
+        </div>
+        {% endif %}
+
+        <!-- Panel 1: Main Operations -->
+        <div class="ent-card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="ent-card-header bg-white border-bottom p-3">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-cogs me-2 text-primary"></i> الوصول السريع</h5>
+            </div>
+            <div class="ent-card-body p-4">
+                <div class="row g-3">
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <a href="{% url 'partner_establishment_list' %}" class="card h-100 border-0 shadow-sm hover-up text-center p-3 text-decoration-none text-dark">
+                            <div class="mb-2 text-primary"><i class="fas fa-building fa-2x"></i></div>
+                            <div class="small fw-bold">إدارة المنشآت</div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <a href="{% url 'wizard_start' %}" class="card h-100 border-0 shadow-sm hover-up text-center p-3 text-decoration-none text-dark">
+                            <div class="mb-2 text-success"><i class="fas fa-plus-circle fa-2x"></i></div>
+                            <div class="small fw-bold">إضافة منشأة</div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <a href="{% url 'partner_review_list' %}" class="card h-100 border-0 shadow-sm hover-up text-center p-3 text-decoration-none text-dark">
+                            <div class="mb-2 text-warning"><i class="fas fa-star fa-2x"></i></div>
+                            <div class="small fw-bold">التقييمات</div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <a href="{% url 'partner_ads' %}" class="card h-100 border-0 shadow-sm hover-up text-center p-3 text-decoration-none text-dark">
+                            <div class="mb-2 text-info"><i class="fas fa-bullhorn fa-2x"></i></div>
+                            <div class="small fw-bold">الإعلانات</div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <a href="{% url 'notification_list' %}" class="card h-100 border-0 shadow-sm hover-up text-center p-3 text-decoration-none text-dark">
+                            <div class="mb-2 text-danger"><i class="fas fa-bell fa-2x"></i></div>
+                            <div class="small fw-bold">الإشعارات</div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <a href="{% url 'partner_profile' %}" class="card h-100 border-0 shadow-sm hover-up text-center p-3 text-decoration-none text-dark">
+                            <div class="mb-2 text-secondary"><i class="fas fa-user-cog fa-2x"></i></div>
+                            <div class="small fw-bold">الملف الشخصي</div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <a href="{% url 'survey_list' %}" class="card h-100 border-0 shadow-sm hover-up text-center p-3 text-decoration-none text-dark">
+                            <div class="mb-2 text-magenta" style="color: #d63384;"><i class="fas fa-poll-h fa-2x"></i></div>
+                            <div class="small fw-bold">الاستبيانات</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Smart Recommendations -->
+        {% if total_places > 0 %}
+        <div class="ent-card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="ent-card-header bg-white border-bottom p-3">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-lightbulb me-2 text-warning"></i> توصيات ذكية لتحسين أدائك</h5>
+            </div>
+            <div class="ent-card-body p-4">
+                <div class="row g-3">
+                    {% if total_reviews == 0 %}
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start gap-3 p-3 bg-warning bg-opacity-10 rounded-3">
+                            <div class="bg-warning bg-opacity-25 rounded-circle p-2 flex-shrink-0">
+                                <i class="fas fa-star text-warning"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 small">اطلب تقييمات من عملائك</h6>
+                                <p class="text-muted small mb-0">المنشآت التي لديها تقييمات تحصل على زيارات أكثر بـ 60%</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start gap-3 p-3 bg-info bg-opacity-10 rounded-3">
+                            <div class="bg-info bg-opacity-25 rounded-circle p-2 flex-shrink-0">
+                                <i class="fas fa-images text-info"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 small">أضف المزيد من الصور</h6>
+                                <p class="text-muted small mb-0">الصور عالية الجودة تزيد نسبة الحجوزات بنسبة 40%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start gap-3 p-3 bg-success bg-opacity-10 rounded-3">
+                            <div class="bg-success bg-opacity-25 rounded-circle p-2 flex-shrink-0">
+                                <i class="fas fa-tags text-success"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 small">أنشئ عرضاً خاصاً</h6>
+                                <p class="text-muted small mb-0">العروض الموسمية تجذب المزيد من الزوار والحجوزات</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+</div>
+
+<!-- Panel 2: Analytics Chart -->
+<div class="ent-card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="ent-card-header bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold"><i class="fas fa-chart-line me-2 text-success"></i> أداء التفاعل (آخر 7 أيام)</h5>
+    </div>
+    <div class="ent-card-body p-4 bg-white">
+        <canvas id="analyticsChart" height="100"></canvas>
+    </div>
+</div>
+
+</div>
+
+<!-- Sidebar Info Column -->
+<div class="col-lg-3">
+    <!-- Profile Summary -->
+    <div class="ent-card">
+        <div class="ent-card-header bg-primary text-white">
+            <span>بيانات الشريك</span>
+        </div>
+        <div class="ent-card-body text-center">
+            <img src="https://ui-avatars.com/api/?name={{ request.user.username }}&background=0D8ABC&color=fff&size=128"
+                class="rounded-circle mb-3 border border-4 border-light shadow-sm" width="80">
+            <h5 class="fw-bold">{{ request.user.get_full_name|default:request.user.username }}</h5>
+            <p class="text-muted small">{{ request.user.email }}</p>
+            <hr>
+            <div class="d-grid gap-2">
+                <a href="{% url 'partner_profile' %}" class="btn btn-outline-primary btn-sm">تعديل البيانات</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Notifications List -->
+    <div class="ent-card">
+        <div class="ent-card-header">
+            <span><i class="fas fa-flag me-2"></i> آخر التنبيهات</span>
+        </div>
+        <ul class="list-group list-group-flush small">
+            {% for notification in latest_notifications %}
+            <li
+                class="list-group-item d-flex justify-content-between align-items-center {% if not notification.is_read %}bg-light{% endif %}">
+                <div>
+                    <i class="fas fa-info-circle text-primary me-1"></i>
+                    {{ notification.title|truncatechars:20 }}
+                </div>
+                <span class="text-muted" style="font-size: 0.75rem;">{{ notification.created_at|timesince }}</span>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted text-center py-3">لا توجد تنبيهات جديدة</li>
+            {% endfor %}
+        </ul>
+        <div class="card-footer bg-white border-top-0 p-2">
+            <a href="{% url 'notification_list' %}" class="btn btn-link btn-sm w-100 text-decoration-none">عرض
+                الكل</a>
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function toggleAccordion(header) {
+        header.classList.toggle('active');
+        var body = header.nextElementSibling;
+        body.classList.toggle('show');
+        var icon = header.querySelector('.fa-chevron-up, .fa-chevron-down');
+        if (icon) {
+            icon.classList.toggle('fa-chevron-up');
+            icon.classList.toggle('fa-chevron-down');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('analyticsChart').getContext('2d');
+        
+        // Use data injected from context
+        const labels = {{ chart_labels|safe }};
+        const dataViews = {{ chart_data|safe }};
+        const dataClicks = {{ chart_data_clicks|safe }};
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'مشاهدات الصفحة',
+                        data: dataViews,
+                        borderColor: '#198754',
+                        backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'نقرات الاتصال',
+                        data: dataClicks,
+                        borderColor: '#0dcaf0',
+                        backgroundColor: 'rgba(13, 202, 240, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        rtl: true,
+                        textDirection: 'rtl'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% block extra_js %}{% endblock %}

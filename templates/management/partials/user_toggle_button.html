@@ -1,0 +1,15 @@
+{% if user.is_active %}
+<form hx-post="{% url 'admin_user_toggle' user.pk %}" hx-swap="outerHTML" class="d-inline">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm btn-outline-danger" title="تعطيل">
+        <i class="fas fa-ban"></i>
+    </button>
+</form>
+{% else %}
+<form hx-post="{% url 'admin_user_toggle' user.pk %}" hx-swap="outerHTML" class="d-inline">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm btn-outline-success" title="تفعيل">
+        <i class="fas fa-check"></i>
+    </button>
+</form>
+{% endif %}

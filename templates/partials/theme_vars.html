@@ -1,0 +1,62 @@
+<style>
+    :root {
+        /* Dynamic Overrides from Admin Theme settings */
+        /* If theme object is present in context, use it. Otherwise fallbacks apply. */
+
+            {
+            % if theme %
+        }
+
+            {
+            % if theme.primary_color %
+        }
+
+        --color-primary: {
+                {
+                theme.primary_color
+            }
+        }
+
+        ;
+
+            {
+            % endif %
+        }
+
+            {
+            % if theme.secondary_color %
+        }
+
+        --color-secondary: {
+                {
+                theme.secondary_color
+            }
+        }
+
+        ;
+
+            {
+            % endif %
+        }
+
+            {
+            % if theme.radius_base %
+        }
+
+        --radius-md: {
+                {
+                theme.radius_base
+            }
+        }
+
+        ;
+
+            {
+            % endif %
+        }
+
+            {
+            % endif %
+        }
+    }
+</style>

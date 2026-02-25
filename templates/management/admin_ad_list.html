@@ -1,0 +1,189 @@
+{% extends 'management/admin_base.html' %}
+{% load static %}
+
+{% block title %}إدارة الإعلانات - لوحة الإدارة{% endblock %}
+
+{% block content %}
+<div class="container-xl py-5" dir="rtl">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-5 gap-3 flex-wrap">
+        <div>
+            <h1 class="h3 fw-bold text-gray-900 mb-2">
+                <i class="fas fa-bullhorn text-warning me-2"></i>إدارة الإعلانات
+            </h1>
+            <p class="text-muted mb-0">مراجعة واعتماد طلبات الإعلانات من الشركاء.</p>
+        </div>
+        <div>
+            <div class="bg-white rounded-pill shadow-sm px-4 py-2 border d-flex align-items-center gap-2">
+                <span class="badge bg-danger rounded-circle p-2 d-flex align-items-center justify-content-center"
+                    style="width: 24px; height: 24px;">{{ ads|length }}</span>
+                <span class="fw-bold text-dark small">إعلانات معلقة</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-4 border-bottom">
+            <h5 class="mb-0 fw-bold text-gray-800">
+                <i class="fas fa-list-alt text-primary me-2"></i>طلبات الإعلانات
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="min-width: 900px;">
+                    <thead class="bg-light text-muted small text-uppercase">
+                        <tr>
+                            <th class="py-3 px-4">الإعلان</th>
+                            <th class="py-3">المنشأة</th>
+                            <th class="py-3">النوع</th>
+                            <th class="py-3">المدة والسعر</th>
+                            <th class="py-3">تاريخ الطلب</th>
+                            <th class="text-center py-3 px-4">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                        {% for ad in ads %}
+                        <tr>
+                            <td class="px-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 me-3">
+                                        {% if ad.image %}
+                                        <img src="{{ ad.image.url }}" class="rounded-3 shadow-sm object-fit-cover"
+                                            style="width: 60px; height: 60px;" alt="Ad Image">
+                                        {% else %}
+                                        <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted border"
+                                            style="width: 60px; height: 60px;">
+                                            <i class="fas fa-image fa-lg"></i>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark text-truncate" style="max-width: 200px;"
+                                            title="{{ ad.title }}">
+                                            {{ ad.title|default:"بدون عنوان" }}
+                                        </div>
+                                        <div class="small text-muted text-truncate" style="max-width: 200px;">
+                                            {{ ad.description|truncatechars:30 }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark small">{{ ad.place.name }}</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info bg-opacity-10 text-info rounded-pill border px-3">
+                                    {{ ad.get_ad_type_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="small fw-bold">{{ ad.duration_days }} يوم</div>
+                                <div class="small text-muted">{{ ad.price|default:"0" }} ر.ي</div>
+                            </td>
+                            <td>
+                                <div class="small">{{ ad.created_at|date:"Y/m/d" }}</div>
+                                <div class="small text-muted">{{ ad.created_at|timesince }} مضت</div>
+                            </td>
+                            <td class="text-center px-4">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <form action="{% url 'admin_ad_approve' ad.pk %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                            class="btn btn-success btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center gap-2"
+                                            onclick="return confirm('هل أنت متأكد من اعتماد هذا الإعلان وتفعيل الفاتورة؟')">
+                                            <i class="fas fa-check"></i> موافقة
+                                        </button>
+                                    </form>
+
+                                    <button type="button"
+                                        class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center gap-2"
+                                        data-bs-toggle="modal" data-bs-target="#rejectModal{{ ad.pk }}">
+                                        <i class="fas fa-times"></i> رفض
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Reject Modal -->
+                        <div class="modal fade" id="rejectModal{{ ad.pk }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                                    <form action="{% url 'admin_ad_reject' ad.pk %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="modal-header bg-danger-subtle border-0">
+                                            <h5 class="modal-title fw-bold text-danger">
+                                                <i class="fas fa-exclamation-triangle me-2"></i>رفض الإعلان
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body p-4">
+                                            <div class="alert alert-light border mb-4 d-flex align-items-center">
+                                                {% if ad.image %}
+                                                <img src="{{ ad.image.url }}" class="rounded-circle me-3" width="40"
+                                                    height="40">
+                                                {% endif %}
+                                                <div>
+                                                    <div class="fw-bold small">{{ ad.title }}</div>
+                                                    <div class="text-muted small">{{ ad.place.name }}</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label
+                                                    class="form-label fw-bold small text-muted text-uppercase mb-2">نوع
+                                                    الرفض</label>
+                                                <div class="d-flex gap-3">
+                                                    <div class="form-check custom-radio-btn">
+                                                        <input class="form-check-input" type="radio" name="action"
+                                                            value="reject" id="rejectOpt{{ ad.pk }}" checked>
+                                                        <label class="form-check-label" for="rejectOpt{{ ad.pk }}">
+                                                            رفض نهائي (مخالف للشروط)
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check custom-radio-btn">
+                                                        <input class="form-check-input" type="radio" name="action"
+                                                            value="payment_issue" id="paymentOpt{{ ad.pk }}">
+                                                        <label class="form-check-label" for="paymentOpt{{ ad.pk }}">
+                                                            مشكلة في الدفع (إعادة للشريك)
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <label class="form-label fw-bold small text-muted text-uppercase mb-2">
+                                                السبب / الملاحظات <span class="text-danger">*</span>
+                                            </label>
+                                            <textarea name="reason" class="form-control bg-light border-0 rounded-3 p-3"
+                                                rows="4" placeholder="يرجى كتابة سبب الرفض بوضوح..."
+                                                required></textarea>
+                                        </div>
+                                        <div class="modal-footer border-0 bg-light px-4 py-3">
+                                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                                data-bs-dismiss="modal">إلغاء</button>
+                                            <button type="submit" class="btn btn-danger rounded-pill px-5 fw-bold">
+                                                تأكيد الرفض
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle mb-4"
+                                    style="width: 80px; height: 80px;">
+                                    <i class="fas fa-bullhorn fa-3x text-muted opacity-25"></i>
+                                </div>
+                                <h5 class="fw-bold text-gray-800">لا توجد إعلانات معلقة</h5>
+                                <p class="text-muted mb-0">جميع طلبات الإعلانات تمت مراجعتها.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

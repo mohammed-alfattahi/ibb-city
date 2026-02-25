@@ -1,0 +1,287 @@
+{% extends "partners/base_partner.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h2 class="fw-bold mb-2 text-dark">{% if form.instance.pk %}تعديل المنشأة{% else %}إضافة منشأة جديدة{% endif %}</h2>
+                <p class="text-muted">أدخل بيانات المنشأة بدقة لجذب المزيد من الزوار</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- Main Form -->
+                <div class="col-lg-8 mx-auto">
+                    <div class="elite-card p-4 p-md-5">
+                        <form method="post" enctype="multipart/form-data" novalidate>
+                            {% csrf_token %}
+
+                            <!-- Basic Info Section -->
+                            <div class="mb-5">
+                                <h6 class="fw-bold text-primary mb-4 border-bottom pb-2 text-uppercase small ls-wider">
+                                    <i class="fas fa-info-circle me-2"></i> المعلومات الأساسية
+                                </h6>
+                                <div class="mb-4">{{ form.name|as_crispy_field }}</div>
+                                <div class="mb-4">{{ form.category|as_crispy_field }}</div>
+                                <div class="mb-4">{{ form.description|as_crispy_field }}</div>
+                            </div>
+
+                            <!-- Contact Info Section -->
+                            <div class="mb-5">
+                                <h6
+                                    class="fw-bold text-success mb-4 border-bottom pb-2 mt-5 text-uppercase small ls-wider">
+                                    <i class="fas fa-phone-alt me-2"></i> جهات الاتصال
+                                </h6>
+                                <div id="contact-info-container" class="mb-3"></div>
+                                {{ form.contact_info }}
+                                <button type="button" id="add-phone-btn"
+                                    class="btn btn-outline-success btn-sm rounded-pill fw-bold">
+                                    <i class="fas fa-plus me-1"></i> إضافة رقم للتواصل
+                                </button>
+                            </div>
+
+
+                            <!-- Location Section -->
+                            <div class="mb-5">
+                                <h6
+                                    class="fw-bold text-danger mb-4 border-bottom pb-2 mt-5 text-uppercase small ls-wider">
+                                    <i class="fas fa-map-marker-alt me-2"></i> الموقع على الخريطة
+                                </h6>
+                                <div
+                                    class="alert alert-light border shadow-sm rounded-3 mb-3 d-flex align-items-center bg-white">
+                                    <div class="bg-warning bg-opacity-10 p-2 rounded-circle text-warning me-3">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <small class="text-muted">قم بتحديد موقع منشأتك بدقة على الخريطة ليتمكن السياح من
+                                        الوصول إليك بسهولة.</small>
+                                </div>
+                                <div id="map-picker" class="rounded-4 border shadow-sm overflow-hidden"></div>
+                                <div class="row g-2 mt-2">
+                                    <div class="col-6">{{ form.latitude|as_crispy_field }}</div>
+                                    <div class="col-6">{{ form.longitude|as_crispy_field }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Cover Image -->
+                            <div class="mb-5">
+                                <h6
+                                    class="fw-bold text-info mb-4 border-bottom pb-2 mt-5 text-uppercase small ls-wider">
+                                    <i class="fas fa-image me-2"></i> الوسائط
+                                </h6>
+                                {{ form.cover_image|as_crispy_field }}
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                                <a href="{% url 'partner_establishment_list' %}"
+                                    class="btn btn-light rounded-pill px-4 fw-bold text-muted">إلغاء</a>
+                                <button type="submit"
+                                    class="btn btn-primary px-5 btn-lg rounded-pill shadow-sm fw-bold">
+                                    <i class="fas fa-save me-2"></i> حفظ البيانات
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- Contact Info Logic ---
+        const container = document.getElementById('contact-info-container');
+        const addBtn = document.getElementById('add-phone-btn');
+        const hiddenInput = document.getElementById('id_contact_info');
+
+        const providers = [
+            { value: 'yemen_mobile', label: 'يمن موبايل (77)', color: '#d32f2f', icon: 'fa-mobile-alt' },
+            { value: 'sabafon', label: 'سبأفون (71)', color: '#fbc02d', icon: 'fa-mobile-alt' },
+            { value: 'you', label: 'يو (73)', color: '#ff9800', icon: 'fa-mobile-alt' },
+            { value: 'landline', label: 'هاتف أرضي (04)', color: '#1976d2', icon: 'fa-phone-alt' },
+            { value: 'whatsapp', label: 'واتساب', color: '#25D366', icon: 'fa-brands fa-whatsapp' }
+        ];
+
+        let contacts = [];
+        try {
+            if (hiddenInput.value) {
+                const parsed = JSON.parse(hiddenInput.value);
+                if (Array.isArray(parsed)) contacts = parsed;
+                else if (typeof parsed === 'object') {
+                    Object.keys(parsed).forEach(key => contacts.push({ provider: 'landline', number: parsed[key] }));
+                }
+            }
+        } catch (e) { console.error("Error parsing contacts", e); }
+
+        function render() {
+            container.innerHTML = '';
+            if (contacts.length === 0) {
+                container.innerHTML = '<div class="text-center py-3 bg-light rounded-3 border border-dashed"><p class="text-muted small mb-0">لا توجد جهات اتصال مضافة.</p></div>';
+            }
+            contacts.forEach((contact, index) => {
+                const row = document.createElement('div');
+                row.className = 'card mb-2 border shadow-sm';
+                row.innerHTML = `
+                    <div class="card-body p-2 d-flex align-items-center gap-2">
+                        <select class="form-select form-select-sm provider-select border-0 bg-light fw-bold" style="max-width: 140px;">
+                            ${providers.map(p => `<option value="${p.value}" ${p.value === contact.provider ? 'selected' : ''}>${p.label}</option>`).join('')}
+                        </select>
+                        <input type="text" class="form-control form-control-sm number-input border-0" placeholder="رقم الهاتف..." value="${contact.number || ''}">
+                        <button type="button" class="btn btn-light btn-sm rounded-circle delete-btn text-danger hover-bg-danger hover-text-white transition-all" title="حذف">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+
+                // Bind events
+                const select = row.querySelector('.provider-select');
+                const input = row.querySelector('.number-input');
+                const delBtn = row.querySelector('.delete-btn');
+
+                select.addEventListener('change', (e) => { contacts[index].provider = e.target.value; updateHiddenInput(); });
+                input.addEventListener('input', (e) => { contacts[index].number = e.target.value; updateHiddenInput(); });
+                delBtn.addEventListener('click', () => { contacts.splice(index, 1); render(); updateHiddenInput(); });
+
+                container.appendChild(row);
+            });
+        }
+
+        function updateHiddenInput() { hiddenInput.value = JSON.stringify(contacts); }
+
+        addBtn.addEventListener('click', () => {
+            contacts.push({ provider: 'yemen_mobile', number: '' });
+            render();
+            updateHiddenInput();
+        });
+
+        render();
+
+
+        // --- MAP PICKER LOGIC ---
+        const mapContainer = document.getElementById('map-picker');
+        if (mapContainer) {
+            const latInput = document.getElementById('id_latitude');
+            const lngInput = document.getElementById('id_longitude');
+
+            // Allow manual input - remove readonly to let users type coordinates
+            // latInput.readOnly = true;  // Removed to allow manual entry
+            // lngInput.readOnly = true;  // Removed to allow manual entry
+
+            let defaultLat = 13.9667;
+            let defaultLng = 44.1833;
+            let zoom = 13;
+
+            if (latInput.value && lngInput.value) {
+                defaultLat = parseFloat(latInput.value);
+                defaultLng = parseFloat(lngInput.value);
+                zoom = 16;
+            }
+
+            const map = L.map('map-picker').setView([defaultLat, defaultLng], zoom);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            let marker;
+            if (latInput.value && lngInput.value) {
+                marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+                bindMarkerEvents(marker);
+            }
+
+            function updateInputs(lat, lng) {
+                latInput.value = lat;
+                lngInput.value = lng;
+            }
+
+            function bindMarkerEvents(marker) {
+                marker.on('dragend', function (e) {
+                    const pos = e.target.getLatLng();
+                    updateInputs(pos.lat.toFixed(6), pos.lng.toFixed(6));
+                    map.panTo(pos);
+                });
+            }
+
+            map.on('click', function (e) {
+                const lat = e.latlng.lat.toFixed(6);
+                const lng = e.latlng.lng.toFixed(6);
+                updateInputs(lat, lng);
+
+                if (marker) {
+                    marker.setLatLng(e.latlng);
+                } else {
+                    marker = L.marker(e.latlng, { draggable: true }).addTo(map);
+                    bindMarkerEvents(marker);
+                }
+            });
+
+            // "Locate Me" Control
+            const locateBtn = L.control({ position: 'topright' });
+            locateBtn.onAdd = function (map) {
+                const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+                div.innerHTML = '<button type="button" class="btn btn-white btn-sm shadow-sm fw-bold border"><i class="fas fa-location-arrow text-primary"></i> موقعي</button>';
+                div.style.backgroundColor = 'white';
+                div.style.cursor = 'pointer';
+                div.onclick = function (e) {
+                    e.preventDefault(); // Prevent submit
+                    map.locate({ setView: true, maxZoom: 16 });
+                }
+                return div;
+            };
+            locateBtn.addTo(map);
+
+            map.on('locationfound', function (e) {
+                const lat = e.latlng.lat.toFixed(6);
+                const lng = e.latlng.lng.toFixed(6);
+                updateInputs(lat, lng);
+
+                if (marker) {
+                    marker.setLatLng(e.latlng);
+                } else {
+                    marker = L.marker(e.latlng, { draggable: true }).addTo(map);
+                    bindMarkerEvents(marker);
+                }
+            });
+
+            map.on('locationerror', function (e) {
+                alert("لم نتمكن من تحديد موقعك الحالي. يرجى التحديد يدوياً.");
+            });
+
+            // === Manual Input Sync ===
+            function syncMapFromInputs() {
+                const lat = parseFloat(latInput.value);
+                const lng = parseFloat(lngInput.value);
+                if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                    const latlng = L.latLng(lat, lng);
+                    if (marker) {
+                        marker.setLatLng(latlng);
+                    } else {
+                        marker = L.marker(latlng, { draggable: true }).addTo(map);
+                        bindMarkerEvents(marker);
+                    }
+                    map.setView(latlng, 16);
+                }
+            }
+
+            latInput.addEventListener('change', syncMapFromInputs);
+            lngInput.addEventListener('change', syncMapFromInputs);
+        }
+    });
+</script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+    #map-picker {
+        height: 350px;
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid #dee2e6;
+        margin-bottom: 20px;
+        z-index: 1;
+    }
+</style>
+{% endblock %}

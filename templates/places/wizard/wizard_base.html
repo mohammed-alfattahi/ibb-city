@@ -1,0 +1,157 @@
+{% extends "partners/base_partner.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center g-4">
+
+        <!-- Progress Sidebar -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 100px;">
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush rounded-4 overflow-hidden">
+                        {% for step in steps_meta %}
+                        <a href="{% url 'wizard_step' draft.pk step.unique_key %}"
+                            class="list-group-item list-group-item-action p-3 d-flex align-items-center {% if step.unique_key == current_step %}active bg-primary text-white{% else %}text-muted{% endif %}">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center me-3 border {% if step.unique_key == current_step %}bg-white text-primary{% else %}bg-light text-secondary{% endif %}"
+                                style="width: 32px; height: 32px; font-weight: bold;">
+                                {{ step.order }}
+                            </div>
+                            <div>
+                                <h6 class="mb-0">{{ step.label }}</h6>
+                                {% if step.unique_key == current_step %}
+                                <small class="opacity-75">{% trans "Current Step" %}</small>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-center py-3">
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill w-100 mb-2"
+                        onclick="previewDraft()">
+                        <i class="fas fa-eye me-1"></i> {% trans "Preview as Tourist" %}
+                    </button>
+                    <small class="text-muted d-block" id="last-saved">{% trans "Changes saved locally" %}</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form -->
+        <div class="col-lg-8" id="wizard-content">
+            <form method="post" enctype="multipart/form-data" id="wizard-form" novalidate>
+                {% csrf_token %}
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-header bg-white py-4 px-4 border-bottom-0">
+                        <h4 class="fw-bold mb-0 text-primary">{{ step_info.label }}</h4>
+                    </div>
+
+                    <div class="card-body px-4 pb-4">
+                        {% if form.errors %}
+                        <div class="alert alert-danger rounded-3 mb-4">
+                            <ul class="mb-0">
+                                {% for field in form %}
+                                {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <!-- Include Step Template -->
+                        {% include step_info.template %}
+
+                    </div>
+
+                    <div class="card-footer bg-light py-3 px-4 d-flex justify-content-between align-items-center">
+                        {% if previous_step_key %}
+                        <a href="{% url 'wizard_step' draft.pk previous_step_key %}"
+                            class="btn btn-secondary rounded-pill px-4">
+                            <i class="fas fa-arrow-right me-2"></i> {% trans "Back" %}
+                        </a>
+                        {% else %}
+                        <div></div>
+                        {% endif %}
+
+                        <div class="d-flex gap-2">
+                            <!-- Save Draft Button (Explicit) -->
+                            <button type="button" class="btn btn-light border rounded-pill text-muted"
+                                id="save-draft-btn">
+                                <i class="fas fa-save me-1"></i> {% trans "Save Draft" %}
+                            </button>
+
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 shadow-sm">
+                                {% if is_last_step %}
+                                {% trans "Submit" %} <i class="fas fa-check ms-2"></i>
+                                {% else %}
+                                {% trans "Next" %} <i class="fas fa-arrow-left ms-2"></i>
+                                {% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const DRAFT_ID = "{{ draft.pk }}";
+    const CSRF_TOKEN = "{{ csrf_token }}";
+
+    // Auto-save logic
+    const form = document.getElementById('wizard-form');
+    let timeoutId;
+
+    form.addEventListener('input', function () {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(autoSave, 2000);
+        document.getElementById('last-saved').innerText = "Saving...";
+    });
+
+    document.getElementById('save-draft-btn').addEventListener('click', function () {
+        autoSave();
+    });
+
+    function autoSave() {
+        // Only works for simple inputs. File inputs can't be auto-saved via JSON easily.
+        // We act like partial submit? No.
+        // We serialize form data to JSON.
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+            if (value instanceof File) return; // Skip files for JSON autosave
+            data[key] = value;
+        });
+
+        fetch("{% url 'wizard_autosave' draft.pk %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': CSRF_TOKEN
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(res => {
+                if (res.status === 'saved') {
+                    document.getElementById('last-saved').innerText = "Saved at " + res.updated_at;
+                }
+            });
+    }
+
+    function previewDraft() {
+        // Open preview in new window
+        window.open("{% url 'wizard_preview' draft.pk %}", '_blank');
+    }
+</script>
+{% endblock %}

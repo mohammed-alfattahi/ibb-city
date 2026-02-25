@@ -1,0 +1,26 @@
+{% if ad %}
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 mt-4">
+    <div class="position-relative">
+        {% if ad.banner_image %}
+        <img src="{{ ad.banner_image.url }}" class="card-img-top object-fit-cover" style="height: 200px;"
+            alt="{{ ad.title }}">
+        {% else %}
+        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+            <i class="fas fa-bullhorn fa-3x text-muted opacity-25"></i>
+        </div>
+        {% endif %}
+        <span class="position-absolute top-0 start-0 m-2 badge bg-warning text-dark shadow-sm">إعلان</span>
+    </div>
+    <div class="card-body text-center">
+        <h5 class="fw-bold mb-2">{{ ad.title }}</h5>
+        <p class="text-muted small mb-3">{{ ad.description|truncatechars:80 }}</p>
+
+        {% if ad.place or ad.target_url %}
+        <a href="{% url 'ad_click' ad.pk %}" class="btn btn-outline-primary rounded-pill w-100">
+            زيارة <i class="fas fa-external-link-alt ms-1"></i>
+        </a>
+        {% endif %}
+    </div>
+    <img src="{% url 'ad_impression' ad.pk %}" style="display:none;" width="1" height="1" alt="" />
+</div>
+{% endif %}

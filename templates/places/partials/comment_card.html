@@ -1,0 +1,93 @@
+<div id="comment-{{ comment.id }}" class="card border-0 shadow-sm rounded-4 p-4 transition-all hover-shadow-md mb-3 animate__animated animate__fadeIn {% if comment.visibility_state != 'visible' %}bg-light opacity-75 border border-warning{% endif %}">
+    <div class="d-flex gap-3">
+        <div class="flex-shrink-0">
+            <img src="https://ui-avatars.com/api/?name={{ comment.user.username }}&background=random&size=128"
+                class="review-avatar shadow-sm object-fit-cover" width="48" height="48"
+                style="border-radius: 12px;">
+        </div>
+        <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                        {{ comment.user.get_full_name|default:comment.user.username }}
+                        {% if comment.user == place.establishment.owner %}
+                        <span class="badge bg-primary-subtle text-primary rounded-pill px-2 py-1"
+                            style="font-size: 0.65em;">
+                            <i class="fas fa-check-circle me-1"></i> المالك
+                        </span>
+                        {% endif %}
+                    </h6>
+                    <small class="text-muted" style="font-size: 0.8rem;">{{ comment.created_at|timesince }}</small>
+                </div>
+            </div>
+
+            <p class="text-secondary mb-3 fs-6">{{ comment.content }}</p>
+
+            <!-- Actions -->
+            <div class="d-flex gap-2 align-items-center">
+                {% if user.is_authenticated %}
+                <button class="btn btn-sm btn-link text-decoration-none text-muted p-0 me-3"
+                    onclick="toggleReplyForm('comment-reply-{{ comment.id }}')">
+                    <i class="fas fa-reply me-1"></i> رد
+                </button>
+                {% endif %}
+
+                <!-- Partner/Admin Controls -->
+                {% if user.is_authenticated and has_management_rights %}
+                <form action="{% url 'toggle_comment_visibility' pk=comment.pk model_type='comment' %}"
+                    method="post" class="d-inline">
+                    {% csrf_token %}
+                    {% if comment.visibility_state == 'visible' %}
+                    <input type="hidden" name="reason" value="Hidden by partner">
+                    <button type="submit" class="btn btn-sm btn-link text-decoration-none text-muted p-0"
+                        title="إخفاء">
+                        <i class="fas fa-eye-slash"></i>
+                    </button>
+                    {% elif comment.visibility_state == 'partner_hidden' %}
+                    <input type="hidden" name="reason" value="">
+                    <button type="submit" class="btn btn-sm btn-link text-decoration-none text-success p-0"
+                        title="إظهار">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    {% endif %}
+                </form>
+                {% endif %}
+            </div>
+
+            <!-- Inline Reply Form -->
+            <div id="comment-reply-{{ comment.id }}" class="mt-3 d-none animate__animated animate__fadeIn">
+                <form action="{% url 'reply_to_comment' comment_pk=comment.pk %}" method="post"
+                    class="position-relative"
+                    hx-post="{% url 'reply_to_comment' comment_pk=comment.pk %}"
+                    hx-target="#replies-list-{{ comment.id }}"
+                    hx-swap="beforeend"
+                    hx-on::after-request="if(event.detail.successful) { this.reset(); toggleReplyForm('comment-reply-{{ comment.id }}'); }">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <div class="flex-grow-1 position-relative">
+                            <textarea name="content" class="form-control bg-light border-0 rounded-4 p-2 pe-5"
+                                rows="1" placeholder="اكتب ردك هنا..." style="resize: none;" required></textarea>
+                            <button type="submit"
+                                class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0 m-1 shadow-sm"
+                                style="width: 28px; height: 28px;">
+                                <i class="fas fa-paper-plane text-white extra-small"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Nested Replies -->
+            <div id="replies-list-{{ comment.id }}" class="mt-3 d-flex flex-column gap-2 border-start border-2 border-primary-subtle ps-3 {% if not comment.replies.all %}d-none{% endif %}">
+                {% for reply in comment.replies.all %}
+                    {% include "places/partials/comment_reply.html" with reply=reply place=place user=user has_management_rights=has_management_rights %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% if comment.visibility_state != 'visible' %}
+    <div class="position-absolute top-0 start-0 m-3">
+        <span class="badge bg-danger rounded-pill shadow-sm"><i class="fas fa-eye-slash me-1"></i> مخفي</span>
+    </div>
+    {% endif %}
+</div>

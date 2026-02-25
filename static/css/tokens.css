@@ -1,0 +1,116 @@
+:root {
+    /* ═══════════════════════════════════════════════════════════════════════════
+   * IBB GUIDE - TOKENS
+   * ═══════════════════════════════════════════════════════════════════════════ */
+
+    /* Brand */
+    --color-primary: #10b981;
+    /* Emerald 500 */
+    --color-primary-dark: #059669;
+    --color-primary-light: #34d399;
+    --gradient-primary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+
+    --color-secondary: #0f172a;
+    /* Slate 900 */
+    --color-secondary-light: #334155;
+    --gradient-secondary: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+
+    --color-accent: #3b82f6;
+    /* Blue 500 */
+    --gradient-accent: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+
+    /* Primitives - Gray Scale */
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+
+    /* Surface Maps */
+    --color-bg: #ffffff;
+    --color-surface: #ffffff;
+    --color-surface-soft: var(--gray-50);
+    --color-border: var(--gray-200);
+
+    /* Text Maps */
+    --color-text: var(--gray-900);
+    --color-text-soft: var(--gray-600);
+    --color-muted: var(--gray-500);
+
+    /* Status */
+    --color-success: #22c55e;
+    --color-success-bg: #dcfce7;
+    --color-warning: #f59e0b;
+    --color-warning-bg: #fef3c7;
+    --color-danger: #ef4444;
+    --color-danger-bg: #fee2e2;
+    --color-info: #3b82f6;
+    --color-info-bg: #dbeafe;
+
+    /* Radius */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
+    /* Spacing */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-8: 48px;
+
+    /* Typography */
+    --font-base: "Tajawal", system-ui, sans-serif;
+    --font-size-base: 16px;
+    --font-heading: "Tajawal", system-ui, sans-serif;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+    /* Transition Maps */
+    --transition-base: 200ms ease-in-out;
+
+    /* Layout Variables */
+    --header-height: 72px;
+    --sidebar-width: 280px;
+    --container-2xl: 1400px;
+
+    /* Yemen Carrier Colors */
+    --carrier-sabafon: #5d00a0;
+    --carrier-yemen-mobile: #cf1d1d;
+    --carrier-you: #ffcc00;
+    --carrier-wai: #2caae1;
+    --carrier-landline: #4b5563;
+}
+
+/* Carrier Icon Classes */
+.carrier-sabafon {
+    color: var(--carrier-sabafon);
+}
+
+.carrier-yemen-mobile {
+    color: var(--carrier-yemen-mobile);
+}
+
+.carrier-you {
+    color: var(--carrier-you);
+}
+
+.carrier-wai {
+    color: var(--carrier-wai);
+}
+
+.carrier-landline {
+    color: var(--carrier-landline);
+}

@@ -1,0 +1,56 @@
+/* Extra auth styles: role selection cards (scoped, reusable)
+   Uses existing design tokens where possible.
+*/
+
+.auth-wide { max-width: 900px; }
+
+.selection-card-item {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  height: 100%;
+}
+
+.selection-card-item:hover {
+  background: rgba(255, 255, 255, 0.92);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.role-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  margin: 0 auto 1.25rem;
+  transition: transform 0.25s ease;
+}
+
+.selection-card-item:hover .role-icon {
+  transform: scale(1.08) rotate(3deg);
+}
+
+/* Tourist */
+.role-tourist .role-icon {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+/* Partner */
+.role-partner .role-icon {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+
+@media (max-width: 576px) {
+  .selection-card-item { padding: 1.5rem; }
+  .role-icon { width: 72px; height: 72px; font-size: 2.25rem; }
+}

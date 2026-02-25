@@ -1,0 +1,116 @@
+ان يكون اظافة الميزات الى المنشاءات لا نهائي من قبل الشريك التجاري عمليه اظافه ميزات 
+او وحدات منشائات او تعديل الصور لا تحتاج الى طلب من مكتب السياحه لكن يرسل اشعار بالتعديلات 
+المظافه المكتب تغير اسم المنشائه او تغير وصفها يحتاج الى طلب من المكتب ليتم مراجعتها و الموافقه على عليها ليتم تطبيق 
+التعديل على الصفحات المعروضه ان يظيف مع كل منشاءه تراخيصها و سجلها التجاري المعتمد ان يوجد في لوحه التحكم الشريك 
+زر للعوده للموقع اريد عند التسجيل كشريك تجاري يدخل الشريك لتصفح المعالم الموجود لكن لا يستطيع
+ الدخول الى لوحه التحكم الا بعد الموافقه على حسابه من قبل المكتب بعد الموافقه يمكنه الذهاب الى لوحه التحكم يصل طلب الحساب الى المكتب ليتم مراجعته و الموافقه على حسابه اريد عند ترقيه حساب 
+ السائح الى شريك يضل اسم المستخدم و البريد واحد اريد ان تكون عمليه الموافقه بشكل اسهل مما هي عليه في مكتب السيايحه توفر زو للموافقه و مراجعه
+  البيانات بشكل سريع يجب ان يصل اشعارات الى الشريك التجاري بقبول الطلباته او رفصها يجب ان يسمح الشريك التجاري بادخال خطوط الطول و العرض يدويا 
+ او من الخريطه عند انشاء منشاء يجب ان سمح النظام بادخال اكثر من رقم الهاتف مثلا ايقونه شركة سبافون مع الرقم ايقوناة يمن مبايل مع الرقم ++ايقونات الشركات الاخرى في
+  اليمن او الخك الثابت يجب ان يسمح النظام بادخال اكثر من وسيله تواصل هذه وسائل التوواصل تعرض لسائح في الواجهه
+  الرئسيه يجب ان يوفر النظام لشريك التجاري زر ارسال طلب اظافه المنشئه لا تظهر المنشئه في الواجه الرئسيه
+  الا بعد الموافقه عليها من قبل المكتب يجب ان يسمح النظام لسائح بحفظ الاماكن المفضله لديه في قسمه الخاص يجب ان يوفر 
+ النظام لشريك التجاري قسمه الخاص يظهر في الواجهه الرئسيه يجب ان يوفر النظام للمستخدم بعديل ملفه الشخصي للبيانات الغير حساسة فقط يجب 
+ ان يوفر النظام للمستخدم كاشريك نجاري ادخال صوره الهويه الشخصية يجب ان يسمح النظام للمستخدم بعمل اكثر من تعليق على المنشائه الواحده وايحب
+  ان يسمح للشريك التجاري بالرد على التعليقات باكثر من ارد ويستطيع لن يرد من الواجه الرئسيه او من لوحه التحكم يجب 
+ ان يسمح النظام للمستخدم بعمل تقيم واحد لكل منشئة يجب ان يسمح النظام للمستخدم بالتعديل على التقيمات التي قام بها يجب 
+ ان يعرض النظام تحذير عند كتابة تعليقات غير لائقة او غير مناسبة يجب ان تكون الاداره اكثر مرونه وسهوله وسريعه يحب ان يوفر النظام امكانية اظهار التعليقات
+  او اخفائها من قبل الشريك التجاري يجب ان يقوم النظام بالعرض الوحدات المتوفرة في المنشاء تحت كل منشئه بشكل جميل وسهل
+  و عير متعب لنظر مع مراعه الجاني الطبي للحفاظ على الاعين يجب ان يسمح النظام لشريك التجاري بالتعديل على اوقات و اظافات ميزات او حدات دون الموافقه على 
+ و التخفيطات دون طلب من المكتب مع وصول اشعار للمكتب بالتعديلات يجب ان يوفر النظام زر عند التعديل حاله الاغلاق او فتوح للمنشئة هذه 
+ الزر يظهر في لوحه التكم و الواجه بجانب كل معم في الواجه الرئسيه و لا يظهر الا الشريك التجاري و فوق منشئته فقظ اريد ان اعرض الوحدات تحت
+  المنشئه التي تم اظافتها اليه اريد ان تحسن عملية عرض التعليقلا و التقيمات بشكل فاخر ريد ان تحسن واجه 
+ الاداره الشريك التجاري التكون مثل حق  اريد ان تحسن عمليات ادخال البيانات اليكون بشكل اسهل
+
+
+You are an experienced quality assurance specialist with deep expertise in verifying complex software project requirements. I require your thorough assessment to confirm the implementation of the following critical functionalities within the system:
+
+- Integration and display of communication icons for companies such as Spafon and Yemen Mobile, including their respective contact numbers, as well as additional telecom providers in Yemen or fixed-line operators.
+- Support for multiple communication methods per entity, ensuring these are visible to tourists on the main user interface.
+- Implementation of a feature enabling commercial partners to send requests for adding new establishments, with establishments only appearing on the main interface upon administrative approval.
+- Functionality allowing tourists to save favorite locations within a dedicated personal section.
+- Provision of a private section for commercial partners accessible from the main interface.
+- Capability for users to edit their personal profile data, limited to non-sensitive information.
+- Facility for commercial partners to upload personal identification images securely.
+- Enabling users to post multiple comments per establishment, while allowing commercial partners to respond with multiple replies, with the option to manage visibility from both the frontend and control panel.
+- Restriction of users to a single rating per establishment.
+- Ability for users to edit company icons and associated contact numbers.
+
+Please conduct a detailed, systematic verification aligned with best practices in software quality assurance. Your evaluation should include validation criteria, test scenarios, and any gaps or deviations observed. Your professional judgment is essential to ensure these requirements are fully and accurately implemented to meet the project’s objectives.
+
+أنت متخصص متمرس في ضمان الجودة، ولديك خبرة واسعة في التحقق من متطلبات مشاريع البرمجيات المعقدة. أحتاج إلى تقييمك الشامل للتأكد من تنفيذ الوظائف الأساسية التالية في النظام:
+
+دمج وعرض أيقونات الاتصال لشركات مثل سبافون واليمن موبايل، بما في ذلك أرقام الاتصال الخاصة بها، بالإضافة إلى مزودي خدمات الاتصالات الآخرين في اليمن أو مشغلي الخطوط الثابتة.
+دعم طرق اتصال متعددة لكل كيان، مما يضمن ظهورها للسياح على واجهة المستخدم الرئيسية.
+تنفيذ ميزة تمكن الشركاء التجاريين من إرسال طلبات لإضافة مؤسسات جديدة، بحيث لا تظهر المؤسسات على الواجهة الرئيسية إلا بعد الموافقة الإدارية.
+خاصية تسمح للسياح بحفظ المواقع المفضلة ضمن قسم شخصي مخصص.
+توفير قسم خاص للشركاء التجاريين يمكن الوصول إليه من الواجهة الرئيسية.
+إمكانية قيام المستخدمين بتعديل بيانات ملفاتهم الشخصية، على أن يقتصر ذلك على المعلومات غير الحساسة.
+مرفق يتيح للشركاء التجاريين تحميل صور الهوية الشخصية بشكل آمن.
+تمكين المستخدمين من نشر تعليقات متعددة لكل مؤسسة، مع السماح للشركاء التجاريين بالرد بردود متعددة، مع خيار إدارة الرؤية من كل من الواجهة الأمامية ولوحة التحكم.
+يقتصر عدد التقييمات المسموح بها لكل منشأة على تقييم واحد فقط.
+إمكانية تعديل المستخدمين لأيقونات الشركة وأرقام الاتصال المرتبطة بها.
+يرجى إجراء عملية تحقق مفصلة ومنهجية تتماشى مع أفضل الممارسات في ضمان جودة البرمجيات. يجب أن يشمل تقييمك معايير التحقق، وسيناريوهات الاختبار، وأي ثغرات أو انحرافات مُلاحظة. يُعدّ حكمك المهني أساسيًا لضمان تنفيذ هذه المتطلبات بشكل كامل ودقيق لتحقيق أهداف المشروع.
+
+
+
+
+
+You are a senior software project manager with deep expertise in managing complex web-based platforms involving multi-stakeholder workflows, including commercial partners and regulatory bodies. I request your comprehensive review and verification to ensure the following functional and procedural requirements are fully implemented and compliant within the project:
+
+- Feature Addition: Confirm that commercial partners can add unlimited features, units, or modify establishment images autonomously without prior approval, with only notifications sent to the tourism office.
+
+- Establishment Edits: Verify that changes to establishment names or descriptions require formal requests submitted to the tourism office for review and approval before changes reflect publicly.
+
+- Licensing Data: Ensure that each establishment profile displays its valid licenses and official commercial registration details correctly.
+
+- Control Panel Access: Check that commercial partners can browse existing landmarks upon registration but cannot access the control panel until their account is approved by the tourism office.
+
+- Account Approval Workflow: Validate that account requests reach the tourism office for expedited review and approval, with notifications sent to partners upon acceptance or rejection.
+
+- User Upgrade: Confirm that when upgrading a tourist account to a partner account, the username and email remain unchanged.
+
+- Approval Process Simplification: Assess the implementation of an optimized, user-friendly approval interface for the tourism office to review partner data efficiently.
+
+- Geolocation Input: Verify partners can input longitude and latitude manually or via map selection during establishment creation.
+
+- Contact Information: Confirm the system allows multiple phone numbers per establishment entry.
+
+- Navigation: Check that the control panel includes a “Return to Site” button facilitating easy navigation.
+
+Leverage your extensive experience to provide a detailed audit ensuring each of these requirements is addressed with clarity, accuracy, and operational efficiency within the project’s architecture and workflows.
+
+
+أنت مدير مشاريع برمجية ذو خبرة واسعة في إدارة منصات الويب المعقدة التي تتضمن سير عمل متعدد الأطراف، بما في ذلك الشركاء التجاريين والهيئات التنظيمية. أطلب منك مراجعة شاملة وتحققًا دقيقًا لضمان تنفيذ المتطلبات الوظيفية والإجرائية التالية بالكامل والامتثال لها ضمن المشروع:
+
+إضافة الميزات: تأكيد أنه يمكن للشركاء التجاريين إضافة عدد غير محدود من الميزات أو الوحدات أو تعديل صور المنشأة بشكل مستقل دون موافقة مسبقة، مع إرسال الإشعارات فقط إلى مكتب السياحة.
+
+تعديلات المنشآت: تحقق من أن التغييرات في أسماء المنشآت أو أوصافها تتطلب تقديم طلبات رسمية إلى مكتب السياحة للمراجعة والموافقة قبل أن تنعكس التغييرات علنًا.
+
+بيانات الترخيص: تأكد من أن كل ملف تعريف للمنشأة يعرض تراخيصها السارية وتفاصيل تسجيلها التجاري الرسمي بشكل صحيح.
+
+الوصول إلى لوحة التحكم: تأكد من أن الشركاء التجاريين يمكنهم تصفح المعالم الموجودة عند التسجيل ولكن لا يمكنهم الوصول إلى لوحة التحكم حتى تتم الموافقة على حسابهم من قبل مكتب السياحة.
+
+سير عمل الموافقة على الحساب: التحقق من وصول طلبات الحساب إلى مكتب السياحة للمراجعة والموافقة السريعة، مع إرسال إشعارات إلى الشركاء عند القبول أو الرفض.
+
+ترقية المستخدم: تأكد من أنه عند ترقية حساب سائح إلى حساب شريك، يظل اسم المستخدم والبريد الإلكتروني دون تغيير.
+
+تبسيط عملية الموافقة: تقييم تنفيذ واجهة موافقة محسّنة وسهلة الاستخدام لمكتب السياحة لمراجعة بيانات الشركاء بكفاءة.
+
+إدخال الموقع الجغرافي: تحقق من إمكانية إدخال الشركاء لخطوط الطول والعرض يدويًا أو عبر تحديد الخريطة أثناء إنشاء المنشأة.
+
+معلومات الاتصال: تأكد من أن النظام يسمح بأرقام هواتف متعددة لكل منشأة.
+
+التنقل: تأكد من أن لوحة التحكم تتضمن زر "العودة إلى الموقع" لتسهيل التنقل.
+
+استغل خبرتك الواسعة لتقديم تدقيق مفصل يضمن معالجة كل من هذه المتطلبات بوضوح ودقة وكفاءة تشغيلية ضمن بنية المشروع وسير العمل.
+
+
+
+
+
+
+python manage.py seed_sample_data      ;python manage.py dbshell  ;py manage.py seed_db ;py manage.py seed_ui  
+
+
+

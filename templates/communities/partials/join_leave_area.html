@@ -1,0 +1,24 @@
+<div id="community-join-leave-area">
+    {% if is_member %}
+    <form action="{% url 'communities:leave' community.slug %}" method="post" class="d-inline"
+        hx-post="{% url 'communities:leave' community.slug %}"
+        hx-target="#community-join-leave-area"
+        hx-swap="outerHTML">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-light btn-sm rounded-pill"
+            hx-confirm="هل أنت متأكد من مغادرة المجتمع؟">
+            <i class="fas fa-sign-out-alt me-2"></i>مغادرة
+        </button>
+    </form>
+    {% else %}
+    <form action="{% url 'communities:join' community.slug %}" method="post" class="d-inline"
+        hx-post="{% url 'communities:join' community.slug %}"
+        hx-target="#community-join-leave-area"
+        hx-swap="outerHTML">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary rounded-pill px-4">
+            <i class="fas fa-plus me-2"></i>متابعة المجتمع
+        </button>
+    </form>
+    {% endif %}
+</div>

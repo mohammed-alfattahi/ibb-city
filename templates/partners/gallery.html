@@ -1,0 +1,116 @@
+{% extends "partners/base_partner.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}معرض الصور - {{ establishment.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0 animate__animated animate__fadeIn">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1 text-dark">معرض الصور</h2>
+            <p class="text-muted mb-0">إدارة صور المنشأة: <span class="fw-bold text-primary">{{ establishment.name }}</span></p>
+        </div>
+        <div>
+            <a href="{% url 'partner_establishment_list' %}"
+                class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
+                <i class="fas fa-arrow-right me-2"></i> عودة
+            </a>
+        </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="elite-card p-4 mb-5">
+        <div class="d-flex align-items-center mb-4">
+            <div class="icon-box bg-purple-50 text-purple-600 me-3">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold mb-0 text-dark">رفع صور جديدة</h5>
+                <p class="text-muted small mb-0">قم برفع صور عالية الجودة لجذب المزيد من الزوار</p>
+            </div>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="row g-3 align-items-end">
+            {% csrf_token %}
+            <div class="col-md-7">
+                {{ form.media_url|as_crispy_field }}
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    {{ form.is_cover|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold shadow-sm mb-3">
+                    <i class="fas fa-upload me-2"></i> رفع
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="row g-4">
+        {% for image in images %}
+        <div class="col-6 col-md-4 col-xl-3">
+            <div class="elite-card p-0 overflow-hidden position-relative group">
+                <div class="ratio ratio-4x3">
+                    <img src="{{ image.media_url.url }}" class="object-fit-cover transition-transform hover-scale"
+                        alt="Place Image">
+                </div>
+
+                <!-- Overlay Actions -->
+                <div
+                    class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center justify-content-center opacity-0 hover-opacity-100 transition-all gap-2">
+                        <button hx-post="{% url 'partner_media_delete' image.pk %}"
+                                hx-confirm="هل أنت متأكد من حذف هذه الصورة؟"
+                                hx-target="closest .col-6"
+                                hx-swap="outerHTML"
+                                class="btn btn-light rounded-circle shadow-sm text-danger" title="حذف">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    {% if not image.is_cover %}
+                    <!-- Logic to set as cover could go here if implemented in backend -->
+                    {% endif %}
+                </div>
+
+                <!-- Badges -->
+                <div class="position-absolute top-0 start-0 m-2">
+                    {% if image.is_cover %}
+                    <span class="badge bg-primary shadow-sm"><i class="fas fa-star me-1"></i> الغلاف</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 py-5 text-center">
+            <div class="mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light" style="width: 100px; height: 100px;">
+                    <i class="fas fa-camera-retro fa-3x text-muted opacity-50"></i>
+                </div>
+            </div>
+            <h4 class="text-dark fw-bold">لا توجد صور في المعرض</h4>
+            <p class="text-muted mb-3 mx-auto" style="max-width: 450px;">
+                أضف صوراً احترافية لمنشأتك لجذب انتباه الزوار. الصور الجذابة هي أول ما يلاحظه السائح!
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <div class="d-inline-flex align-items-center gap-2 bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill small">
+                    <i class="fas fa-check"></i>
+                    <span>حجم مناسب: 1200×800 بكسل</span>
+                </div>
+                <div class="d-inline-flex align-items-center gap-2 bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill small">
+                    <i class="fas fa-check"></i>
+                    <span>صور واضحة وبإضاءة جيدة</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .group:hover .hover-opacity-100 {
+        opacity: 1 !important;
+    }
+</style>
+{% endblock %}

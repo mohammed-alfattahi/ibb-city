@@ -1,0 +1,18 @@
+{% extends "place_list.html" %}
+{% load static %}
+
+{% block title %}{{ category.name }} - دليل إب{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+    /* Custom override for category specific hero if needed */
+    .hero-banner {
+        background-color: #f8f9fa; /* Fallback */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+{% endblock %}

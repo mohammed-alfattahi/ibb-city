@@ -1,0 +1,124 @@
+{% extends "management/admin_base.html" %}
+{% load i18n %}
+
+{% block title %}نتائج البحث - {{ query }}{% endblock %}
+{% block title_breadcrumb %}نتائج البحث: "{{ query }}"{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    {% if not users and not establishments and not places %}
+    <div class="alert alert-warning text-center p-5 rounded-4 shadow-sm">
+        <i class="fas fa-search fa-3x mb-3 text-warning opacity-50"></i>
+        <h4>لا توجد نتائج</h4>
+        <p class="text-muted">لم يتم العثور على أي نتائج مطابقة لـ "{{ query }}"</p>
+        <a href="{% url 'custom_admin_dashboard' %}" class="btn btn-outline-primary mt-2">
+            <i class="fas fa-arrow-right me-2"></i> العودة للرئيسية
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+        
+        <!-- Establishments Results -->
+        {% if establishments %}
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold mb-0 text-primary">
+                        <i class="fas fa-hotel me-2"></i> المنشآت ({{ establishments|length }})
+                    </h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="border-0 px-4">الاسم</th>
+                                <th class="border-0">المالك</th>
+                                <th class="border-0">الحالة</th>
+                                <th class="border-0 text-end px-4">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for place in establishments %}
+                            <tr>
+                                <td class="px-4 fw-bold">
+                                    <a href="{{ place.get_absolute_url }}" class="text-dark text-decoration-none">
+                                        {{ place.name }}
+                                    </a>
+                                </td>
+                                <td>{{ place.owner.get_full_name|default:place.owner.username }}</td>
+                                <td>
+                                    <span class="badge bg-{{ place.status_css_class }} bg-opacity-10 text-{{ place.status_css_class }} px-3 py-2 rounded-pill">
+                                        {{ place.get_operational_status_display }}
+                                    </span>
+                                </td>
+                                <td class="text-end px-4">
+                                    <a href="{{ place.get_absolute_url }}" class="btn btn-sm btn-outline-primary rounded-pill">
+                                        <i class="fas fa-eye me-1"></i> عرض
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Users Results -->
+        {% if users %}
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold mb-0 text-success">
+                        <i class="fas fa-users me-2"></i> المستخدمين ({{ users|length }})
+                    </h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="border-0 px-4">اسم المستخدم</th>
+                                <th class="border-0">البريد الإلكتروني</th>
+                                <th class="border-0">الهاتف</th>
+                                <th class="border-0">تاريخ الانضمام</th>
+                                <th class="border-0 text-end px-4">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user_obj in users %}
+                            <tr>
+                                <td class="px-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle bg-light text-primary fw-bold me-2" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                                            {{ user_obj.username|slice:":1"|upper }}
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">{{ user_obj.username }}</div>
+                                            <div class="small text-muted">{{ user_obj.get_role_display }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ user_obj.email }}</td>
+                                <td>{{ user_obj.phone_number|default:"-" }}</td>
+                                <td>{{ user_obj.date_joined|date:"Y-m-d" }}</td>
+                                <td class="text-end px-4">
+                                    <!-- Add link to user profile edit if available -->
+                                    <button class="btn btn-sm btn-light border rounded-pill">
+                                        <i class="fas fa-edit text-muted"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

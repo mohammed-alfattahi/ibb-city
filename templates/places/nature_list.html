@@ -1,0 +1,350 @@
+{% extends "base_marketing.html" %}
+{% load static %}
+
+{% block title %}الطبيعة والمناظر - دليل إب{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/modern_list.css' %}">
+<style>
+    /* Hero Banner */
+    .hero-banner {
+        height: 350px;
+        border-radius: 0 0 40px 40px;
+        overflow: hidden;
+        position: relative;
+        background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%);
+    }
+
+    .hero-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-overlay {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
+    }
+
+    /* Top Filter Bar */
+    .filter-bar {
+        background: white;
+        border-radius: 20px;
+        padding: 20px 24px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        margin-top: -60px;
+        position: relative;
+        z-index: 20;
+    }
+
+    .filter-bar .form-control,
+    .filter-bar .form-select {
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .filter-bar .form-control:focus,
+    .filter-bar .form-select:focus {
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .filter-btn {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 12px 28px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Place Cards */
+    .place-card {
+        border-radius: 20px !important;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none !important;
+    }
+
+    .place-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .place-card .card-img-wrapper {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .place-card .card-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .place-card:hover .card-img-wrapper img {
+        transform: scale(1.1);
+    }
+
+    /* Pagination */
+    .modern-pagination .page-link {
+        border: none;
+        border-radius: 12px;
+        padding: 10px 18px;
+        margin: 0 4px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .modern-pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .modern-pagination .page-link:hover:not(.active) {
+        background: #f1f5f9;
+        color: #10b981;
+    }
+
+    /* Smooth Page Transitions */
+    .fade-in {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Feature tags */
+    .feature-tag {
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+        padding: 0.25rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-left: 0.25rem;
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<div class="hero-banner shadow-lg mb-0">
+    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+        alt="Nature">
+    <div
+        class="hero-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+        <div class="mb-3">
+            <i class="fas fa-tree fa-3x text-white opacity-75"></i>
+        </div>
+        <h1 class="text-white display-4 fw-bold mb-3 animate__animated animate__fadeInDown"
+            style="text-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+            الطبيعة والمناظر
+        </h1>
+        <p class="text-white fs-5 opacity-90 animate__animated animate__fadeInUp fw-light">
+            استمتع بجمال الطبيعة الخلابة في محافظة إب الخضراء
+        </p>
+    </div>
+</div>
+
+<div class="container" style="max-width: 1200px;">
+    <!-- Top Filter Bar -->
+    <div class="filter-bar mb-5 animate__animated animate__fadeInUp">
+        <form method="get" class="row g-3 align-items-end">
+            <!-- Search -->
+            <div class="col-md-5">
+                <label class="form-label small fw-bold text-muted">البحث</label>
+                <input type="text" name="search" class="form-control" placeholder="ابحث عن موقع طبيعي..."
+                    value="{{ request.GET.search }}">
+            </div>
+
+            <!-- Type Filter -->
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted">النوع</label>
+                <select name="type" class="form-select">
+                    <option value="">جميع الأنواع</option>
+                    <option value="mountain" {% if request.GET.type == "mountain" %}selected{% endif %}>جبال</option>
+                    <option value="valley" {% if request.GET.type == "valley" %}selected{% endif %}>وديان</option>
+                    <option value="park" {% if request.GET.type == "park" %}selected{% endif %}>متنزهات</option>
+                    <option value="waterfall" {% if request.GET.type == "waterfall" %}selected{% endif %}>شلالات</option>
+                </select>
+            </div>
+
+            <!-- Submit & Reset -->
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary filter-btn flex-grow-1">
+                    <i class="fas fa-search me-2"></i>بحث
+                </button>
+                <a href="{% url 'places_nature_list' %}" class="btn btn-light border" style="border-radius: 12px;">
+                    <i class="fas fa-undo"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Count -->
+    <div class="d-flex justify-content-between align-items-center mb-4 fade-in">
+        <h5 class="fw-bold text-secondary mb-0">
+            <span class="text-primary">{{ places|length }}</span> موقع طبيعي
+        </h5>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-light rounded-pill active" data-view="grid">
+                <i class="fas fa-th-large"></i>
+            </button>
+            <button class="btn btn-sm btn-light rounded-pill" data-view="list">
+                <i class="fas fa-list"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Places Grid -->
+    <div class="row g-4 mb-5">
+        {% for place in places %}
+        <div class="col-md-6 col-lg-4 fade-in">
+            <div class="card h-100 shadow-sm place-card">
+                <!-- Image -->
+                <div class="card-img-wrapper">
+                    {% if place.cover_image %}
+                    <img src="{{ place.cover_image.url }}" alt="{{ place.name }}">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400"
+                        alt="{{ place.name }}">
+                    {% endif %}
+
+                    <!-- Category Badge -->
+                    <span
+                        class="position-absolute top-0 start-0 m-3 badge bg-success text-white shadow-sm rounded-pill px-3 py-2">
+                        <i class="fas fa-leaf me-1"></i>{{ place.category.name|default:"طبيعة" }}
+                    </span>
+
+                    <!-- Rating Badge -->
+                    {% if place.avg_rating > 0 %}
+                    <div
+                        class="position-absolute bottom-0 end-0 m-3 badge bg-white text-dark shadow-sm rounded-pill d-flex align-items-center gap-1 px-3 py-2">
+                        <i class="fas fa-star text-warning"></i>
+                        <span class="fw-bold">{{ place.avg_rating }}</span>
+                    </div>
+                    {% endif %}
+
+                    <!-- Favorite Toggle Wrapper -->
+                    <div class="position-absolute top-0 end-0 m-3" style="z-index: 10;" id="fav-btn-wrap-{{ place.id }}">
+                        {% include "partials/favorite_button.html" with is_fav=place.is_favorited %}
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title fw-bold mb-0 text-dark">{{ place.name }}</h5>
+                    </div>
+
+                    <div class="text-muted small mb-2">
+                        <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                        {{ place.get_directorate_display|default:"إب" }}
+                    </div>
+
+                    <!-- Feature Tags -->
+                    <div class="mb-3">
+                        <span class="feature-tag"><i class="fas fa-camera me-1"></i>تصوير</span>
+                        <span class="feature-tag"><i class="fas fa-hiking me-1"></i>مشي</span>
+                        <span class="feature-tag"><i class="fas fa-wind me-1"></i>هواء نقي</span>
+                    </div>
+
+                    <a href="{% url 'place_detail' place.pk %}"
+                        class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm">
+                        <i class="fas fa-compass me-2"></i>استكشف المكان
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 py-5 text-center fade-in">
+            <div class="bg-light rounded-4 p-5">
+                <i class="fas fa-tree fa-3x text-muted opacity-50 mb-3"></i>
+                <h4>لا توجد نتائج</h4>
+                <p class="text-muted">جرب تعديل خيارات البحث للعثور على ما تبحث عنه.</p>
+                <a href="{% url 'place_list' %}" class="btn btn-primary rounded-pill px-4">
+                    <i class="fas fa-th-large me-2"></i>تصفح جميع الأماكن
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Modern Pagination -->
+    {% if is_paginated %}
+    <nav class="d-flex justify-content-center mb-5">
+        <ul class="pagination modern-pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    <i class="fas fa-chevron-right me-1"></i> السابق
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        التالي <i class="fas fa-chevron-left ms-1"></i>
+                    </a>
+                </li>
+                {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<!-- Smooth Scroll & Animations -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Intersection Observer for fade-in animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach((el) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    });
+</script>
+{% endblock %}

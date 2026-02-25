@@ -1,0 +1,38 @@
+[
+  {
+    "model": "management.publicemergencynumber",
+    "pk": 1,
+    "fields": {
+      "name": "الشرطة",
+      "number": "199",
+      "icon": "fas fa-user-shield",
+      "description": "للحالات الأمنية الطارئة",
+      "is_active": true,
+      "order": 1
+    }
+  },
+  {
+    "model": "management.publicemergencynumber",
+    "pk": 2,
+    "fields": {
+      "name": "الإسعاف",
+      "number": "191",
+      "icon": "fas fa-ambulance",
+      "description": "للحالات الطبية الطارئة",
+      "is_active": true,
+      "order": 2
+    }
+  },
+  {
+    "model": "management.publicemergencynumber",
+    "pk": 3,
+    "fields": {
+      "name": "الدفاع المدني",
+      "number": "179",
+      "icon": "fas fa-fire-extinguisher",
+      "description": "لحرائق وكوارث السيول",
+      "is_active": true,
+      "order": 3
+    }
+  }
+]

@@ -1,0 +1,65 @@
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="text-center mb-4">
+            <i class="fas fa-concierge-bell fa-3x text-info mb-3"></i>
+            <h3>المرافق والخدمات</h3>
+            <p class="text-muted">اختر الخدمات التي تقدمها منشأتك لتظهر للزوار.</p>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <label class="form-label fw-bold mb-3 d-block">
+                    <i class="fas fa-check-circle text-success me-2"></i> الميزات المتوفرة
+                </label>
+
+                <div class="amenities-grid p-3 bg-light rounded-3" style="max-height: 400px; overflow-y: auto;">
+                    {{ form.amenities }}
+                </div>
+
+                <div class="form-text mt-3">
+                    <i class="fas fa-info-circle me-1"></i>
+                    يمكنك إضافة المزيد من الوحدات (غرف، شاليهات) وتفاصيلها من لوحة التحكم بعد الحفظ.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom style for checklist */
+    .amenities-grid ul {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        margin: 0;
+    }
+
+    .amenities-grid li {
+        margin: 0;
+    }
+
+    .amenities-grid label {
+        display: flex;
+        align-items: center;
+        background: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .amenities-grid label:hover {
+        border-color: #0d6efd;
+        background: #f8f9fa;
+    }
+
+    .amenities-grid input[type="checkbox"] {
+        margin-left: 10px;
+        /* RTL */
+        width: 1.2em;
+        height: 1.2em;
+    }
+</style>

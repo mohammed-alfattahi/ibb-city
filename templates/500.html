@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - Ibb Guide{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center min-vh-75 d-flex flex-column justify-content-center align-items-center">
+    <div class="display-1 fw-bold text-danger mb-3">500</div>
+    <h2 class="fw-bold mb-4">Something Went Wrong</h2>
+    <p class="lead text-muted mb-5">
+        Our servers stumbled on a rock. We are fixing it right now.
+    </p>
+    <a href="{% url 'home' %}" class="btn btn-outline-danger btn-lg rounded-pill px-5">
+        <i class="fas fa-redo me-2"></i> Try Again Later
+    </a>
+</div>
+{% endblock %}

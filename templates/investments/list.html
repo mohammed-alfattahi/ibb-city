@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}فرص الاستثمار - Horizon Investments{% endblock %}
+
+{% block extra_css %}
+<style>
+    .horizon-hero {
+        background: linear-gradient(rgba(17, 24, 39, 0.9), rgba(17, 24, 39, 0.95)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 6rem 0;
+        clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+        margin-bottom: -3rem;
+    }
+
+    .horizon-card {
+        border: none;
+        border-radius: 1px;
+        background: white;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+    }
+
+    .horizon-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .horizon-badge {
+        background: #10b981;
+        color: white;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        padding: 0.5rem 1rem;
+    }
+
+    .stat-box {
+        border-right: 1px solid #e5e7eb;
+    }
+
+    .stat-box:last-child {
+        border-right: none;
+    }
+
+    .btn-horizon-primary {
+        background-color: #111827;
+        color: white;
+        border-radius: 0;
+        padding: 0.75rem 2rem;
+        transition: all 0.2s;
+    }
+
+    .btn-horizon-primary:hover {
+        background-color: #374151;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .btn-horizon-outline {
+        border: 1px solid #e5e7eb;
+        color: #374151;
+        border-radius: 0;
+        padding: 0.75rem 2rem;
+    }
+
+    .btn-horizon-outline:hover {
+        background-color: #f9fafb;
+        color: #111827;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Horizon Hero -->
+<div class="horizon-hero position-relative">
+    <div class="container animate__animated animate__fadeIn">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="text-success fw-bold text-uppercase letter-spacing-2 mb-2 d-block">Horizon
+                    Investments</span>
+                <h1 class="display-3 fw-bold mb-4">استثمر في مستقبل إب الواعد</h1>
+                <p class="lead opacity-75 mb-5" style="max-width: 600px; line-height: 1.8;">
+                    اكتشف فرصاً استثمارية حصرية في قطاعات السياحة والعقار والخدمات، مصممة لتحقيق عوائد مجزية ونمو
+                    مستدام.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="#investments"
+                        class="btn btn-success rounded-0 px-5 py-3 fw-bold shadow-lg hover-scale">تصفح الفرص</a>
+                    <button class="btn btn-outline-light rounded-0 px-5 py-3 fw-bold">دليل المستثمر</button>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block">
+                <!-- Abstract 3D Element or Stats Card could go here -->
+                <div
+                    class="bg-white bg-opacity-10 backdrop-blur-md p-4 border border-light border-opacity-25 rounded-3">
+                    <div
+                        class="d-flex align-items-center justify-content-between mb-4 border-bottom border-light border-opacity-25 pb-3">
+                        <span class="text-uppercase small">إجمالي الاستثمارات</span>
+                        <span class="fw-bold">+150M ر.ي</span>
+                    </div>
+                    <div
+                        class="d-flex align-items-center justify-content-between mb-4 border-bottom border-light border-opacity-25 pb-3">
+                        <span class="text-uppercase small">المشاريع النشطة</span>
+                        <span class="fw-bold">24 مشروع</span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="text-uppercase small">متوسط العائد</span>
+                        <span class="fw-bold text-success">18.5%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5" style="margin-top: 3rem;" id="investments">
+
+    <!-- Filters -->
+    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
+        <h3 class="fw-bold mb-0 border-start border-4 border-success ps-3">فرص مميزة</h3>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-dark text-white rounded-0 px-4">الكل</button>
+            <button class="btn btn-light border rounded-0 px-4">عقاري</button>
+            <button class="btn btn-light border rounded-0 px-4">سياحي</button>
+            <button class="btn btn-light border rounded-0 px-4">زراعي</button>
+        </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="row g-4">
+        {% for item in investments %}
+        <div class="col-md-6 col-lg-4">
+            <div class="bg-white horizon-card shadow-sm h-100 d-flex flex-column animate__animated animate__fadeInUp"
+                style="animation-delay: {{ forloop.counter0|add:1 }}00ms;">
+
+                <!-- Image Header -->
+                <div class="position-relative" style="height: 240px;">
+                    <img src="https://source.unsplash.com/random/800x600?building,architecture,{{ forloop.counter }}"
+                        class="w-100 h-100 object-fit-cover" alt="{{ item.title }}">
+                    <div class="position-absolute top-0 start-0 w-100 h-100"
+                        style="background: linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.7) 100%);"></div>
+                    <span class="position-absolute top-0 start-0 m-3 horizon-badge fs-xs fw-bold">{{ item.category|default:"استثمار عام" }}</span>
+                    <h5 class="position-absolute bottom-0 start-0 m-4 text-white fw-bold mb-0 text-shadow">{{ item.title }}</h5>
+                </div>
+
+                <!-- Body -->
+                <div class="p-4 flex-grow-1">
+                    <p class="text-muted small mb-4 line-clamp-3" style="line-height: 1.6;">
+                        {{ item.description|default:"فرصة استثمارية فريدة في قلب مدينة إب، توفر عائداً استثمارياً مرتفعاً مع ضمانات قوية." }}
+                    </p>
+
+                    <div class="d-flex border-top border-bottom py-3 mb-4">
+                        <div class="w-50 text-center stat-box">
+                            <small class="text-muted d-block text-uppercase" style="font-size: 0.7rem;">التكلفة</small>
+                            <span class="fw-bold text-dark">{{ item.cost|intcomma }} ر.ي</span>
+                        </div>
+                        <div class="w-50 text-center">
+                            <small class="text-muted d-block text-uppercase" style="font-size: 0.7rem;">العائد
+                                المتوقع</small>
+                            <span class="fw-bold text-success">{{ item.roi|default:"22" }}%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="p-4 pt-0 mt-auto">
+                    <a href="{% url 'investment_detail' item.pk %}" class="btn btn-horizon-primary w-100 fw-bold">
+                        طلب تفاصيل
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 py-5 text-center">
+            <div class="bg-light p-5 border border-dashed text-muted">
+                <i class="fas fa-briefcase fa-3x mb-3 opacity-25"></i>
+                <h5>لا توجد فرص متاحة حالياً</h5>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="d-flex justify-content-center mt-5">
+        <nav>
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link border-0 text-dark" href="?page={{ page_obj.previous_page_number }}"><i
+                            class="fas fa-arrow-right"></i></a>
+                </li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link bg-dark border-dark">{{ page_obj.number }}</span>
+                </li>
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link border-0 text-dark" href="?page={{ page_obj.next_page_number }}"><i
+                            class="fas fa-arrow-left"></i></a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

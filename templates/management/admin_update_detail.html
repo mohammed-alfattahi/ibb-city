@@ -1,0 +1,75 @@
+{% extends "management/admin_base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="{% url 'custom_admin_dashboard' %}">Admin Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'admin_pending_updates' %}">Updates</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ establishment.name }}</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold">Review Changes: {{ establishment.name }}</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <form action="{% url 'admin_update_reject' establishment.pk %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger rounded-pill px-4 me-2"
+                    onclick="return confirm('Reject changes? All pending edits will be discarded.')">
+                    <i class="fas fa-times me-1"></i> Reject
+                </button>
+            </form>
+            <form action="{% url 'admin_update_approve' establishment.pk %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success rounded-pill px-4"
+                    onclick="return confirm('Approve and apply these changes?')">
+                    <i class="fas fa-check me-1"></i> Approve
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-header bg-light py-3">
+            <h5 class="fw-bold mb-0">Changes Comparison</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 20%;">Field</th>
+                            <th style="width: 40%;">Current Value</th>
+                            <th style="width: 40%;" class="table-warning">Proposed Change</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for field, new_value in updates.items %}
+                        <tr>
+                            <td class="fw-bold text-capitalize">{{ field }}</td>
+                            <td class="text-muted">
+                                <!-- Minimal attempt to get current value dynamically in template is hard; 
+                                     Ideally use a template tag, but we can do basic lookups if fields are simple Strings -->
+                                {% if field == 'name' %}{{ establishment.name }}
+                                {% elif field == 'description' %}{{ establishment.description|linebreaks }}
+                                {% elif field == 'category' %}{{ establishment.category.name }}
+                                {% elif field == 'latitude' %}{{ establishment.latitude }}
+                                {% elif field == 'longitude' %}{{ establishment.longitude }}
+                                {% else %}
+                                <span class="text-muted fst-italic">Field Check Not Implemented Display</span>
+                                {% endif %}
+                            </td>
+                            <td class="bg-warning bg-opacity-10 fw-bold">
+                                {{ new_value }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

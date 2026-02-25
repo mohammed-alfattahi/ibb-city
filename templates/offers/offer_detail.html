@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">الرئيسية</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'offer_list' %}">العروض السياحية</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ offer.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="position-relative">
+                    {% if offer.banner_image %}
+                    <img src="{{ offer.banner_image.url }}" class="w-100" alt="{{ offer.title }}"
+                        style="max-height: 500px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                        <i class="fas fa-image fa-5x text-muted opacity-50"></i>
+                    </div>
+                    {% endif %}
+
+                    {% if offer.discount_price %}
+                    <span class="position-absolute top-0 start-0 m-4 badge bg-danger shadow fs-5 px-3 py-2">
+                        خصم خاص 🔥
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-2 mb-3 text-primary">
+                        <i class="fas fa-store"></i>
+                        <a href="{% url 'place_detail' offer.place.pk %}" class="text-decoration-none fw-bold">{{ offer.place.name }}</a>
+                        <i class="fas fa-check-circle text-success" title="موثق"></i>
+                    </div>
+
+                    <h1 class="card-title fw-bold mb-3 h2">{{ offer.title }}</h1>
+
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        {% if offer.discount_price %}
+                        <span class="display-6 fw-bold text-success">{{ offer.discount_price|intcomma }} ر.ي</span>
+                        <span class="text-muted text-decoration-line-through fs-4">{{ offer.price|intcomma }} ر.ي</span>
+                        {% elif offer.price %}
+                        <span class="display-6 fw-bold text-primary">{{ offer.price|intcomma }} ر.ي</span>
+                        {% else %}
+                        <span class="badge bg-success fs-5">تواصل لمعرفة السعر</span>
+                        {% endif %}
+                    </div>
+
+                    <hr>
+
+                    <h5 class="fw-bold mb-3">تفاصيل العرض</h5>
+                    <p class="card-text text-muted fs-5 lh-lg">{{ offer.description|linebreaks }}</p>
+
+                    <div class="alert alert-light border mt-4">
+                        <h6 class="fw-bold"><i class="fas fa-info-circle me-2 text-info"></i>شروط العرض:</h6>
+                        <ul class="mb-0 small text-muted">
+                            <li>العرض ساري حتى: <strong>{{ offer.end_date|date:"Y/m/d" }}</strong></li>
+                            <li>يجب إبراز العرض عند الحجز للاستفادة من الخصم.</li>
+                            <li>يخضع العرض لتوفر الإمكانية لدى المنشأة.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Actions -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm sticky-top" style="top: 20px; z-index: 1000;">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-4">تواصل واحجز الآن</h5>
+
+                    <div class="d-grid gap-3">
+                        {% if offer.place.phone_number %}
+                        <a href="tel:{{ offer.place.phone_number }}" class="btn btn-outline-primary py-2">
+                            <i class="fas fa-phone-alt me-2"></i>اتصال مباشر
+                        </a>
+                        <a href="https://wa.me/{{ offer.place.phone_number|cut:'+'|cut:' ' }}" target="_blank"
+                            class="btn btn-success py-2">
+                            <i class="fab fa-whatsapp me-2"></i>مراسلة واتساب
+                        </a>
+                        {% else %}
+                        <button class="btn btn-secondary" disabled>رقم الهاتف غير متوفر</button>
+                        {% endif %}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="flex-shrink-0">
+                            {% if offer.place.main_image %}
+                            <img src="{{ offer.place.main_image.url }}" class="rounded-circle" width="50" height="50"
+                                style="object-fit: cover;">
+                            {% else %}
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 50px; height: 50px;">
+                                <i class="fas fa-building text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">{{ offer.place.name }}</h6>
+                            <small class="text-muted">مقدم العرض</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light border-0 py-3 text-center">
+                    <small class="text-muted"><i class="fas fa-shield-alt me-1"></i>عرض موثوق من دليل إب السياحي</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,101 @@
+amqp @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/amqp-5.3.1-py3-none-any.whl#sha256=43b3319e1b4e7d1251833a93d672b4af1e40f3d632d479b98661a95f117880a2
+asgiref==3.11.0
+bidict==0.23.1
+billiard @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/billiard-4.2.4-py3-none-any.whl#sha256=525b42bdec68d2b983347ac312f892db930858495db601b5836ac24e6477cde5
+blinker==1.9.0
+celery @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/celery-5.6.2-py3-none-any.whl#sha256=3ffafacbe056951b629c7abcf9064c4a2366de0bdfc9fdba421b97ebb68619a5
+certifi==2025.11.12
+cffi==1.17.1
+charset-normalizer==3.4.4
+click @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/click-8.3.1-py3-none-any.whl#sha256=981153a64e25f12d547d3426c367a4857371575ee7ad18df2a6183ab0545b2a6
+click-didyoumean @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/click_didyoumean-0.3.1-py3-none-any.whl#sha256=5c4bb6007cfea5f2fd6583a2fb6701a22a41eb98957e63d0fac41c10e7c3117c
+click-plugins @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/click_plugins-1.1.1.2-py2.py3-none-any.whl#sha256=008d65743833ffc1f5417bf0e78e8d2c23aab04d9745ba817bd3e71b0feb6aa6
+click-repl @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/click_repl-0.3.0-py3-none-any.whl#sha256=fb7e06deb8da8de86180a33a9da97ac316751c094c6899382da7feeeeb51b812
+colorama==0.4.6
+contourpy==1.3.3
+crispy-bootstrap5==2025.6
+cryptography==45.0.6
+customtkinter==5.2.2
+cycler==0.12.1
+darkdetect==0.8.0
+dj-database-url==2.1.0
+Django==4.2.27
+django-allauth==65.13.1
+django-axes==7.0.1
+django-crispy-forms==2.5
+django-filter==23.5
+django-jazzmin==3.0.1
+django-mathfilters==1.0.0
+django-ratelimit @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/django_ratelimit-4.1.0-py2.py3-none-any.whl#sha256=d047a31cf94d83ef1465d7543ca66c6fc16695559b5f8d814d1b51df15110b92
+django_celery_results @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/django_celery_results-2.6.0-py3-none-any.whl#sha256=b9ccdca2695b98c7cbbb8dea742311ba9a92773d71d7b4944a676e69a7df1c73
+djangorestframework==3.16.1
+djangorestframework_simplejwt==5.5.1
+dnspython==2.7.0
+eventlet==0.40.3
+Faker==39.0.0
+Flask==3.1.2
+Flask-SocketIO==5.5.1
+fonttools==4.59.2
+greenlet==3.2.4
+h11==0.16.0
+idna==3.11
+itsdangerous==2.2.0
+Jinja2==3.1.6
+joblib==1.5.2
+kiwisolver==1.4.9
+kombu @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/kombu-5.6.2-py3-none-any.whl#sha256=efcfc559da324d41d61ca311b0c64965ea35b4c55cc04ee36e55386145dace93
+lxml==6.0.1
+Markdown==3.10
+MarkupSafe==3.0.2
+matplotlib==3.10.6
+MouseInfo==0.1.3
+mss==10.1.0
+numpy==2.2.6
+opencv-python==4.12.0.88
+packaging==25.0
+pillow==12.0.0
+prompt_toolkit @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/prompt_toolkit-3.0.52-py3-none-any.whl#sha256=9aac639a3bbd33284347de5ad8d68ecc044b91a762dc39b7c21095fcd6a19955
+psutil==7.2.1
+PyAudio==0.2.14
+PyAutoGUI==0.9.54
+pycparser==2.22
+PyGetWindow==0.0.9
+PyJWT==2.10.1
+PyMsgBox==1.0.9
+PyMySQL==1.1.2
+pyparsing==3.2.3
+pyperclip==1.9.0
+PyQt5==5.15.11
+PyQt5-Qt5==5.15.2
+PyQt5_sip==12.17.0
+PyRect==0.2.0
+PyScreeze==1.0.1
+PySide6==6.9.2
+PySide6_Addons==6.9.2
+PySide6_Essentials==6.9.2
+python-dateutil==2.9.0.post0
+python-decouple==3.8
+python-engineio==4.12.2
+python-pptx==1.0.2
+python-socketio==5.13.0
+pytweening==1.2.0
+requests==2.32.5
+scikit-learn==1.7.2
+scipy==1.16.2
+shiboken6==6.9.2
+simple-websocket==1.1.0
+six==1.17.0
+sorl-thumbnail==13.0.0
+sounddevice==0.5.2
+sqlparse==0.5.5
+threadpoolctl==3.6.0
+typing_extensions==4.15.0
+tzdata==2025.3
+tzlocal @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/tzlocal-5.3.1-py3-none-any.whl#sha256=eb1a66c3ef5847adf7a834f1be0800581b683b5608e74f86ecbcef8ab91bb85d
+urllib3==2.6.2
+vine @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/vine-5.1.0-py3-none-any.whl#sha256=40fdf3c48b2cfe1c38a49e9ae2da6fda88e4794c810050a728bd7413811fb1dc
+wcwidth @ file:///D:/Information_Technology/Level4/term2/ibb_city/ibb/wcwidth-0.6.0-py3-none-any.whl#sha256=1a3a1e510b553315f8e146c54764f4fb6264ffad731b3d78088cdb1478ffbdad
+Werkzeug==3.1.3
+whitenoise==6.6.0
+wsproto==1.2.0
+xlsxwriter==3.2.5

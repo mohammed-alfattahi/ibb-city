@@ -1,0 +1,221 @@
+{% load static %}
+{% load i18n %}
+
+<!-- Dynamic Header -->
+<nav class="navbar navbar-expand-lg navbar-light navbar-custom shadow-sm bg-white glass-navbar sticky-top">
+    <div class="container">
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center gap-2 py-0" href="{% url 'home' %}">
+            {% if site_settings.logo %}
+            <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" height="40" style="width: auto; max-width: 120px; object-fit: contain;"
+                class="bg-transparent" onerror="this.onerror=null;this.src='{% static "img/icon-192.png" %}';">
+            {% else %}
+            <i class="fas fa-leaf text-success fa-2x"></i>
+            {% endif %}
+            <span class="fw-bold text-success d-none d-md-block" style="font-size: 1.1rem;">{{ site_settings.site_name }}</span>
+        </a>
+
+        <!-- Global Search (Desktop) -->
+        <div class="d-none d-lg-flex flex-grow-1 mx-4 position-relative">
+            <form action="{% url 'place_list' %}" method="get" class="w-100">
+                <div class="input-group rounded-pill overflow-hidden bg-light border">
+                    <span class="input-group-text border-0 bg-transparent ps-3"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" name="search" class="form-control border-0 bg-transparent shadow-none" 
+                           placeholder="ابحث عن وجهتك..."
+                           hx-get="{% url 'global_search' %}"
+                           hx-target="#global-search-results"
+                           hx-trigger="keyup changed delay:300ms, search"
+                           hx-swap="innerHTML"
+                           autocomplete="off">
+                </div>
+            </form>
+            <!-- Results Dropdown -->
+            <div id="global-search-results" class="position-absolute w-100 top-100 start-0 mt-2 bg-white rounded-3 shadow-lg overflow-hidden" 
+                 style="z-index: 1050; min-height: 0;"></div>
+        </div>
+
+        <!-- Mobile Search & Toggler -->
+        <div class="d-flex align-items-center gap-2 order-lg-3">
+            <a href="{% url 'place_list' %}" class="btn btn-icon d-lg-none text-muted"><i class="fas fa-search"></i></a>
+
+            <!-- User State (Mobile & Desktop shared wrapper) -->
+            {% if user.is_authenticated %}
+
+            {% if user.is_partner and user.partnerprofile.is_approved %}
+            <a href="{% url 'partner_dashboard' %}"
+                class="btn btn-primary btn-sm rounded-pill px-3 fw-bold d-none d-lg-inline-block shadow-sm text-white">
+                <i class="fas fa-chart-line me-2"></i> لوحة الشريك
+            </a>
+            {% endif %}
+
+            {% if user.is_staff %}
+            <a href="{% url 'custom_admin_dashboard' %}"
+                class="btn btn-danger btn-sm rounded-pill px-3 fw-bold d-none d-lg-inline-block shadow-sm ms-2 text-white">
+                <i class="fas fa-user-shield me-2"></i> الإدارة
+            </a>
+            {% endif %}
+
+            <!-- Favorites -->
+            <a href="{% url 'favorite_list' %}"
+                class="position-relative btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center me-2"
+                style="width:38px;height:38px;" title="المفضلة">
+                <i class="fas fa-heart text-danger"></i>
+                {% if favorites_count > 0 %}
+                <span class="badge-count animate__animated animate__bounceIn">
+                    {{ favorites_count }}
+                </span>
+                {% endif %}
+            </a>
+
+            <!-- Notifications (SSE Enabled) -->
+            <div class="dropdown me-1">
+                <a href="#" class="position-relative btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center"
+                    style="width:40px;height:40px;" data-bs-toggle="dropdown" aria-expanded="false" id="notif-dropdown-toggle">
+                    <i class="fas fa-bell"></i>
+                    <div id="notif-badge"></div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 mt-2 p-0 overflow-hidden" 
+                    id="notif-dropdown" style="width: 320px; z-index: 1100;">
+                    <div class="p-4 text-center text-muted">
+                        <div class="spinner-border spinner-border-sm mb-2 text-primary" role="status"></div>
+                        <p class="mb-0 small">جاري التحميل...</p>
+                    </div>
+                </ul>
+                {% if user.is_authenticated %}
+                <div hx-get="{% url 'notifications_snapshot' %}"
+                     hx-trigger="load"
+                     hx-swap="none"></div>
+                {% endif %}
+            </div>
+
+            <!-- User Dropdown -->
+            <div class="dropdown">
+                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="userMenu"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    {% if user.profile_image %}
+                    <img src="{{ user.profile_image.url }}" alt="{{ user.username }}"
+                        class="img-avatar-sm border rounded-circle" width="32" height="32">
+                    {% else %}
+                    <img src="https://ui-avatars.com/api/?name={{ user.username }}" alt="{{ user.username }}"
+                        class="img-avatar-sm border rounded-circle" width="32" height="32">
+                    {% endif %}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 text-end"
+                    aria-labelledby="userMenu">
+                    <li>
+                        <h6 class="dropdown-header">{{ user.username }}</h6>
+                    </li>
+                    <li>
+                        <form action="{% url 'live_share_start' %}" method="POST" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item text-danger fw-bold"><i
+                                    class="fas fa-satellite-dish me-2"></i> بث موقعي (Live)</button>
+                        </form>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="{% url 'user_profile' %}">الملف الشخصي</a></li>
+                    <li><a class="dropdown-item" href="{% url 'user_settings' %}">الإعدادات</a></li>
+
+                    {% if user.is_staff %}
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <h6 class="dropdown-header text-danger">الإدارة</h6>
+                    </li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'custom_admin_dashboard' %}">
+                            <i class="fas fa-user-shield me-2"></i> لوحة الإدارة
+                        </a></li>
+                    {% endif %}
+
+                    {% if user.is_partner and user.partnerprofile.is_approved %}
+                    {% if not user.is_staff %}<li>
+                        <hr class="dropdown-divider">
+                    </li>{% endif %}
+                    <li>
+                        <h6 class="dropdown-header text-primary">الشركاء</h6>
+                    </li>
+                    <li><a class="dropdown-item text-primary" href="{% url 'partner_dashboard' %}">
+                            <i class="fas fa-chart-line me-2"></i> لوحة الشريك
+                        </a></li>
+                    {% endif %}
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <form action="{% url 'logout' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button class="dropdown-item text-danger w-100 text-end" type="submit">تسجيل خروج</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary btn-sm rounded-pill px-3 fw-bold text-white shadow-sm">دخول</a>
+            {% endif %}
+
+            <button class="navbar-toggler border-0 p-0 ms-2" type="button" data-bs-toggle="collapse"
+                data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <!-- Dynamic Menu Items -->
+        <div class="collapse navbar-collapse bg-white p-3 p-lg-0 rounded-3 mt-2 mt-lg-0 shadow-lg shadow-lg-none"
+            id="mainNav">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 text-center gap-1">
+                {% for item in header_menu %}
+                {% if item.is_active %}
+                <!-- Role Check Logic -->
+                {% if user.is_authenticated %}
+                {% if user.is_staff or user.is_superuser %}
+                <!-- Admin sees everything admin-visible logic?? 
+                                     Actually for simplicity: if visible_for_admins is true and user is admin -> show. 
+                                     But usually Admins assume 'visible_for_users' also applies.
+                                     Let's follow logic: 
+                                     Guest -> needs visible_for_guests
+                                     User -> needs visible_for_users
+                                     Admin -> needs visible_for_admins
+                                -->
+                {% if item.visible_for_admins %}
+                {% include "partials/nav_item_logic.html" with item=item %}
+                {% endif %}
+                {% else %}
+                <!-- Regular User -->
+                {% if item.visible_for_users %}
+                {% include "partials/nav_item_logic.html" with item=item %}
+                {% endif %}
+                {% endif %}
+                {% else %}
+                <!-- Guest -->
+                {% if item.visible_for_guests %}
+                {% include "partials/nav_item_logic.html" with item=item %}
+                {% endif %}
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+
+                <!-- Mobile Only: Dashboard Links -->
+                {% if user.is_authenticated %}
+                {% if user.is_partner and user.partnerprofile.is_approved %}
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link text-primary fw-bold" href="{% url 'partner_dashboard' %}">
+                        <i class="fas fa-chart-line me-2"></i> لوحة الشريك
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if user.is_staff %}
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link text-danger fw-bold" href="{% url 'custom_admin_dashboard' %}">
+                        <i class="fas fa-user-shield me-2"></i> الإدارة
+                    </a>
+                </li>
+                {% endif %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

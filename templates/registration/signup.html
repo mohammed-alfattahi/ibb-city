@@ -1,0 +1,148 @@
+{% extends "base_marketing.html" %}
+{% load static %}
+
+{% block title %}انضم إلينا - دليل إب{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/modern_auth.css' %}">
+<style>
+    .selection-card-item {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 24px;
+        padding: 2.5rem;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .selection-card-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: transparent;
+        transition: background 0.3s;
+    }
+
+    .selection-card-item:hover {
+        background: white;
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .role-icon {
+        width: 90px;
+        height: 90px;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 1.5rem;
+        transition: transform 0.4s;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .selection-card-item:hover .role-icon {
+        transform: scale(1.1) rotate(-5deg);
+    }
+
+    /* Tourist Style */
+    .role-tourist .role-icon {
+        background: #ecfdf5;
+        color: #10b981;
+    }
+
+    .role-tourist:hover::before {
+        background: #10b981;
+    }
+
+    .role-tourist:hover .btn-select {
+        background: #10b981;
+        color: white;
+        border-color: #10b981;
+    }
+
+    /* Partner Style */
+    .role-partner .role-icon {
+        background: #eff6ff;
+        color: #3b82f6;
+    }
+
+    .role-partner:hover::before {
+        background: #3b82f6;
+    }
+
+    .role-partner:hover .btn-select {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+    }
+
+    .btn-select {
+        transition: all 0.3s;
+        border-width: 2px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper animate__animated animate__fadeIn">
+    <div class="container" style="max-width: 900px;">
+        <div class="text-center mb-5 text-white">
+            <h2 class="display-4 fw-bold mb-3" style="text-shadow: 0 2px 10px rgba(0,0,0,0.2);">ابدأ رحلتك معنا</h2>
+            <p class="fs-5 opacity-90">اختر نوع الحساب الذي يناسب احتياجاتك للانضمام إلى منصة إب السياحية</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Tourist Option -->
+            <div class="col-md-5 animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+                <a href="{% url 'visitor_signup' %}" class="text-decoration-none text-dark">
+                    <div class="selection-card-item role-tourist">
+                        <div class="role-icon">
+                            <i class="fas fa-hiking"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">زائر / سائح</h3>
+                        <p class="text-muted mb-4 px-2">
+                            استكشف المعالم السياحية، شارك تجاربك، واكتشف أفضل الوجهات في إب الخضراء.
+                        </p>
+                        <span class="btn btn-outline-success rounded-pill px-5 fw-bold py-2 btn-select">تسجيل
+                            كسائح</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Partner Option -->
+            <div class="col-md-5 animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+                <a href="{% url 'partner_signup' %}" class="text-decoration-none text-dark">
+                    <div class="selection-card-item role-partner">
+                        <div class="role-icon">
+                            <i class="fas fa-store-alt"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">شريك أعمال</h3>
+                        <p class="text-muted mb-4 px-2">
+                            هل تملك فندقاً أو منتزهاً؟ سجل منشأتك الآن وابدأ في جذب الزوار والعملاء.
+                        </p>
+                        <span class="btn btn-outline-primary rounded-pill px-5 fw-bold py-2 btn-select">تسجيل
+                            كشريك</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="text-center mt-5 animate__animated animate__fadeIn">
+            <p class="text-white mb-0" style="text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
+                لديك حساب بالفعل؟ <a href="{% url 'login' %}"
+                    class="fw-bold text-white text-decoration-underline ms-1">تسجيل الدخول</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

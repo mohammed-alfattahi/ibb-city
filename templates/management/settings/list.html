@@ -1,0 +1,81 @@
+{% extends "management/admin_base.html" %}
+{% load static %}
+
+{% block title %}إعدادات النظام - لوحة التحكم{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 text-gray-800">إعدادات النظام</h1>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">الإعدادات العامة</h6>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>الإعداد</th>
+                            <th>الوصف</th>
+                            <th>القيمة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for setting in settings %}
+                        <tr>
+                            <td class="align-middle font-weight-bold">
+                                {{ setting.get_key_display|default:setting.key }}
+                                <br>
+                                <small class="text-muted">{{ setting.key }}</small>
+                            </td>
+                            <td class="align-middle text-gray-600">{{ setting.description }}</td>
+                            <td class="align-middle">
+                                {% if setting.data_type == 'boolean' %}
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" 
+                                               id="setting_{{ setting.key }}" 
+                                               name="setting_{{ setting.key }}" 
+                                               value="true"
+                                               {% if setting.value == 'True' or setting.value == 'true' %}checked{% endif %}>
+                                        <label class="custom-control-label" for="setting_{{ setting.key }}"></label>
+                                    </div>
+                                {% elif setting.data_type == 'text' %}
+                                    <textarea class="form-control" name="setting_{{ setting.key }}" rows="3">{{ setting.value }}</textarea>
+                                {% elif setting.data_type == 'integer' %}
+                                    <input type="number" class="form-control" name="setting_{{ setting.key }}" value="{{ setting.value }}">
+                                {% else %}
+                                    <input type="text" class="form-control" name="setting_{{ setting.key }}" value="{{ setting.value }}">
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">لا توجد إعدادات مضافة بعد.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save ml-2"></i> حفظ الإعدادات
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block content %}
+<!-- Community Header -->
+<div class="bg-white border-bottom shadow-sm">
+    <div class="position-relative" style="height: 300px;">
+        {% if community.cover_image %}
+        <img src="{{ community.cover_image.url }}" class="w-100 h-100" style="object-fit: cover;"
+            alt="{{ community.name }}">
+        {% else %}
+        <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+            <i class="fas fa-users fa-4x text-muted opacity-25"></i>
+        </div>
+        {% endif %}
+        <div class="position-absolute bottom-0 start-0 w-100 bg-gradient-dark p-4 text-white"
+            style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+            <div class="container">
+                <div class="d-flex align-items-end justify-content-between">
+                    <div>
+                        <h1 class="display-5 fw-bold mb-1">{{ community.name }}</h1>
+                        <p class="mb-0 opacity-75"><i class="fas fa-hiking me-2"></i>{{ community.members.count }}
+                            سائح نشط
+                        </p>
+                    </div>
+                    <div>
+                        {% include "communities/partials/join_leave_area.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Main Feed -->
+        <div class="col-lg-8">
+            <!-- Create Post Box -->
+            {% if is_member %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex gap-3">
+                        <div class="flex-shrink-0">
+                            {% if user.profile_image %}
+                            <img src="{{ user.profile_image.url }}" class="rounded-circle" width="48" height="48">
+                            {% else %}
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <button class="btn btn-light w-100 text-start text-muted rounded-pill px-3 py-2"
+                                data-bs-toggle="modal" data-bs-target="#createPostModal">
+                                شارك تجربتك أو نصيحتك السياحية...
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-3 border-top pt-3">
+                        <button class="btn btn-sm btn-link text-decoration-none text-muted" data-bs-toggle="modal"
+                            data-bs-target="#createPostModal">
+                            <i class="fas fa-camera text-success me-1"></i> توثيق تجربة
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Posts List -->
+            {% if community.posts.exists %}
+            <h5 class="mb-3 fw-bold ps-2 border-start border-4 border-primary">تجارب الزوار الأخيرة</h5>
+            <div id="community-posts-feed">
+            {% for post in community.posts.all %}
+            {% include "communities/partials/post_item.html" with post=post %}
+            {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="fas fa-map-signs fa-3x mb-3 opacity-50"></i>
+                <p>لا توجد تجارب منشورة بعد. شاركنا أول تجربة!</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4 sticky-top" style="top: 20px; z-index: 1000;">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">عن المجتمع</h5>
+                    <p class="text-muted">{{ community.description }}</p>
+
+                    <hr>
+
+                    <h6 class="fw-bold mb-3 small text-uppercase text-muted">إحصائيات المجتمع</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex justify-content-between mb-2">
+                            <span>سياح نشطون</span>
+                            <span class="fw-bold">{{ community.members.count }}</span>
+                        </li>
+                        <li class="d-flex justify-content-between">
+                            <span>تجارب منشورة</span>
+                            <span class="fw-bold">{{ community.posts.count }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Post Modal -->
+<div class="modal fade" id="createPostModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title fw-bold">نشر تجربة / نصيحة جديدة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form hx-post="{% url 'communities:create_post' community.slug %}" 
+                  hx-encoding="multipart/form-data"
+                  hx-target="#community-posts-feed"
+                  hx-swap="afterbegin"
+                  onsubmit="setTimeout(() => { bootstrap.Modal.getInstance(document.getElementById('createPostModal')).hide(); this.reset(); }, 500);">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {% load crispy_forms_tags %}
+                    {{ post_form|crispy }}
+                </div>
+                <div class="modal-footer border-top-0">
+                    <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">نشر المشاركة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/pages/community_detail.js' %}"></script>
+{% endblock %}

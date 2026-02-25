@@ -1,0 +1,70 @@
+{% load static %}
+{% load i18n %}
+
+{% if ui.show_sidebar %}
+<aside class="sidebar-right">
+
+    {% for widget in sidebar_widgets %}
+    {% if widget.is_visible %}
+    <!-- Filtering Logic: Only show if current_page is in widget.pages (or pages is empty) AND current_role is in widget.roles (or roles is empty) -->
+    {% if not widget.pages or current_page in widget.pages %}
+    {% if not widget.roles or current_role in widget.roles %}
+
+    <div class="bg-white rounded-3 p-3 shadow-sm mb-3 widget-{{ widget.widget_type }}">
+        <h6 class="fw-bold mb-3">{{ widget.title }}</h6>
+
+        {% if widget.widget_type == "text" %}
+        <p class="text-muted small mb-0">{{ widget.content }}</p>
+
+        {% elif widget.widget_type == "custom_html" %}
+        {{ widget.content|safe }}
+
+        {% elif widget.widget_type == "links" %}
+        <ul class="list-unstyled small mb-0">
+            {% for link in widget.links.all %}
+            {% if link.is_active %}
+            <li class="mb-2">
+                <a href="{{ link.url }}" class="text-decoration-none text-dark d-flex align-items-center gap-2">
+                    <i class="fas fa-chevron-left text-muted" style="font-size: 0.7rem;"></i>
+                    {{ link.title }}
+                </a>
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+
+        {% elif widget.widget_type == "cta" %}
+        <div class="text-center">
+            {{ widget.content|safe }}
+            <!-- Assuming content is just text? Or HTML? 
+                             The plan text said "content" is link usually for CTA? 
+                             Plan sample: <a href="{{ widget.content }}" ...> {{ widget.title }} </a>
+                             My model description said: "content... or link for CTA".
+                             Let's assume content IS the link for CTA type. 
+                         -->
+            <a href="{{ widget.content }}" class="btn btn-primary w-100 rounded-pill">
+                {{ widget.title }} <i class="fas fa-arrow-left ms-2"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    {% endif %}
+    {% endif %}
+    {% endif %}
+    {% empty %}
+    <!-- Fallback if no widgets or DB empty -->
+    <div class="bg-white rounded-3 p-3 shadow-sm mb-3">
+        <h6 class="fw-bold mb-3">طقس إب</h6>
+        <div class="d-flex align-items-center gap-3">
+            <i class="fas fa-cloud-sun fa-2x text-warning"></i>
+            <div>
+                <div class="fs-4 fw-bold">22°C</div>
+                <div class="text-muted small">غائم جزئياً</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</aside>
+{% endif %}

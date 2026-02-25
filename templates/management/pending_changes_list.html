@@ -1,0 +1,267 @@
+{% extends "management/admin_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "التغييرات المعلقة" %} - {% trans "لوحة الإدارة" %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header & Breadcrumb -->
+    <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">
+                <i class="fas fa-history text-primary me-2"></i>{% trans "مراجعة التغييرات" %}
+            </h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mb-0 small">
+                    <li class="breadcrumb-item"><a href="{% url 'custom_admin_dashboard' %}" class="text-decoration-none text-muted">{% trans "الرئيسية" %}</a></li>
+                    <li class="breadcrumb-item active text-primary fw-bold">{% trans "التغييرات المعلقة" %}</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="stats-badge shadow-sm rounded-pill bg-white border px-4 py-2 d-flex align-items-center">
+            <div class="icon-circle bg-warning bg-opacity-10 text-warning me-3" style="width: 35px; height: 35px; font-size: 1rem;">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold mb-0 lh-1">{{ total_pending }}</h5>
+                <div class="text-muted" style="font-size: 0.7rem;">{% trans "طلبات معلقة" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <form method="get" class="search-form">
+                <div class="input-group bg-white shadow-sm rounded-pill overflow-hidden border">
+                    <span class="input-group-text bg-white border-0 ps-4">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" name="q" class="form-control border-0 py-3" 
+                           placeholder="{% trans 'بحث عن منشأة، شريك، أو حقل...' %}" value="{{ request.GET.q }}">
+                    <button type="submit" class="btn btn-primary px-5 rounded-pill m-1">
+                        {% trans "بحث" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Content: Pending Changes -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">{% trans "طلبات التغيير" %}</h5>
+                    {% if pending_changes %}
+                    <span class="badge bg-light text-dark rounded-pill border">{{ pending_changes.count }} {% trans "طلب" %}</span>
+                    {% endif %}
+                </div>
+                <div class="card-body p-0">
+                    {% if pending_changes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-muted small text-uppercase">
+                                <tr>
+                                    <th class="ps-4">{% trans "المنشأة والشريك" %}</th>
+                                    <th>{% trans "الحقل المتغير" %}</th>
+                                    <th>{% trans "تاريخ الطلب" %}</th>
+                                    <th class="text-center pe-4">{% trans "الإجراء" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for change in pending_changes %}
+                                <tr>
+                                    <td class="ps-4 py-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-primary bg-opacity-10 text-primary rounded-circle me-3 d-flex align-items-center justify-content-center fw-bold">
+                                                {{ change.establishment.name|slice:":1"|upper }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark">{{ change.establishment.name }}</div>
+                                                <div class="small text-muted"><i class="fas fa-user-circle me-1"></i>{{ change.requested_by.username }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge rounded-pill bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-3">
+                                            {{ change.get_field_name_display }}
+                                        </span>
+                                    </td>
+                                    <td class="text-muted small">
+                                        <div>{{ change.created_at|date:"Y/m/d" }}</div>
+                                        <div class="opacity-75">{{ change.created_at|time:"H:i" }}</div>
+                                    </td>
+                                    <td class="text-center pe-4">
+                                        <button type="button" class="btn btn-white btn-sm shadow-sm border rounded-pill px-3"
+                                            data-bs-toggle="modal" data-bs-target="#changeModal{{ change.id }}">
+                                            <i class="fas fa-eye text-primary me-1"></i> {% trans "مراجعة" %}
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <!-- Enhanced Review Modal -->
+                                <div class="modal fade" id="changeModal{{ change.id }}" tabindex="-1">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                        <div class="modal-content border-0 shadow-lg rounded-4">
+                                            <div class="modal-header border-0 pb-0">
+                                                <h5 class="modal-title fw-bold">
+                                                    <i class="fas fa-file-signature text-primary me-2"></i>
+                                                    {% trans "تفاصيل طلب التغيير" %}
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body p-4">
+                                                <!-- Context Banner -->
+                                                <div class="d-flex align-items-center p-3 rounded-4 bg-light mb-4 text-dark border">
+                                                    <div class="avatar-md bg-white border rounded-3 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px;">
+                                                        <i class="fas fa-building text-muted fa-lg"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold">{{ change.establishment.name }}</div>
+                                                        <div class="small text-muted">{% trans "تحديث" %} {{ change.get_field_name_display }} • {% trans "بواسطة" %} {{ change.requested_by.username }}</div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Diff Layout -->
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <div class="diff-card rounded-4 border p-3 h-100 bg-danger bg-opacity-10 border-danger border-opacity-10">
+                                                            <div class="small fw-bold text-danger mb-2">
+                                                                <i class="fas fa-minus-circle me-1"></i>{% trans "القيمة الحالية" %}
+                                                            </div>
+                                                            <div class="diff-content text-dark small">
+                                                                {{ change.old_value|default:"(فارغ)" }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="diff-card rounded-4 border p-3 h-100 bg-success bg-opacity-10 border-success border-opacity-10">
+                                                            <div class="small fw-bold text-success mb-2">
+                                                                <i class="fas fa-plus-circle me-1"></i>{% trans "القيمة الجديدة" %}
+                                                            </div>
+                                                            <div class="diff-content text-dark small fw-bold">
+                                                                {{ change.new_value }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Rejection Reason Input (Dynamic) -->
+                                                <div class="mt-4 animate__animated animate__fadeIn" id="rejectNote{{ change.id }}" style="display: none;">
+                                                    <label class="form-label fw-bold small text-muted">{% trans "توضيح سبب الرفض (اختياري)" %}:</label>
+                                                    <textarea class="form-control border-danger border-opacity-25" name="reject_note" rows="3" 
+                                                              form="rejectForm{{ change.id }}"
+                                                              placeholder="{% trans 'اكتب سبباً مختصراً للرفض ليظهر للشريك...' %}"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer border-0 p-4 pt-0">
+                                                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{% trans "إغلاق" %}</button>
+                                                
+                                                <!-- Reject Action -->
+                                                <form id="rejectForm{{ change.id }}" method="post" action="{% url 'admin_pending_change_action' change.id %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="reject">
+                                                    <button type="button" class="btn btn-outline-danger rounded-pill px-4"
+                                                            onclick="document.getElementById('rejectNote{{ change.id }}').style.display='block'; this.style.display='none'; document.getElementById('confirmReject{{ change.id }}').style.display='inline-block';">
+                                                        {% trans "رفض" %}
+                                                    </button>
+                                                    <button type="submit" id="confirmReject{{ change.id }}" class="btn btn-danger rounded-pill px-4" style="display: none;">
+                                                        {% trans "تأكيد الرفض" %}
+                                                    </button>
+                                                </form>
+
+                                                <!-- Approve Action -->
+                                                <form method="post" action="{% url 'admin_pending_change_action' change.id %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="approve">
+                                                    <button type="submit" class="btn btn-success rounded-pill px-5">
+                                                        <i class="fas fa-check me-2"></i>{% trans "موافقة واعتماد" %}
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <!-- Modern Empty State -->
+                    <div class="text-center py-5 px-4 bg-white">
+                        <div class="mb-4">
+                            <div class="d-inline-flex p-4 rounded-circle bg-success bg-opacity-10 text-success">
+                                <i class="fas fa-check-double fa-4x animate__animated animate__bounceIn"></i>
+                            </div>
+                        </div>
+                        <h4 class="fw-bold text-dark">{% trans "كل العمليات منجزة!" %}</h4>
+                        <p class="text-muted mx-auto" style="max-width: 400px;">
+                            {% trans "لا توجد أي طلبات تغيير معلقة حالياً. جميع تحديثات المنشآت تمت مراجعتها بالكامل وتعكس الوضع الحالي." %}
+                        </p>
+                        <a href="{% url 'custom_admin_dashboard' %}" class="btn btn-outline-primary rounded-pill px-4 mt-2">
+                            <i class="fas fa-home me-2"></i>{% trans "العودة للرئيسية" %}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Activity Timeline -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-stream text-primary me-2"></i>{% trans "آخر النشاطات" %}</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="timeline-container p-4">
+                        {% if recent_approved or recent_rejected %}
+                            {% for change in recent_approved %}
+                            <div class="timeline-item mb-4 border-start border-success border-2 ps-3 position-relative">
+                                <div class="timeline-dot bg-success" style="left: -7px; width: 12px; height: 12px; border-radius: 50%; position: absolute; top: 5px;"></div>
+                                <div class="small fw-bold text-dark">{{ change.establishment.name }}</div>
+                                <div class="small text-muted">{{ change.get_field_name_display }} <span class="badge bg-success bg-opacity-10 text-success ms-1">{% trans "تم القبول" %}</span></div>
+                                <div class="text-muted" style="font-size: 0.7rem;">{{ change.reviewed_at|timesince }}</div>
+                            </div>
+                            {% endfor %}
+                            
+                            {% for change in recent_rejected %}
+                            <div class="timeline-item mb-4 border-start border-danger border-2 ps-3 position-relative">
+                                <div class="timeline-dot bg-danger" style="left: -7px; width: 12px; height: 12px; border-radius: 50%; position: absolute; top: 5px;"></div>
+                                <div class="small fw-bold text-dark">{{ change.establishment.name }}</div>
+                                <div class="small text-muted">{{ change.get_field_name_display }} <span class="badge bg-danger bg-opacity-10 text-danger ms-1">{% trans "مرفوض" %}</span></div>
+                                <div class="text-muted" style="font-size: 0.7rem;">{{ change.reviewed_at|timesince }}</div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-4">
+                                <img src="https://cdni.iconscout.com/illustration/premium/thumb/no-data-found-8867280-7265556.png" class="img-fluid opacity-25 mb-3" style="max-height: 120px;">
+                                <p class="small text-muted mb-0">{% trans "لا توجد نشاطات سابقة مسجلة" %}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Mini Legend -->
+                <div class="card-footer bg-light border-0 p-3">
+                    <h6 class="fw-bold small mb-2">{% trans "تنبيه" %}:</h6>
+                    <div class="small text-muted">
+                        <div class="mb-1"><i class="fas fa-info-circle text-primary me-1"></i> {% trans "اسم المنشأة ووصفها يتطلبان موافقة يدوية." %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar-sm { width: 40px; height: 40px; font-size: 1.1rem; }
+    .avatar-md { width: 50px; height: 50px; }
+    .btn-white { background: #fff; border: 1px solid #e2e8f0; color: #4a5568; }
+    .btn-white:hover { background: #f7fafc; }
+    .diff-card { transition: all 0.2s ease; }
+    .diff-content { white-space: pre-wrap; font-family: inherit; line-height: 1.5; }
+    .icon-circle { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-size: 1.4rem; }
+</style>
+{% endblock %}

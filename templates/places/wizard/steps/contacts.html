@@ -1,0 +1,271 @@
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="text-center mb-4">
+            <i class="fas fa-address-book fa-3x text-success mb-3"></i>
+            <h3>إدارة جهات الاتصال</h3>
+            <p class="text-muted">أضف أرقام الهواتف، حسابات التواصل الاجتماعي، وموقعك على الخريطة لتسهيل الوصول إليك.
+            </p>
+        </div>
+
+        <!-- Contact List -->
+        <div id="contactList" class="list-group mb-4 shadow-sm">
+            {% for contact in draft.establishment.contacts.all %}
+            <div class="list-group-item d-flex justify-content-between align-items-center"
+                id="contact-{{ contact.id }}">
+                <div class="d-flex align-items-center">
+                    <div class="me-3 text-center" style="width: 40px;">
+                        <i class="{{ contact.icon_class }} fa-lg text-primary"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">{{ contact.get_type_display }}</h6>
+                        <small class="text-muted">{{ contact.value }}</small>
+                        {% if contact.label %}
+                        <span class="badge bg-light text-dark">{{ contact.label }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-outline-danger delete-contact" data-id="{{ contact.id }}">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+            {% empty %}
+            <div class="text-center py-4 text-muted" id="emptyState">
+                <i class="far fa-sad-tear fa-2x mb-2"></i>
+                <p>لا توجد جهات اتصال مضافة بعد.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Add Contact Form Trigger -->
+        <div class="text-center">
+            <button class="btn btn-outline-success rounded-pill px-4" type="button" data-bs-toggle="collapse"
+                data-bs-target="#addContactForm">
+                <i class="fas fa-plus me-2"></i> إضافة جهة اتصال
+            </button>
+        </div>
+
+        <!-- Add Contact Form -->
+        <div class="collapse mt-4" id="addContactForm">
+            <div class="card card-body border-success shadow-sm">
+                <form id="contactForm">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">نوع جهة الاتصال</label>
+                            <select class="form-select" name="type" id="contactType" required>
+                                <option value="" selected disabled>اختر النوع...</option>
+                                <option value="phone">هاتف</option>
+                                <option value="whatsapp">واتساب</option>
+                                <option value="facebook">فيسبوك</option>
+                                <option value="instagram">انستغرام</option>
+                                <option value="website">موقع إلكتروني</option>
+                                <option value="email">بريد إلكتروني</option>
+                                <option value="google_maps">خرائط جوجل</option>
+                                <option value="other">أخرى</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 d-none" id="carrierGroup">
+                            <label class="form-label">شبكة الاتصال</label>
+                            <select class="form-select" name="carrier" id="contactCarrier">
+                                <option value="">اختر الشبكة...</option>
+                                <option value="yemen_mobile">يمن موبايل</option>
+                                <option value="sabafon">سبأفون</option>
+                                <option value="you">يو (YOU)</option>
+                                <option value="wai">واي</option>
+                                <option value="landline">هاتف أرضي</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">القيمة (الرقم أو الرابط)</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="valuePrefix"><i class="fas fa-pen"></i></span>
+                                <input type="text" class="form-control" name="value" id="contactValue"
+                                    placeholder="أدخل القيمة هنا..." required>
+                            </div>
+                            <div class="form-text" id="valueHelp"></div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">تسمية اختيارية</label>
+                            <input type="text" class="form-control" name="label"
+                                placeholder="مثال: خدمة العملاء، الإدارة">
+                        </div>
+
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-toggle="collapse"
+                                data-bs-target="#addContactForm">إلغاء</button>
+                            <button type="submit" class="btn btn-success" id="saveContactBtn">
+                                <span class="spinner-border spinner-border-sm d-none me-2" role="status"
+                                    aria-hidden="true"></span>
+                                حفظ الإضافة
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const typeSelect = document.getElementById('contactType');
+        const carrierGroup = document.getElementById('carrierGroup');
+        const carrierSelect = document.getElementById('contactCarrier');
+        const form = document.getElementById('contactForm');
+        const saveBtn = document.getElementById('saveContactBtn');
+        const contactList = document.getElementById('contactList');
+        const emptyState = document.getElementById('emptyState');
+        const valuePrefix = document.getElementById('valuePrefix');
+        const valueInput = document.getElementById('contactValue');
+
+        // Toggle Carrier Field
+        typeSelect.addEventListener('change', function () {
+            const type = this.value;
+            if (type === 'phone') {
+                carrierGroup.classList.remove('d-none');
+                carrierSelect.setAttribute('required', 'required');
+                valuePrefix.innerHTML = '<i class="fas fa-phone"></i>';
+                valueInput.placeholder = '77xxxxxxx';
+            } else {
+                carrierGroup.classList.add('d-none');
+                carrierSelect.removeAttribute('required');
+                carrierSelect.value = '';
+
+                // Helpful icons
+                const icons = {
+                    'whatsapp': 'fab fa-whatsapp',
+                    'facebook': 'fab fa-facebook',
+                    'instagram': 'fab fa-instagram',
+                    'email': 'fas fa-envelope',
+                    'website': 'fas fa-globe'
+                };
+                const icon = icons[type] || 'fas fa-pen';
+                valuePrefix.innerHTML = `<i class="${icon}"></i>`;
+            }
+        });
+
+        // Handle Form Submit
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Show loading
+            saveBtn.disabled = true;
+            saveBtn.querySelector('.spinner-border').classList.remove('d-none');
+
+            const formData = new FormData(form);
+            // Add defaults
+            formData.append('is_visible', 'on');
+
+            fetch("{% url 'partner_contact_create' pk=draft.establishment.pk %}", {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        addContactRow(data.contact);
+                        form.reset();
+                        carrierGroup.classList.add('d-none');
+
+                        // Hide form
+                        const bsCollapse = new bootstrap.Collapse(document.getElementById('addContactForm'), {
+                            toggle: true
+                        });
+
+                        // Show success toast/alert?
+                    } else {
+                        alert('Error: ' + data.message);
+                        if (data.errors) {
+                            console.log(data.errors);
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('حدث خطأ أثناء الاتصال بالخادم.');
+                })
+                .finally(() => {
+                    saveBtn.disabled = false;
+                    saveBtn.querySelector('.spinner-border').classList.add('d-none');
+                });
+        });
+
+        // Handle Delete
+        contactList.addEventListener('click', function (e) {
+            const btn = e.target.closest('.delete-contact');
+            if (!btn) return;
+
+            if (!confirm('هل أنت متأكد من حذف جهة الاتصال هذه؟')) return;
+
+            const id = btn.dataset.id;
+            const row = document.getElementById(`contact-${id}`);
+
+            // Build URL dynamically since JS template tags are static
+            // Assuming consistent URL structure: /partner/establishments/PK/contacts/UUID/delete/
+            const deleteUrl = `/partner/establishments/{{ draft.establishment.pk }}/contacts/${id}/delete/`;
+
+            fetch(deleteUrl, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        row.remove();
+                        if (contactList.children.length === 0 || (contactList.children.length === 1 && emptyState)) {
+                            // check if empty
+                            if (contactList.querySelectorAll('.list-group-item').length === 0) {
+                                if (emptyState) emptyState.style.display = 'block';
+                                else {
+                                    // Recreate empty state if removed
+                                    contactList.innerHTML = `
+                                <div class="text-center py-4 text-muted" id="emptyState">
+                                    <i class="far fa-sad-tear fa-2x mb-2"></i>
+                                    <p>لا توجد جهات اتصال مضافة بعد.</p>
+                                </div>`;
+                                }
+                            }
+                        }
+                    } else {
+                        alert('فشل الحذف: ' + data.message);
+                    }
+                });
+        });
+
+        function addContactRow(contact) {
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+
+            const html = `
+            <div class="list-group-item d-flex justify-content-between align-items-center animate__animated animate__fadeIn" id="contact-${contact.id}">
+                <div class="d-flex align-items-center">
+                    <div class="me-3 text-center" style="width: 40px;">
+                        <i class="${contact.icon_class} fa-lg text-primary"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">${contact.type}</h6>
+                        <small class="text-muted">${contact.value}</small>
+                        ${contact.label ? `<span class="badge bg-light text-dark ms-2">${contact.label}</span>` : ''}
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-outline-danger delete-contact" data-id="${contact.id}">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        `;
+
+            contactList.insertAdjacentHTML('beforeend', html);
+        }
+    });
+</script>

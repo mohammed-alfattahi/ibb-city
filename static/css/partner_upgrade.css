@@ -1,0 +1,81 @@
+:root {
+  --upgrade-card-radius: 20px;
+}
+
+.upgrade-page .upgrade-card {
+  border-radius: var(--upgrade-card-radius);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.upgrade-page .upgrade-header {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.14), rgba(124, 58, 237, 0.10));
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.upgrade-page .upgrade-title {
+  font-weight: 900;
+  letter-spacing: 0.2px;
+}
+
+.upgrade-page .upgrade-subtitle {
+  color: rgba(15, 23, 42, 0.65);
+}
+
+.upgrade-page .stepper {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.upgrade-page .step {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.9);
+}
+
+.upgrade-page .step .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(79, 70, 229, 0.75);
+}
+
+.upgrade-page .helper-callout {
+  border-radius: 16px;
+  border: 1px solid rgba(6, 182, 212, 0.18);
+  background: rgba(6, 182, 212, 0.08);
+}
+
+.upgrade-page .helper-callout h6 {
+  font-weight: 800;
+}
+
+.upgrade-page .form-label {
+  font-weight: 700;
+}
+
+.upgrade-page .form-text {
+  color: rgba(15, 23, 42, 0.65);
+}
+
+.upgrade-page .sticky-actions {
+  position: sticky;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 12px;
+  border-radius: 16px;
+}
+
+.upgrade-page .sticky-actions .btn {
+  border-radius: 14px;
+  font-weight: 800;
+}

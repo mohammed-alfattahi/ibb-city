@@ -1,0 +1,266 @@
+/* Enterprise Dashboard Styles - Student System Inspired */
+
+:root {
+    --ent-primary: #337ab7;
+    /* Classic Admin Blue */
+    --ent-success: #5cb85c;
+    /* Bootstrap 3 Green */
+    --ent-info: #5bc0de;
+    --ent-warning: #f0ad4e;
+    --ent-danger: #d9534f;
+    --ent-gray-light: #f8f9fa;
+    --ent-border: #ddd;
+    --ent-text: #333;
+    --ent-header-bg: #fff;
+    --ent-sidebar-width: 250px;
+}
+
+body.enterprise-theme {
+    font-family: 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    font-size: 14px;
+    color: var(--ent-text);
+}
+
+/* --- Layout --- */
+.ent-container {
+    padding: 20px;
+    margin-right: var(--ent-sidebar-width);
+    transition: margin-right 0.3s ease;
+}
+
+@media (max-width: 992px) {
+    .ent-container {
+        margin-right: 0;
+    }
+}
+
+/* --- Utilities --- */
+.ent-card {
+    background: #fff;
+    border: 1px solid var(--ent-border);
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    margin-bottom: 20px;
+}
+
+.ent-card-header {
+    background-color: var(--ent-primary);
+    color: #fff;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--ent-border);
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ent-card-header.bg-success {
+    background-color: var(--ent-success) !important;
+}
+
+.ent-card-header.bg-warning {
+    background-color: var(--ent-warning) !important;
+}
+
+.ent-card-header.bg-danger {
+    background-color: var(--ent-danger) !important;
+}
+
+.ent-card-body {
+    padding: 15px;
+}
+
+/* --- Sidebar --- */
+.ent-sidebar {
+    width: var(--ent-sidebar-width);
+    position: fixed;
+    top: 70px;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    border-left: 1px solid var(--ent-border);
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.ent-nav-item {
+    border-bottom: 1px solid #eee;
+}
+
+.ent-nav-link {
+    display: block;
+    padding: 12px 15px;
+    color: var(--ent-text);
+    text-decoration: none;
+    transition: all 0.2s;
+    font-weight: 500;
+    border-right: 4px solid transparent;
+}
+
+.ent-nav-link:hover {
+    background-color: #f8f9fa;
+    color: var(--ent-primary);
+}
+
+.ent-nav-link.active {
+    background-color: #e9f2ff;
+    color: var(--ent-primary);
+    border-right-color: var(--ent-primary);
+}
+
+.ent-nav-header {
+    background-color: #f5f5f5;
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #777;
+    text-transform: uppercase;
+}
+
+/* --- Icon Grid --- */
+.ent-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+    justify-content: center;
+}
+
+.ent-icon-box {
+    background: #fff;
+    border: 1px solid var(--ent-border);
+    border-radius: 4px;
+    padding: 20px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: var(--ent-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 140px;
+}
+
+.ent-icon-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-color: var(--ent-primary);
+    color: var(--ent-primary);
+}
+
+.ent-icon-box i {
+    font-size: 32px;
+    margin-bottom: 15px;
+    color: #555;
+    transition: color 0.2s;
+}
+
+.ent-icon-box:hover i {
+    color: var(--ent-primary);
+}
+
+.ent-icon-box span {
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* --- Status Bars / Accordions --- */
+.ent-accordion-item {
+    border: 1px solid var(--ent-border);
+    margin-bottom: 5px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.ent-accordion-header {
+    background: #f8f9fa;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid transparent;
+}
+
+.ent-accordion-header:hover {
+    background: #eee;
+}
+
+.ent-accordion-header.active {
+    background: #e9f2ff;
+    color: var(--ent-primary);
+    border-bottom-color: var(--ent-border);
+}
+
+.ent-accordion-body {
+    padding: 15px;
+    background: #fff;
+    display: none;
+}
+
+.ent-accordion-body.show {
+    display: block;
+}
+
+/* Specific Colors for Sections */
+.bg-light-blue {
+    background-color: #d9edf7;
+    color: #31708f;
+}
+
+.bg-light-green {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+
+.bg-light-yellow {
+    background-color: #fcf8e3;
+    color: #8a6d3b;
+}
+
+.bg-light-red {
+    background-color: #f2dede;
+    color: #a94442;
+}
+
+/* Status Strips */
+.status-strip {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* --- Partner Dashboard Theme (Distinction from Admin) --- */
+.navbar-partner-theme {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important; /* Deep Blue / Slate 900 */
+    border-bottom: 2px solid #fbbf24 !important; /* Amber 400 (Gold) */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.navbar-partner-theme .navbar-brand {
+    color: #fbbf24 !important; /* Gold Brand */
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.navbar-partner-theme .nav-link {
+    color: #e2e8f0 !important; /* Slate 200 */
+    transition: color 0.2s;
+}
+
+.navbar-partner-theme .nav-link:hover,
+.navbar-partner-theme .nav-link:focus {
+    color: #fbbf24 !important; /* Gold Hover */
+}
+
+.navbar-partner-theme .dropdown-menu {
+    border-top: 3px solid #fbbf24;
+}

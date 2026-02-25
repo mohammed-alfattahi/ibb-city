@@ -1,0 +1,364 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}الخريطة التفاعلية - دليل إب{% endblock %}
+
+{% block extra_css %}
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css">
+<link rel="stylesheet" href="{% static 'css/modern_map.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="map-layout">
+
+    <!-- Sidebar -->
+    <div class="map-sidebar animate__animated animate__slideInRight">
+        <div class="map-sidebar-header">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2 text-primary">
+                <i class="fas fa-map-marked-alt"></i> المعالم السياحية
+            </h5>
+
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 rounded-start-pill ps-3">
+                    <i class="fas fa-search text-muted"></i>
+                </span>
+                <input id="search" type="text" class="form-control bg-light border-start-0 rounded-end-pill py-2"
+                    placeholder="بحث عن مكان...">
+            </div>
+        </div>
+
+        <div class="map-sidebar-content custom-scrollbar">
+            <!-- Tools -->
+            <div class="d-flex gap-2 mb-3">
+                <button id="nearestBtn" class="btn btn-sm btn-outline-success flex-grow-1 rounded-pill">
+                    <i class="fas fa-location-arrow me-1"></i> الأقرب إليّ
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-light rounded-pill dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown">
+                        <i class="fas fa-filter text-muted"></i>
+                    </button>
+                    <ul class="dropdown-menu shadow-sm border-0 rounded-3">
+                        <li>
+                            <h6 class="dropdown-header">نطاق البحث</h6>
+                        </li>
+                        <li><a class="dropdown-item active" href="#" data-range="1000">1 كم</a></li>
+                        <li><a class="dropdown-item" href="#" data-range="5000">5 كم</a></li>
+                        <li><a class="dropdown-item" href="#" data-range="10000">10 كم</a></li>
+                        <li><h6 class="dropdown-header border-top mt-2 pt-2">التصنيف</h6></li>
+                        <li><a class="dropdown-item category-filter active" href="#" data-cat="">الكل</a></li>
+                        {% for cat in categories %}
+                        <li><a class="dropdown-item category-filter" href="#" data-cat="{{ cat.id }}">{{ cat.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    <select id="rangeSelect" class="d-none">
+                        <option value="1000" selected>1000</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="placesCount" class="small text-muted fw-bold mb-2 ms-1">جاري التحميل...</div>
+            <div id="places" class="d-flex flex-column gap-2">
+                <!-- Places injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Controls (Floating) -->
+    <div class="map-controls">
+        <button id="locateMe" class="map-btn" title="موقعي">
+            <i class="fas fa-location-crosshairs"></i>
+        </button>
+        <button id="simulateLocation" class="map-btn text-warning" title="محاكاة موقع (للتجربة)">
+            <i class="fas fa-walking"></i>
+        </button>
+        <button id="toggleMapType" class="map-btn" title="تغيير نوع الخريطة">
+            <i class="fas fa-satellite"></i>
+        </button>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+<script>
+    /* ================= VARIABLES ================= */
+    let map, userMarker, userCircle, rangeCircle, routingControl;
+    let placesData = [], watchId = null, alertTriggered = false;
+    let currentCategory = ''; // Store active category
+    let markers = L.markerClusterGroup({
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        spiderfyOnMaxZoom: true,
+        iconCreateFunction: function (cluster) {
+            return L.divIcon({
+                html: '<div class="d-flex align-items-center justify-content-center bg-success text-white rounded-circle fw-bold shadow-sm" style="width: 40px; height: 40px; border: 2px solid white;">' + cluster.getChildCount() + '</div>',
+                className: 'marker-cluster-custom',
+                iconSize: L.point(40, 40)
+            });
+        }
+    });
+
+    // Custom Icons
+    const createIcon = (iconClass, color) => L.divIcon({
+        className: 'custom-map-icon',
+        html: `<div class="d-flex align-items-center justify-content-center rounded-circle shadow-lg" 
+                   style="width: 40px; height: 40px; background: white; border: 2px solid ${color}; color: ${color}; font-size: 1.2rem;">
+                   <i class="${iconClass}"></i>
+               </div>`,
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40]
+    });
+
+    /* ================= MAP INITIALIZATION ================= */
+    // Ibb Coordinates
+    map = L.map('map', { zoomControl: false }).setView([13.9667, 44.1833], 13);
+
+    // Zoom Control Top-Left
+    L.control.zoom({ position: 'topleft' }).addTo(map);
+
+    /* ===== Base Layers ===== */
+    const normalMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    });
+
+    const satelliteMap = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        { maxZoom: 19, attribution: '© Esri' }
+    );
+
+    // Default
+    normalMap.addTo(map);
+    let isSatellite = false;
+
+    // Toggle Map Type
+    document.getElementById('toggleMapType').onclick = function () {
+        isSatellite = !isSatellite;
+        if (isSatellite) {
+            map.removeLayer(normalMap);
+            satelliteMap.addTo(map);
+            this.innerHTML = '<i class="fas fa-map"></i>';
+        } else {
+            map.removeLayer(satelliteMap);
+            normalMap.addTo(map);
+            this.innerHTML = '<i class="fas fa-satellite"></i>';
+        }
+    };
+
+    /* ================= LOCATE USER ================= */
+    document.getElementById('locateMe').onclick = () => {
+        if (!navigator.geolocation) {
+            alert('متصفحك لا يدعم تحديد الموقع الجغرافي (Geolocation).');
+            return;
+        }
+
+        const btn = document.getElementById('locateMe');
+        const originalIcon = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                const latlng = [position.coords.latitude, position.coords.longitude];
+
+                if (userMarker) {
+                    map.removeLayer(userMarker);
+                    map.removeLayer(userCircle);
+                }
+
+                // Create User Marker
+                userMarker = L.marker(latlng, {
+                    icon: L.divIcon({
+                        className: 'user-location-pulse',
+                        html: '<div style="background:#0d6efd;width:16px;height:16px;border-radius:50%;border:2px solid white;box-shadow:0 0 0 10px rgba(13,110,253,0.2);"></div>',
+                        iconSize: [16, 16]
+                    })
+                }).addTo(map).bindPopup('<div class="text-center fw-bold">📍 موقعك الحالي</div>').openPopup();
+
+                userCircle = L.circle(latlng, {
+                    radius: position.coords.accuracy,
+                    color: '#0d6efd',
+                    fillOpacity: 0.1,
+                    weight: 1
+                }).addTo(map);
+
+                map.flyTo(latlng, 15);
+                btn.innerHTML = originalIcon;
+                btn.disabled = false;
+
+                updatePlacesWithDistance();
+            },
+            error => {
+                console.error("Geolocation Error:", error);
+                btn.innerHTML = originalIcon;
+                btn.disabled = false;
+                let msg = 'تعذر تحديد الموقع.';
+                if (error.code === 1) msg += ' يرجى السماح للموقع من إعدادات المتصفح.';
+                else if (error.code === 2) msg += ' الموقع غير متاح.';
+                else if (error.code === 3) msg += ' انتهت مهلة الطلب.';
+                alert(msg);
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    };
+
+    /* ================= DISTANCE & LOAD ================= */
+    function distanceFromUser(p) {
+        if (!userMarker) return Infinity;
+        return map.distance(userMarker.getLatLng(), L.latLng(p.lat, p.lng));
+    }
+
+    function updatePlacesWithDistance() {
+        if (!userMarker) return;
+        placesData = placesData.map(p => ({
+            ...p,
+            distance: distanceFromUser(p)
+        })).sort((a, b) => a.distance - b.distance);
+        renderPlaces(placesData);
+    }
+
+    function renderPlaces(list) {
+        const container = document.getElementById('places');
+        const countEl = document.getElementById('placesCount');
+        container.innerHTML = '';
+
+        countEl.textContent = `📍 ${list.length} وجهة سياحية`;
+
+        if (list.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-search-location fa-3x mb-3 opacity-25"></i>
+                    <p class="mb-0">لا توجد نتائج مطابقة</p>
+                </div>
+            `;
+            return;
+        }
+
+        list.forEach(p => {
+            const distText = p.distance && p.distance !== Infinity
+                ? `<small class="text-success fw-bold"><i class="fas fa-walking me-1"></i>${(p.distance / 1000).toFixed(1)} كم</small>`
+                : '';
+
+            const div = document.createElement('div');
+            div.className = 'place-item d-flex align-items-center gap-3';
+            div.innerHTML = `
+                <img src="${p.image || 'https://via.placeholder.com/60'}" onerror="this.src='https://via.placeholder.com/60?text=No+Image'" class="rounded-3 object-fit-cover" style="width: 60px; height: 60px;">
+                <div class="flex-grow-1">
+                    <h6 class="fw-bold mb-1 text-dark small">${p.name}</h6>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-light text-muted fw-normal border">${p.category}</span>
+                        ${distText}
+                    </div>
+                </div>
+            `;
+            div.onclick = () => {
+                map.flyTo([p.lat, p.lng], 16);
+
+                // Highlight marker
+                markers.eachLayer(layer => {
+                    if (layer.getLatLng().lat === p.lat && layer.getLatLng().lng === p.lng) {
+                        layer.openPopup();
+                    }
+                });
+
+                // Highlight list item
+                document.querySelectorAll('.place-item').forEach(el => el.classList.remove('active'));
+                div.classList.add('active');
+            };
+            container.appendChild(div);
+        });
+    }
+
+    function loadPlaces(category = '') {
+        const url = category ? `/map/data/?category=${category}` : '/map/data/';
+        
+        fetch(url)
+            .then(r => r.json())
+            .then(data => {
+                placesData = data.features.map(f => ({
+                    id: f.properties.id,
+                    name: f.properties.title,
+                    category: f.properties.category,
+                    lat: f.geometry.coordinates[1],
+                    lng: f.geometry.coordinates[0],
+                    image: f.properties.image,
+                    url: f.properties.url
+                }));
+
+                renderPlaces(placesData);
+                markers.clearLayers();
+
+                placesData.forEach(p => {
+                    const icon = createIcon('fas fa-map-marker-alt', '#10b981'); // Emerald Green
+                    const marker = L.marker([p.lat, p.lng], { icon: icon })
+                        .bindPopup(`
+                            <div class="text-center p-2" style="width:200px">
+                                <img src="${p.image || 'https://via.placeholder.com/200?text=No+Image'}" onerror="this.src='https://via.placeholder.com/200?text=No+Image'" class="rounded-3 mb-2 w-100" style="height:100px;object-fit:cover;">
+                                <h6 class="fw-bold mb-1">${p.name}</h6>
+                                <a href="${p.url}" class="btn btn-sm btn-primary w-100 rounded-pill mt-2">التفاصيل</a>
+                            </div>
+                        `);
+                    markers.addLayer(marker);
+                });
+                map.addLayer(markers);
+            })
+            .catch(err => {
+                console.warn('Using Mock Data as API failed or empty');
+                 // Mock Data for fallback/dev
+                placesData = [
+                    { name: 'شلال المشنة', category: 'طبيعة', lat: 13.97, lng: 44.17, image: 'https://placehold.co/100', url: '#' },
+                    { name: 'حصن حب', category: 'تاريخ', lat: 13.98, lng: 44.19, image: 'https://placehold.co/100', url: '#' }
+                ];
+                renderPlaces(placesData);
+            });
+    }
+
+    // Filter Logic
+    document.querySelectorAll('.category-filter').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Update Active State
+            document.querySelectorAll('.category-filter').forEach(el => el.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Fetch
+            const catId = this.getAttribute('data-cat');
+            loadPlaces(catId);
+        });
+    });
+
+    // Init with logic to check URL params later if needed, for now load all
+    loadPlaces();
+
+    // Search
+    document.getElementById('search').oninput = function () {
+        const q = this.value.toLowerCase();
+        const res = placesData.filter(p => p.name.toLowerCase().includes(q));
+        renderPlaces(res);
+    };
+
+    // Nearest
+    document.getElementById('nearestBtn').onclick = () => {
+        if (!userMarker) {
+            document.getElementById('locateMe').click();
+            return; // Wait for location
+        }
+        updatePlacesWithDistance();
+    };
+
+</script>
+{% endblock %}

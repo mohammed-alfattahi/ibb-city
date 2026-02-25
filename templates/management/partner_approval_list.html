@@ -1,0 +1,425 @@
+{% extends 'management/admin_base.html' %}
+{% load static %}
+
+{% block title %}اعتماد الشركاء - لوحة الإدارة{% endblock %}
+
+{% block content %}
+<div class="container-xl py-5" dir="rtl">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-5 gap-3 flex-wrap">
+        <div>
+            <h1 class="h3 fw-bold text-gray-900 mb-2">
+                <i class="fas fa-user-tie text-primary me-2"></i>اعتماد طلبات الشراكة
+            </h1>
+            <p class="text-muted mb-0">مراجعة وثائق وبيانات الشركاء الجدد لاتخاذ القرار المناسب.</p>
+        </div>
+        <div>
+            <div class="bg-white rounded-pill shadow-sm px-4 py-2 border d-flex align-items-center gap-2">
+                <span class="badge bg-warning rounded-circle p-2 d-flex align-items-center justify-content-center"
+                    style="width: 24px; height: 24px;">{{ pending_count }}</span>
+                <span class="fw-bold text-dark small">طلبات معلقة</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Content: Pending Partners -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4 h-100">
+                <div
+                    class="card-header bg-white py-4 d-flex align-items-center justify-content-between border-bottom flex-wrap gap-3">
+                    <h5 class="mb-0 fw-bold text-gray-800">
+                        <i class="fas fa-hourglass-half text-warning me-2"></i>طلبات تنتظر الموافقة
+                    </h5>
+                    <!-- Search & Filter -->
+                    <form method="get" class="d-flex gap-2 flex-wrap">
+                        <div class="input-group" style="max-width: 250px;">
+                            <span class="input-group-text bg-light border-0"><i
+                                    class="fas fa-search text-muted"></i></span>
+                            <input type="text" name="q" class="form-control bg-light border-0"
+                                placeholder="بحث بالاسم أو البريد..." value="{{ request.GET.q }}">
+                        </div>
+                        <select name="sort" class="form-select bg-light border-0" style="max-width: 150px;">
+                            <option value="-submitted_at" {% if request.GET.sort == '-submitted_at' %}selected{% endif %}>
+                                الأحدث</option>
+                            <option value="submitted_at" {% if request.GET.sort == 'submitted_at' %}selected{% endif %}>
+                                الأقدم</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3">
+                            <i class="fas fa-filter me-1"></i> تصفية
+                        </button>
+                    </form>
+                </div>
+                <div class="card-body p-0">
+                    {% if pending_partners %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" style="min-width: 800px;">
+                            <thead class="bg-light text-muted small text-uppercase">
+                                <tr>
+                                    <th class="py-3 px-4">الشريك</th>
+                                    <th class="py-3">المنظمة</th>
+                                    <th class="py-3">تاريخ التقديم</th>
+                                    <th class="py-3">المستندات</th>
+                                    <th class="text-center py-3 px-4">إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody class="border-top-0">
+                                {% for partner in pending_partners %}
+                                <tr class="position-relative">
+                                    <td class="px-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar avatar-sm bg-primary-subtle text-primary rounded-circle me-3 d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+                                                style="width: 40px; height: 40px;">
+                                                {{ partner.user.username|slice:":1"|upper }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark text-truncate" style="max-width: 150px;"
+                                                    title="{{ partner.user.get_full_name|default:partner.user.username }}">
+                                                    {{ partner.user.get_full_name|default:partner.user.username }}
+                                                </div>
+                                                <div class="small text-muted text-truncate" style="max-width: 150px;">
+                                                    {{ partner.user.email }}
+                                                </div>
+                                                {% if partner.user.phone_number %}
+                                                <div class="small text-muted dir-ltr text-end mt-1">
+                                                    {{ partner.user.phone_number }} <i class="fas fa-phone ms-1"></i>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border rounded-pill fw-normal px-3 py-2">
+                                            {{ partner.organization_name|default:"-" }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <span class="fw-bold fs-7">{{ partner.submitted_at|default:partner.created_at|date:"Y/m/d" }}</span>
+                                            <small class="text-muted">{{ partner.submitted_at|default:partner.created_at|timesince }}
+                                                مضت</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            {% if partner.id_card_image %}
+                                            <button type="button" class="btn btn-sm btn-outline-info rounded-pill px-3"
+                                                data-url="{% url 'secure_file' file_path=partner.id_card_image.name %}"
+                                                onclick="showDocumentPreview(this.getAttribute('data-url'), 'Image', 'الهوية')">
+                                                <i class="fas fa-id-card me-1"></i> الهوية
+                                            </button>
+                                            {% endif %}
+                                            {% if partner.commercial_registry_file %}
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-secondary rounded-pill px-3"
+                                                data-url="{% url 'secure_file' file_path=partner.commercial_registry_file.name %}"
+                                                onclick="showDocumentPreview(this.getAttribute('data-url'), 'PDF/Image', 'السجل التجاري')">
+                                                <i class="fas fa-file-alt me-1"></i> السجل
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="text-center px-4">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <form method="post" action="{% url 'admin_partner_approve' partner.pk %}">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                    class="btn btn-success btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center gap-2"
+                                                    onclick="return confirm('هل أنت متأكد من الموافقة على هذا الشريك؟')">
+                                                    <i class="fas fa-check"></i> موافقة
+                                                </button>
+                                            </form>
+
+                                            <button type="button"
+                                                class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center gap-2"
+                                                data-bs-toggle="modal" data-bs-target="#rejectModal{{ partner.pk }}">
+                                                <i class="fas fa-times"></i> رفض
+                                            </button>
+
+                                            <button type="button"
+                                                class="btn btn-warning btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center gap-2"
+                                                data-bs-toggle="modal" data-bs-target="#needsInfoModal{{ partner.pk }}">
+                                                <i class="fas fa-question-circle"></i> استكمال
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if page_obj.has_other_pages %}
+                    <div class="card-footer bg-white border-0 py-4">
+                        <nav>
+                            <ul class="pagination justify-content-center mb-0 gap-1">
+                                {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link rounded-circle d-flex align-items-center justify-content-center border-0 bg-light text-dark"
+                                        style="width: 32px; height: 32px;"
+                                        href="?page={{ page_obj.previous_page_number }}">
+                                        <i class="fas fa-chevron-right small"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                <li class="page-item disabled">
+                                    <span class="page-link border-0 fw-bold mx-2">{{ page_obj.number }}</span>
+                                </li>
+                                {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link rounded-circle d-flex align-items-center justify-content-center border-0 bg-light text-dark"
+                                        style="width: 32px; height: 32px;" href="?page={{ page_obj.next_page_number }}">
+                                        <i class="fas fa-chevron-left small"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                    {% endif %}
+
+                    {% else %}
+                    <div class="text-center py-5 px-4">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded-circle mb-4"
+                            style="width: 80px; height: 80px;">
+                            <i class="fas fa-check fa-3x text-success"></i>
+                        </div>
+                        <h5 class="fw-bold text-gray-800">لا توجد طلبات معلقة</h5>
+                        <p class="text-muted mb-0">رائع! جميع طلبات الشراكة تمت مراجعتها.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar: Recent Activity -->
+        <div class="col-xl-4 col-lg-5">
+            <!-- Recently Approved -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div
+                    class="card-header bg-white py-3 border-bottom-0 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold text-success">
+                        <i class="fas fa-check-circle me-2"></i>تمت الموافقة مؤخراً
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    {% if recently_approved %}
+                    <div class="list-group list-group-flush">
+                        {% for p in recently_approved %}
+                        <div class="list-group-item border-light px-4 py-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="fw-bold text-dark mb-1">{{ p.user.get_full_name|default:p.user.username }}</div>
+                                    <div class="small text-muted mb-1">
+                                        <i class="far fa-building me-1"></i> {{ p.organization_name }}
+                                    </div>
+                                    <small class="text-gray-400">
+                                        <i class="far fa-clock me-1"></i> {{ p.reviewed_at|timesince }} مضت
+                                    </small>
+                                </div>
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2">
+                                    <i class="fas fa-check small"></i>
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4 text-muted small">
+                        لا توجد موافقات حديثة
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recently Rejected -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-bottom-0">
+                    <h6 class="mb-0 fw-bold text-danger">
+                        <i class="fas fa-times-circle me-2"></i>تم الرفض مؤخراً
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    {% if recently_rejected %}
+                    <div class="list-group list-group-flush">
+                        {% for p in recently_rejected %}
+                        <div class="list-group-item border-light px-4 py-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="fw-bold text-dark text-truncate" style="max-width: 150px;">
+                                    {{ p.user.get_full_name|default:p.user.username }}
+                                </div>
+                                <span
+                                    class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 small">مرفوض</span>
+                            </div>
+                            <div class="bg-light rounded-3 p-2 small text-muted">
+                                "{{ p.rejection_reason|truncatewords:8 }}"
+                            </div>
+                            <div class="text-end mt-2">
+                                <small class="text-gray-400" style="font-size: 0.75rem;">
+                                    {{ p.reviewed_at|timesince }} مضت
+                                </small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4 text-muted small">
+                        لا توجد رفوضات حديثة
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card bg-primary bg-opacity-10 border-0 rounded-4 p-4 text-primary">
+                <div class="d-flex align-items-start gap-3">
+                    <i class="fas fa-info-circle fa-2x mt-1"></i>
+                    <div>
+                        <h6 class="fw-bold mb-2">معلومات للمشرف</h6>
+                        <ul class="mb-0 small ps-3 opacity-75" style="list-style-type: disc;">
+                            <li class="mb-1">الموافقة تمنح صلاحية الدخول الفوري للوحة الشريك.</li>
+                            <li class="mb-1">يجب التحقق من صحة السجل التجاري والهوية قبل الموافقة.</li>
+                            <li>قرار الرفض يرسل بالبريد مع السبب المحدد.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals Loop (Moved Outside Table) -->
+    {% if pending_partners %}
+    {% for partner in pending_partners %}
+    <!-- Needs Info Modal -->
+    <div class="modal fade" id="needsInfoModal{{ partner.pk }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <form method="post" action="{% url 'admin_partner_needs_info' partner.pk %}">
+                    {% csrf_token %}
+                    <div class="modal-header bg-warning-subtle border-0">
+                        <h5 class="modal-title fw-bold text-warning">
+                            <i class="fas fa-question-circle me-2"></i>طلب استكمال بيانات
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="alert alert-light border d-flex align-items-center mb-4">
+                            <div class="avatar avatar-sm bg-warning text-white rounded-circle me-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                                style="width: 32px; height: 32px;">
+                                {{ partner.user.username|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <div class="fw-bold small">{{ partner.user.get_full_name|default:partner.user.username }}</div>
+                                <div class="text-muted small">{{ partner.organization_name }}</div>
+                            </div>
+                        </div>
+
+                        <label class="form-label fw-bold small text-muted text-uppercase mb-2">
+                            البيانات المطلوبة <span class="text-danger">*</span>
+                        </label>
+                        <textarea name="message" class="form-control bg-light border-0 rounded-3 p-3" rows="4"
+                            placeholder="يرجى تحديد البيانات أو المستندات المطلوب استكمالها..." required></textarea>
+                    </div>
+                    <div class="modal-footer border-0 bg-light px-4 py-3">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                            data-bs-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-warning rounded-pill px-5 fw-bold text-dark">
+                            إرسال الطلب
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject Modal -->
+    <div class="modal fade" id="rejectModal{{ partner.pk }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <form method="post" action="{% url 'admin_partner_reject' partner.pk %}">
+                    {% csrf_token %}
+                    <div class="modal-header bg-danger-subtle border-0">
+                        <h5 class="modal-title fw-bold text-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>رفض طلب الشراكة
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="alert alert-light border d-flex align-items-center mb-4">
+                            <div class="avatar avatar-sm bg-secondary text-white rounded-circle me-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                                style="width: 32px; height: 32px;">
+                                {{ partner.user.username|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <div class="fw-bold small">{{ partner.user.get_full_name|default:partner.user.username }}</div>
+                                <div class="text-muted small">{{ partner.organization_name }}</div>
+                            </div>
+                        </div>
+
+                        <label class="form-label fw-bold small text-muted text-uppercase mb-2">
+                            سبب الرفض <span class="text-danger">*</span>
+                        </label>
+                        <textarea name="reason" class="form-control bg-light border-0 rounded-3 p-3" rows="4"
+                            placeholder="يرجى كتابة سبب الرفض بوضوح ليقوم الشريك بتعديله..." required></textarea>
+                    </div>
+                    <div class="modal-footer border-0 bg-light px-4 py-3">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                            data-bs-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-5 fw-bold">
+                            تأكيد الرفض
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Document Preview Modal -->
+    <div class="modal fade" id="documentPreviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden" style="height: 85vh;">
+                <div class="modal-header bg-dark text-white border-0 py-2">
+                    <h5 class="modal-title fs-6">
+                        <i class="fas fa-eye me-2"></i>معاينة: <span id="previewTitle" class="fw-bold"></span>
+                    </h5>
+                    <div class="d-flex gap-2">
+                        <a id="downloadBtn" href="#" target="_blank" class="btn btn-sm btn-outline-light rounded-pill">
+                            <i class="fas fa-external-link-alt me-1"></i> فتح في نافذة جديدة
+                        </a>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div
+                    class="modal-body p-0 bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center position-relative">
+                    <div id="loadingSpinner" class="spinner-border text-primary position-absolute" role="status"
+                        style="z-index: 10;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <iframe id="previewFrame" src="" class="w-100 h-100 border-0"
+                        onload="document.getElementById('loadingSpinner').style.display='none';"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showDocumentPreview(url, type, title) {
+            document.getElementById('previewTitle').innerText = title;
+            document.getElementById('downloadBtn').href = url;
+
+            var frame = document.getElementById('previewFrame');
+            var spinner = document.getElementById('loadingSpinner');
+
+            spinner.style.display = 'block';
+            frame.src = url;
+
+            var modal = new bootstrap.Modal(document.getElementById('documentPreviewModal'));
+            modal.show();
+        }
+    </script>
+</div>
+{% endblock %}

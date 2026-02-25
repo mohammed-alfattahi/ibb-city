@@ -1,0 +1,216 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ request.LANGUAGE_CODE|default:'ar' }}"
+    dir="{{ request.LANGUAGE_CODE|default:'ar'|language_bidi|yesno:'rtl,ltr' }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}دليل إب السياحي{% endblock %}</title>
+
+    <!-- SEO & Social Meta Tags -->
+    {% block meta_tags %}
+    <meta name="description" content="دليل إب السياحي - اكتشف جمال الطبيعة والتاريخ في اللواء الأخضر">
+    <meta property="og:title" content="دليل إب السياحي">
+    <meta property="og:description" content="دليل إب السياحي - اكتشف جمال الطبيعة والتاريخ في اللواء الأخضر">
+    <meta property="og:image" content="{% static 'img/og-default.jpg' %}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    {% endblock %}
+
+    <!-- Bootstrap 5 RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    
+    <!-- OneSignal SDK -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+    <!-- PWA -->
+    <!-- PWA -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#059669">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{% static 'img/icon-192.png' %}">
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts: Tajawal (Premium Arabic Font) -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- IBB Guide Design System -->
+    {% include "partials/theme_vars.html" %}
+    <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/utilities.css' %}">
+    <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+
+    {% block extra_css %}{% endblock %}
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <style>
+        /* HTMX Indicators */
+        .htmx-indicator {
+            opacity: 0;
+            transition: opacity 200ms ease-in;
+        }
+        .htmx-request .htmx-indicator,
+        .htmx-request.htmx-indicator {
+            opacity: 1;
+        }
+        /* Fade out container during request */
+        .htmx-request.transition-fade {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .transition-fade {
+            transition: opacity 200ms ease-in-out;
+        }
+        #global-loading {
+            position: fixed;
+            top: 12px;
+            inset-inline-end: 12px;
+            z-index: 9999;
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid #e2e8f0;
+            border-radius: 999px;
+            padding: 6px 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            font-size: 0.85rem;
+        }
+
+        /* Global Favorite Button Enhancement */
+        .favorite-btn-htmx.is-active {
+            color: #f43f5e !important;
+        }
+        .favorite-btn-htmx.is-active i {
+            font-weight: 900 !important; /* Force Solid icon */
+        }
+    </style>
+</head>
+
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <script>
+        document.body.addEventListener('htmx:configRequest', (event) => {
+            const templateToken = "{{ csrf_token }}";
+            if (templateToken && templateToken !== "NOTPROVIDED") {
+                event.detail.headers['X-CSRFToken'] = templateToken;
+                return;
+            }
+
+            const getCookie = (name) => {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            };
+            const csrftoken = getCookie('csrftoken');
+            if (csrftoken) {
+                event.detail.headers['X-CSRFToken'] = csrftoken;
+            }
+        });
+    </script>
+    <div id="global-loading" class="htmx-indicator">Loading...</div>
+    <!-- Top Ad Banner (Lazy Loaded) -->
+    <div id="ad-navbar-slot"
+         hx-get="{% url 'ad_slot' 'navbar' %}"
+         hx-trigger="load"
+         hx-swap="innerHTML"></div>
+
+    <!-- Header -->
+    {% include "partials/header.html" %}
+
+    {% block body_content %}{% endblock %}
+
+    <!-- Footer -->
+    {% include "partials/footer.html" %}
+
+    <!-- FAB for Mobile SOS -->
+    <a href="{% url 'emergency' %}"
+        class="btn btn-danger rounded-circle shadow-lg d-lg-none position-fixed start-0 m-3 d-flex align-items-center justify-content-center"
+        style="width: 50px; height: 50px; z-index: 9999; bottom: 70px;">
+        <i class="fas fa-phone-alt"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core JS Architecture -->
+    <script>
+        window.APP = {
+            csrf: "{{ csrf_token }}",
+            features: JSON.parse('{{ features_json|escapejs|default:"{}" }}'),
+            onesignalAppId: "{{ onesignal_app_id }}",
+            urls: {
+                autosave: "", // Will be populated in specific pages if needed
+            }
+        };
+    </script>
+    <script src="{% static 'js/core/http.js' %}"></script>
+    <script src="{% static 'js/core/ui.js' %}"></script>
+    <script src="{% static 'js/core/features.js' %}"></script>
+    <script src="{% static 'js/core/notifications.js' %}"></script>
+    <script src="{% static 'js/core/places_interactions.js' %}"></script>
+
+    <!-- SSE Notifications -->
+    {% if user.is_authenticated %}
+    <script>
+        (function() {
+            let eventSource;
+            function connectSSE() {
+                if (eventSource) eventSource.close();
+                
+                eventSource = new EventSource("{% url 'stream_notifications' %}");
+                
+                eventSource.addEventListener("badge", function(e) {
+                    const badgeContainer = document.getElementById("notif-badge");
+                    if (badgeContainer) badgeContainer.innerHTML = e.data;
+                });
+                
+                eventSource.addEventListener("dropdown", function(e) {
+                    const dropdownContainer = document.getElementById("notif-dropdown");
+                    if (dropdownContainer) dropdownContainer.innerHTML = e.data;
+                });
+                
+                eventSource.onerror = function() {
+                    console.log("SSE Connection lost. Reconnecting in 5s...");
+                    eventSource.close();
+                    setTimeout(connectSSE, 5000);
+                };
+            }
+            connectSSE();
+        })();
+    </script>
+    {% endif %}
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

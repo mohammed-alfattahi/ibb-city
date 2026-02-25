@@ -1,0 +1,279 @@
+/* ==============================================
+   Admin Dashboard Styles
+   Extracted from templates/management/admin_base.html
+   ============================================== */
+
+:root {
+    --header-height: 70px;
+    --sidebar-width: 290px;
+    --primary-color: #0f172a; /* Slate 900 */
+    --accent-color: #3b82f6; /* Blue 500 */
+    --secondary-accent: #10b981; /* Emerald 500 */
+    --bg-color: #f8fafc; /* Slate 50 */
+    --text-color: #334155; /* Slate 700 */
+    --sidebar-bg: #ffffff;
+    --sidebar-border: #f1f5f9;
+    --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --premium-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+}
+
+/* --- Header --- */
+.main-header {
+    height: var(--header-height);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: var(--sidebar-width);
+    z-index: 100;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.header-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.user-profile:hover {
+    background-color: #f9fafb;
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    background: #e0f2fe;
+    color: var(--primary-color);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-left: 1px solid var(--sidebar-border);
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 101;
+    overflow-y: auto;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s;
+}
+
+.sidebar-brand {
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--sidebar-border);
+    margin-bottom: 10px;
+    text-align: center;
+    padding: 1rem;
+}
+
+.sidebar-brand img {
+    max-height: 60px;
+    margin-bottom: 10px;
+}
+
+.sidebar-brand h5 {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--primary-color);
+    margin: 0;
+    letter-spacing: -0.025em;
+}
+
+.sidebar-brand small {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Sidebar Menu Items (Accordion Style) */
+.menu-category {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    padding: 10px 20px 5px;
+    font-weight: 600;
+    display: none;
+}
+
+.nav-item-btn {
+    width: 90%;
+    margin: 4px 5%;
+    text-align: right;
+    background: none;
+    border: none;
+    padding: 10px 16px;
+    font-weight: 600;
+    color: #64748b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item-btn:hover {
+    background-color: #f1f5f9;
+    color: var(--accent-color);
+}
+
+.nav-item-btn.active {
+    color: #fff;
+    background: var(--premium-gradient);
+    box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.2);
+}
+
+.nav-sub-menu {
+    background-color: #fcfcfc;
+    display: none;
+}
+
+.nav-sub-menu.open {
+    display: block;
+}
+
+.sub-link {
+    display: flex;
+    align-items: center;
+    padding: 10px 25px 10px 10px;
+    font-size: 0.9rem;
+    color: #4b5563;
+    text-decoration: none;
+    border-bottom: 1px dashed #e5e7eb;
+    transition: all 0.2s;
+}
+
+.sub-link:hover {
+    color: var(--primary-color);
+    padding-right: 30px;
+}
+
+/* The Colored Number Badges */
+.color-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-left: 10px;
+    position: relative;
+}
+
+.bg-teal {
+    background-color: #14b8a6;
+}
+
+.bg-blue {
+    background-color: #3b82f6;
+}
+
+.bg-orange {
+    background-color: #f97316;
+}
+
+.bg-green {
+    background-color: #22c55e;
+}
+
+.bg-purple {
+    background-color: #a855f7;
+}
+
+.bg-red {
+    background-color: #ef4444;
+}
+
+/* --- Main Content Area --- */
+.main-content-wrapper {
+    margin-right: var(--sidebar-width);
+    padding: calc(var(--header-height) + 20px) 20px 20px 20px;
+    transition: all 0.3s;
+}
+
+/* Breadcrumb Bar */
+.breadcrumb-bar {
+    background: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #eee;
+}
+
+/* Responsive */
+/* Glassmorphism & Premium Utilities */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.soft-shadow {
+    box-shadow: var(--card-shadow);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+[dir="rtl"] .sidebar {
+    border-left: 1px solid var(--sidebar-border);
+    border-right: none;
+}

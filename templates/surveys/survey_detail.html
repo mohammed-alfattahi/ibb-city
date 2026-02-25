@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}{{ survey.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">الرئيسية</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'survey_list' %}">الاستبيانات</a></li>
+            <li class="breadcrumb-item active">{{ survey.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white p-4">
+                    <h2 class="mb-2">{{ survey.title }}</h2>
+                    {% if survey.description %}
+                    <p class="mb-0 opacity-75">{{ survey.description }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="card-body p-4">
+                    {% if already_responded %}
+                    <div class="alert alert-info text-center rounded-4 border-0 shadow-sm">
+                        <i class="fas fa-check-circle fa-2x mb-3 text-info"></i>
+                        <h5 class="fw-bold">شكراً لمشاركتك!</h5>
+                        <p class="mb-0">لقد أجبت على هذا الاستبيان مسبقاً.</p>
+                    </div>
+                    {% elif not survey.is_open %}
+                    <div class="alert alert-light text-center py-5 border rounded-4 shadow-sm">
+                        <div class="mb-4">
+                            <span class="display-4 text-{{ survey.status_info.class }} opacity-50">
+                                <i class="fas fa-{{ survey.status_info.icon }}"></i>
+                            </span>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-2">الاستبيان {% if not survey.is_active %}معطّل{% else %}مغلق{% endif %}</h4>
+                        <p class="text-muted mb-4">{{ survey.status_info.label }}</p>
+                        
+                        {% if user.is_staff and not survey.is_open and survey.is_active %}
+                        <div class="alert alert-warning py-2 mb-4 rounded-pill border-0 shadow-sm" style="font-size: 0.85rem;">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <strong>تنبيه للمسؤول:</strong> الاستبيان نشط في الإعدادات، لكنه مغلق أمام الجمهور بسبب (التاريخ أو عدد الردود).
+                        </div>
+                        {% endif %}
+                        
+                        {% if user.is_staff %}
+                        <div class="admin-controls border-top pt-4 mt-2">
+                            <h6 class="text-muted small fw-bold mb-3 text-uppercase">لوحة التحكم (للمسؤولين فقط)</h6>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{% url 'survey_results' survey.pk %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    <i class="fas fa-chart-bar me-1"></i> عرض النتائج
+                                </a>
+                                <form action="{% url 'survey_toggle_active' survey.pk %}" method="POST" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm {% if survey.is_active %}btn-outline-danger{% else %}btn-success{% endif %} rounded-pill px-3">
+                                        {% if survey.is_active %}<i class="fas fa-power-off me-1"></i> إغلاق الآن{% else %}<i class="fas fa-play me-1"></i> فتح الآن{% endif %}
+                                    </button>
+                                </form>
+                                <a href="/admin/surveys/survey/{{ survey.id }}/change/" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                    <i class="fas fa-edit me-1"></i> تعديل الإعدادات
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% elif not user.is_authenticated %}
+                    <div class="alert alert-light text-center py-5 border-0 rounded-4 shadow-sm" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                        <div class="mb-4">
+                            <span class="display-4 text-primary opacity-50">
+                                <i class="fas fa-user-lock"></i>
+                            </span>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-2">تسجيل الدخول مطلوب</h4>
+                        <p class="text-muted mb-4">نعتذر، المشاركة في الاستبيان متاحة فقط للأعضاء المسجلين لضمان جودة البيانات.</p>
+                        
+                        <div class="d-grid gap-2 col-md-6 mx-auto">
+                            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary rounded-pill py-2 shadow-sm">
+                                <i class="fas fa-sign-in-alt me-2"></i> تسجيل الدخول الآن
+                            </a>
+                            <a href="{% url 'visitor_signup' %}?next={{ request.path }}" class="btn btn-outline-secondary rounded-pill py-2">
+                                إنشاء حساب جديد
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Progress Bar -->
+                    <div class="progress mb-4" style="height: 10px;">
+                        <div id="surveyProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                    </div>
+
+                    <form method="post" id="surveyForm">
+                        {% csrf_token %}
+
+                        {% for question in questions %}
+                        <div class="mb-4 p-3 bg-light rounded survey-question" data-required="{{ question.is_required|lower }}">
+                            <label class="form-label fw-bold mb-3 d-block" dir="auto">
+                                {{ forloop.counter }}. {{ question.question_text }}
+                                {% if question.is_required %}
+                                <span class="text-danger">*</span>
+                                {% endif %}
+                            </label>
+
+                            {% if question.question_type == 'rating' %}
+                            <!-- تقييم بالنجوم -->
+                            <div class="d-flex gap-2 flex-wrap">
+                            <div class="star-rating d-inline-flex">
+                                {% for i in "54321" %}
+                                <input type="radio" name="question_{{ question.id }}" value="{{ i }}" id="q{{ question.id }}_{{ i }}" {% if question.is_required %}required{% endif %}>
+                                <label for="q{{ question.id }}_{{ i }}" title="{{ i }} نجوم"></label>
+                                {% endfor %}
+                            </div>
+                            </div>
+
+                            {% elif question.question_type == 'text' %}
+                            <!-- نص حر -->
+                            <textarea name="question_{{ question.id }}" class="form-control feedback-input" rows="3" {% if question.is_required %}required{% endif %} placeholder="اكتب إجابتك هنا..."></textarea>
+
+                            {% elif question.question_type == 'choice' %}
+                            <!-- اختيار من متعدد (راديو) -->
+                            {% for choice in question.choices %}
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="question_{{ question.id }}"
+                                    value="{{ choice }}" id="q{{ question.id }}_{{ forloop.counter }}" {% if question.is_required %}required{% endif %}>
+                                <label class="form-check-label" for="q{{ question.id }}_{{ forloop.counter }}">
+                                    {{ choice }}
+                                </label>
+                            </div>
+                            {% endfor %}
+
+                            {% elif question.question_type == 'checkbox' %}
+                            <!-- اختيارات متعددة (مربعات اختيار) -->
+                            {% for choice in question.choices %}
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="question_{{ question.id }}"
+                                    value="{{ choice }}" id="q{{ question.id }}_{{ forloop.counter }}">
+                                <label class="form-check-label" for="q{{ question.id }}_{{ forloop.counter }}">
+                                    {{ choice }}
+                                </label>
+                            </div>
+                            {% endfor %}
+
+                            {% elif question.question_type == 'select' %}
+                            <!-- قائمة منسدلة -->
+                            <select name="question_{{ question.id }}" class="form-select feedback-input" {% if question.is_required %}required{% endif %}>
+                                <option value="" selected disabled>اختر من القائمة...</option>
+                                {% for choice in question.choices %}
+                                <option value="{{ choice }}">{{ choice }}</option>
+                                {% endfor %}
+                            </select>
+
+                            {% elif question.question_type == 'number' %}
+                            <!-- رقم -->
+                            <input type="number" name="question_{{ question.id }}" class="form-control feedback-input" {% if question.is_required %}required{% endif %}>
+
+                            {% elif question.question_type == 'date' %}
+                            <!-- تاريخ -->
+                            <input type="date" name="question_{{ question.id }}" class="form-control feedback-input" {% if question.is_required %}required{% endif %}>
+
+                            {% elif question.question_type == 'yesno' %}
+                            <!-- نعم / لا -->
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="question_{{ question.id }}"
+                                        value="نعم" id="q{{ question.id }}_yes" {% if question.is_required %}required{% endif %}>
+                                    <label class="form-check-label" for="q{{ question.id }}_yes">
+                                        <span class="badge bg-success fs-6">نعم</span>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="question_{{ question.id }}"
+                                        value="لا" id="q{{ question.id }}_no">
+                                    <label class="form-check-label" for="q{{ question.id }}_no">
+                                        <span class="badge bg-danger fs-6">لا</span>
+                                    </label>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        <div class="d-grid gap-2 mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm py-3 fw-bold" style="background: var(--color-primary, #10b981); border-color: var(--color-primary, #10b981);">
+                                <i class="fas fa-paper-plane me-2"></i> إرسال الإجابات
+                            </button>
+                        </div>
+                    </form>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const form = document.getElementById('surveyForm');
+                            const progressBar = document.getElementById('surveyProgress');
+                            const questions = document.querySelectorAll('.survey-question');
+                            const totalQuestions = questions.length;
+
+                            function updateProgress() {
+                                let answered = 0;
+                                questions.forEach(q => {
+                                    const inputs = q.querySelectorAll('input, select, textarea');
+                                    let isAnswered = false;
+                                    
+                                    inputs.forEach(input => {
+                                        if (input.type === 'radio' || input.type === 'checkbox') {
+                                            if (input.checked) isAnswered = true;
+                                        } else {
+                                            if (input.value.trim() !== '') isAnswered = true;
+                                        }
+                                    });
+                                    
+                                    if (isAnswered) answered++;
+                                });
+                                
+                                const percent = (answered / totalQuestions) * 100;
+                                progressBar.style.width = percent + '%';
+                            }
+
+                            form.addEventListener('change', updateProgress);
+                            form.addEventListener('input', updateProgress);
+                            updateProgress(); // Initial call
+                        });
+                    </script>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Premium Star Rating */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2.5rem;
+    color: #e4e5e9;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 0;
+}
+
+.star-rating label::before {
+    content: "★";
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label {
+    color: #ffc107;
+    transform: scale(1.15);
+    text-shadow: 0 0 10px rgba(255, 193, 7, 0.4);
+}
+
+.star-rating label:active {
+    transform: scale(0.9);
+}
+</style>
+{% endblock %}

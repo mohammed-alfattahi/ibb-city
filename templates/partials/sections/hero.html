@@ -1,0 +1,155 @@
+{% if hero_slides %}
+<div id="heroCarousel" class="carousel slide carousel-fade vh-100 position-relative" data-bs-ride="carousel"
+    data-bs-pause="false">
+
+    <!-- Modern Indicators -->
+    <div class="carousel-indicators mb-5 gap-2">
+        {% for slide in hero_slides %}
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+            class="{% if forloop.first %}active{% endif %} rounded-pill opacity-100" aria-current="true"
+            aria-label="Slide {{ forloop.counter }}"
+            style="width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.8); background-clip: content-box; border-top: 2px solid transparent; border-bottom: 2px solid transparent; flex: 0 1 auto; transition: all 0.3s ease;"></button>
+        {% endfor %}
+    </div>
+
+    <!-- Inner -->
+    <div class="carousel-inner h-100">
+        {% for slide in hero_slides %}
+        <div class="carousel-item h-100 {% if forloop.first %}active{% endif %}" data-bs-interval="6000">
+            <!-- Background Image with Slight Zoom Animation -->
+            <div class="position-absolute top-0 start-0 w-100 h-100 overflow-hidden">
+                {% if slide.image and slide.image.url %}
+                <img src="{{ slide.image.url }}" class="w-100 h-100 object-fit-cover animate-kenburns"
+                    alt="{{ slide.title }}">
+                {% else %}
+                <img src="https://images.unsplash.com/photo-1596423497886-f1262d46e387?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+                    class="w-100 h-100 object-fit-cover animate-kenburns" alt="{{ slide.title }}">
+                {% endif %}
+            </div>
+
+            <!-- Modern Gradient Overlay -->
+            <div class="position-absolute top-0 start-0 w-100 h-100"
+                style="background: linear-gradient(180deg, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.2) 50%, rgba(15, 23, 42, 0.9) 100%);">
+            </div>
+
+            <!-- Radial Gradient for focused text readability -->
+            <div class="position-absolute top-0 start-0 w-100 h-100 opacity-60"
+                style="background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%);"></div>
+
+            <!-- Content -->
+            <div class="position-absolute top-50 start-50 translate-middle text-center text-white w-100 px-3"
+                style="max-width: 900px;">
+                {% if slide.subtitle %}
+                <div class="overflow-hidden mb-3">
+                    <h5 class="text-uppercase letter-spacing-3 fw-semibold text-warning animate__animated animate__fadeInDown animate__delay-500ms d-inline-block px-3 py-1 rounded-pill"
+                        style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px);">
+                        {{ slide.subtitle }}
+                    </h5>
+                </div>
+                {% endif %}
+
+                <h1 class="display-2 fw-bolder mb-4 animate__animated animate__fadeInUp bg-text-gradient-white"
+                    style="line-height: 1.1; letter-spacing: -2px; text-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                    {{ slide.title }}
+                </h1>
+
+                <p class="lead fw-light mb-5 fs-4 text-white-50 animate__animated animate__fadeInUp animate__delay-1s mx-auto"
+                    style="max-width: 700px;">
+                    {{ slide.description|default:""|truncatewords:20 }}
+                </p>
+
+                {% if slide.button_text and slide.button_link %}
+                <div class="animate__animated animate__fadeInUp animate__delay-1s">
+                    <a href="{{ slide.button_link }}"
+                        class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg hover-scale border-0 position-relative overflow-hidden group"
+                        style="background: var(--gradient-primary);">
+                        <span class="position-relative z-10">{{ slide.button_text }}</span>
+                        <div
+                            class="position-absolute top-0 start-0 w-100 h-100 bg-white opacity-20 transform scale-x-0 group-hover-scale-x-100 transition-transform origin-left duration-300">
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Glassmorphic Search (If no button) -->
+                {% if not slide.button_text %}
+                <div class="mx-auto animate__animated animate__fadeInUp animate__delay-1s position-relative"
+                    style="max-width: 600px;">
+                    <form action="{% url 'place_list' %}" method="GET" class="position-relative">
+                        <div class="input-group input-group-lg rounded-pill overflow-hidden shadow-2xl border border-white border-opacity-20"
+                            style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(12px);">
+                            <span class="input-group-text bg-transparent border-0 ps-4 text-white">
+                                <i class="fas fa-search opacity-75"></i>
+                            </span>
+                            <input type="text" name="q"
+                                class="form-control bg-transparent border-0 text-white placeholder-white-50 fw-normal shadow-none"
+                                placeholder="ابحث عن فنادق، مطاعم، أو مناطق سياحية..." style="height: 60px;">
+                            <button class="btn btn-primary px-4 m-1 rounded-pill fw-bold border-0"
+                                style="background: var(--color-primary); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);"
+                                type="submit">استكشف</button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Scroll Down Indicator -->
+    <div class="position-absolute bottom-0 start-50 translate-middle-x mb-5 z-10">
+        <a href="#featured-section"
+            class="text-white opacity-50 hover-opacity-100 transition-opacity animate-bounce d-block">
+            <i class="fas fa-chevron-down fa-2x"></i>
+        </a>
+    </div>
+
+</div>
+
+<style>
+    /* Ken Burns Animation */
+    @keyframes kenburns {
+        0% {
+            transform: scale(1);
+        }
+
+        100% {
+            transform: scale(1.1);
+        }
+    }
+
+    .animate-kenburns {
+        animation: kenburns 10s ease-out alternate infinite;
+    }
+
+    /* Carousel Indicators Active State */
+    .carousel-indicators .active {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        width: 30px !important;
+    }
+
+    /* Text Gradient Fallback */
+    .bg-text-gradient-white {
+        background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+    }
+</style>
+{% else %}
+<!-- Default Hero -->
+<div class="position-relative vh-100 overflow-hidden">
+    <div class="position-absolute top-0 start-0 w-100 h-100">
+        <img src="https://images.unsplash.com/photo-1596423497886-f1262d46e387?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+            class="w-100 h-100 object-fit-cover animate-kenburns">
+    </div>
+    <div class="position-absolute top-0 start-0 w-100 h-100"
+        style="background: linear-gradient(180deg, rgba(15,23,42,0.3) 0%, rgba(15,23,42,0.9) 100%);"></div>
+    <div class="position-absolute top-50 start-50 translate-middle text-center text-white w-100 px-4">
+        <h1 class="display-1 fw-bold mb-3" style="letter-spacing: -2px;">إب الخضراء</h1>
+        <p class="h3 fw-light text-white-50">جنة السياحة اليمنية</p>
+    </div>
+</div>
+{% endif %}

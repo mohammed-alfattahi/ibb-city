@@ -1,0 +1,268 @@
+<!-- Explore Saudi/Ibb Theme -->
+<div class="position-relative vh-100 overflow-hidden">
+    <!-- Background Image -->
+    <img src="https://images.unsplash.com/photo-1596423497886-f1262d46e387?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+        class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" alt="Ibb Mountains">
+
+    <!-- Dark Gradient Overlay -->
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-black opacity-40"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100"
+        style="background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 100%);"></div>
+
+    <!-- Hero Content -->
+    <div class="position-absolute top-50 start-50 translate-middle text-center text-white w-100 px-4">
+        <h5 class="text-uppercase letter-spacing-3 mb-3 animate__animated animate__fadeInDown fw-light">مرحباً بكم في
+        </h5>
+        <h1 class="display-1 fw-bold mb-4 animate__animated animate__fadeInUp" style="letter-spacing: -2px;">إب الخضراء
+        </h1>
+        <p class="h4 fw-light mb-5 opacity-90 animate__animated animate__fadeInUp animate__delay-1s">
+            حيث يلتقي السحاب بالجبال
+        </p>
+
+        <!-- Minimal Glass Search Bar -->
+        <div class="mx-auto animate__animated animate__fadeInUp animate__delay-1s" style="max-width: 650px;">
+            <form action="{% url 'place_list' %}" method="GET" class="position-relative">
+                <input type="text" name="q"
+                    class="form-control form-control-lg rounded-pill border-0 ps-5 pe-5 py-3 fs-5 hero-search-input"
+                    placeholder="اكتشف سحر إب الآن...">
+                <button type="submit"
+                    class="btn btn-ibb-green position-absolute top-50 end-0 translate-middle-y me-2 rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 48px; height: 48px;">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scroll Down Indicator -->
+    <div class="position-absolute bottom-0 start-50 translate-middle-x mb-5 text-white animate-bounce">
+        <i class="fas fa-chevron-down fa-2x opacity-50"></i>
+    </div>
+</div>
+
+<!-- Modern Grid - Featured -->
+<div class="container py-5 my-5">
+    <div class="text-center mb-5">
+        <span class="text-success text-uppercase letter-spacing-2 fw-bold small">اكتشف</span>
+        <h2 class="display-5 fw-bold mt-2">وجهات مختارة</h2>
+    </div>
+
+    <div class="row g-4">
+        <!-- Featured Item (Large) -->
+        <div class="col-lg-8">
+            <div
+                class="position-relative rounded-5 overflow-hidden shadow-lg h-100 group cursor-pointer card-hover-effect">
+                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945"
+                    class="w-100 h-100 object-fit-cover transition-transform duration-700 group-hover:scale-110"
+                    style="min-height: 400px;" alt="Main Feature">
+                <div class="position-absolute bottom-0 start-0 w-100 p-5 text-white"
+                    style="background: linear-gradient(0deg, rgba(6, 95, 70, 0.9) 0%, transparent 100%);">
+                    <h3 class="fw-bold mb-2">فنادق ومنتجعات فاخرة</h3>
+                    <p class="mb-3 opacity-75">استمتع بإقامة استثنائية في أرقى فنادق إب الساحرة.</p>
+                    <a href="{% url 'place_list' %}?category=hotels" class="btn btn-ibb-green rounded-pill px-4">اكتشف
+                        الآن</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Side Items -->
+        <div class="col-lg-4">
+            <div class="d-flex flex-column gap-4 h-100">
+                <div class="position-relative rounded-5 overflow-hidden shadow-lg flex-grow-1 group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1542224566-6e85f2e6772f"
+                        class="w-100 h-100 object-fit-cover transition-transform duration-700 group-hover:scale-110"
+                        alt="Nature">
+                    <div class="position-absolute bottom-0 start-0 w-100 p-4 text-white"
+                        style="background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);">
+                        <h5 class="fw-bold mb-1">الطبيعة والمغامرة</h5>
+                        <a href="{% url 'nature_list' %}" class="stretched-link"></a>
+                    </div>
+                </div>
+                <div class="position-relative rounded-5 overflow-hidden shadow-lg flex-grow-1 group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9"
+                        class="w-100 h-100 object-fit-cover transition-transform duration-700 group-hover:scale-110"
+                        alt="History">
+                    <div class="position-absolute bottom-0 start-0 w-100 p-4 text-white"
+                        style="background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);">
+                        <h5 class="fw-bold mb-1">عبق التاريخ</h5>
+                        <a href="{% url 'place_list' %}?category=historical" class="stretched-link"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Ad Banner -->
+{% include "partials/components/ad_banner.html" with ad=page_ad %}
+
+{% if recommended_places %}
+<!-- Recommended Section -->
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="animate__animated animate__fadeInRight">
+            <span class="text-primary text-uppercase letter-spacing-2 fw-bold small">مخصص لك</span>
+            <h2 class="display-6 fw-bold mt-1">مقترحات بناءً على اهتماماتك</h2>
+        </div>
+        <a href="{% url 'place_list' %}" class="btn btn-outline-primary rounded-pill">عرض الكل</a>
+    </div>
+
+    <div class="row g-4">
+        {% for place in recommended_places %}
+        <div class="col-md-6 col-lg-4">
+            <div
+                class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover-effect animate__animated animate__fadeInUp">
+                <div class="position-relative" style="height: 200px;">
+                    {% if place.cover_image %}
+                    <img src="{{ place.cover_image.url }}" class="w-100 h-100 object-fit-cover" alt="{{ place.name }}">
+                    {% else %}
+                    <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                        <i class="fas fa-image fa-2x text-muted opacity-25"></i>
+                    </div>
+                    {% endif %}
+                    <span class="badge bg-white text-dark position-absolute top-0 start-0 m-3 shadow-sm rounded-pill">
+                        {{ place.category.name }}
+                    </span>
+                    <div class="position-absolute bottom-0 end-0 m-3">
+                        <span class="badge bg-warning text-dark rounded-pill">
+                            <i class="fas fa-star text-white me-1"></i> {{ place.avg_rating|default:"-" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-2">{{ place.name }}</h5>
+                    <div class="d-flex align-items-center text-secondary small mb-3">
+                        <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                        <span>{{ place.directorate|default:"إب" }}</span>
+                    </div>
+                    <a href="{{ place.get_absolute_url }}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Quick Access Icons (Clean) -->
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row g-4 justify-content-center text-center">
+            <div class="col-6 col-md-2" onclick="window.location='{% url 'place_list' %}';" style="cursor: pointer;">
+                <div class="bg-white p-4 rounded-circle shadow-sm d-inline-block mb-3 hover-scale transition-all"
+                    style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-map-marked-alt fa-2x text-success"></i>
+                </div>
+                <h6 class="fw-bold text-dark">دليل الأماكن</h6>
+            </div>
+            <div class="col-6 col-md-2" onclick="window.location='{% url 'map_explore' %}';" style="cursor: pointer;">
+                <div class="bg-white p-4 rounded-circle shadow-sm d-inline-block mb-3 hover-scale transition-all"
+                    style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-globe-asia fa-2x text-primary"></i>
+                </div>
+                <h6 class="fw-bold text-dark">الخريطة</h6>
+            </div>
+            <div class="col-6 col-md-2" onclick="window.location='{% url 'investment_list' %}';"
+                style="cursor: pointer;">
+                <div class="bg-white p-4 rounded-circle shadow-sm d-inline-block mb-3 hover-scale transition-all"
+                    style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-chart-line fa-2x text-warning"></i>
+                </div>
+                <h6 class="fw-bold text-dark">استثمار</h6>
+            </div>
+            <div class="col-6 col-md-2" onclick="window.location='{% url 'about' %}';" style="cursor: pointer;">
+                <div class="bg-white p-4 rounded-circle shadow-sm d-inline-block mb-3 hover-scale transition-all"
+                    style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-info-circle fa-2x text-info"></i>
+                </div>
+                <h6 class="fw-bold text-dark">من نحن</h6>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Highlights of Ibb Section (Refined) -->
+<div class="py-5 bg-white position-relative">
+    <div class="container py-4">
+        <div class="text-center mb-5 animate__animated animate__fadeIn">
+            <span class="text-success text-uppercase letter-spacing-2 fw-bold small">أيقونة الجمال</span>
+            <h2 class="display-5 fw-bold mt-2 text-dark">أبرز معالم إب</h2>
+            <p class="text-muted mt-3 mx-auto" style="max-width: 600px;">
+                تجربة سياحية فريدة تجمع بين عبق التاريخ وسحر الطبيعة في "اللواء الأخضر".
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- 1. Old City -->
+            <div class="col-md-4 col-lg-3">
+                <div class="highlight-card animate__animated animate__fadeInUp animate__delay-1s">
+                    <div class="highlight-icon-wrapper">
+                        <i class="fas fa-mosque"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">المدينة القديمة</h4>
+                    <p class="text-muted small mb-0 lh-lg">
+                        تتميز إب القديمة بطرازها المعماري الفريد ومساجدها التاريخية وأزقتها التي تحكي قصصاً من الماضي
+                        العريق.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 2. Mountains (Cloud Kissed) -->
+            <div class="col-md-4 col-lg-3">
+                <div class="highlight-card animate__animated animate__fadeInUp animate__delay-2s">
+                    <div class="highlight-icon-wrapper">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">جبال تعانق السحاب</h4>
+                    <p class="text-muted small mb-0 lh-lg">
+                        سلاسل جبلية شاهقة تكسوها الخضرة، توفر إطلالات بانورامية خلابة وتجربة استجمام وسط الغيوم.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 3. Green Season -->
+            <div class="col-md-4 col-lg-3">
+                <div class="highlight-card animate__animated animate__fadeInUp animate__delay-3s">
+                    <div class="highlight-icon-wrapper">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">الموسم الأخضر</h4>
+                    <p class="text-muted small mb-0 lh-lg">
+                        مهرجان سنوي للطبيعة حيث تكتسي الأرض بساطاً أخضر وتتدفق الشلالات في مشهد لا يتكرر.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 4. Waterfalls (Bonus) -->
+            <div class="col-md-4 col-lg-3">
+                <div class="highlight-card animate__animated animate__fadeInUp animate__delay-3s">
+                    <div class="highlight-icon-wrapper">
+                        <i class="fas fa-water"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">وديان وشلالات</h4>
+                    <p class="text-muted small mb-0 lh-lg">
+                        تزخر المحافظة بوديان خصبة وشلالات مياه عذبة تمنح الزائر شعوراً بالانتعاش والهدوء.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Partner Showcase -->
+<div class="container py-5 mb-5 overflow-hidden">
+    <h5 class="text-muted fw-bold text-center mb-5 opacity-50">شركاء النجاح</h5>
+    <div class="row justify-content-center opacity-50 grayscale hover-grayscale-0 transition-all">
+        {% for partner in featured_partners %}
+        <div class="col-4 col-md-2 text-center">
+            {% if partner.cover_image %}
+            <img src="{{ partner.cover_image.url }}" class="img-fluid rounded-3"
+                style="max-height: 60px; filter: grayscale(100%); transition: all 0.3s;"
+                onmouseover="this.style.filter='grayscale(0%)'" onmouseout="this.style.filter='grayscale(100%)'">
+            {% else %}
+            <i class="fas fa-building fa-3x text-muted"></i>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>

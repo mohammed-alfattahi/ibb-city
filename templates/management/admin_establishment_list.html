@@ -1,0 +1,289 @@
+{% extends 'management/admin_base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}إدارة المنشآت - لوحة الإدارة{% endblock %}
+
+{% block content %}
+<div class="container-xl py-5" dir="rtl">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-5 gap-3 flex-wrap">
+        <div>
+            <h1 class="h3 fw-bold text-gray-900 mb-2">
+                <i class="fas fa-building text-primary me-2"></i>إدارة المنشآت
+            </h1>
+            <p class="text-muted mb-0">مراقبة وإدارة جميع المنشآت المسجلة في النظام.</p>
+        </div>
+        <div>
+            <div class="bg-white rounded-pill shadow-sm px-4 py-2 border d-flex align-items-center gap-2">
+                <span class="badge bg-primary rounded-circle p-2 d-flex align-items-center justify-content-center"
+                    style="width: 24px; height: 24px;">{{ places|length }}</span>
+                <span class="fw-bold text-dark small">منشأة مسجلة</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-4 d-flex align-items-center justify-content-between border-bottom">
+            <h5 class="mb-0 fw-bold text-gray-800">
+                <i class="fas fa-list text-primary me-2"></i>قائمة المنشآت
+            </h5>
+
+            <!-- Search/Filter Toolbar -->
+            <form method="get" class="d-flex gap-2 flex-grow-1 justify-content-end">
+                <!-- Status Filter -->
+                <select name="status" class="form-select form-select-sm rounded-pill" style="max-width: 150px;" onchange="this.form.submit()">
+                    <option value="">جميع الحالات</option>
+                    <option value="active" {% if current_status == 'active' %}selected{% endif %}>نشط</option>
+                    <option value="inactive" {% if current_status == 'inactive' %}selected{% endif %}>غير نشط</option>
+                    <option value="suspended" {% if current_status == 'suspended' %}selected{% endif %}>معلق</option>
+                    <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>قيد المراجعة</option>
+                </select>
+
+                <!-- Category Filter -->
+                <select name="category" class="form-select form-select-sm rounded-pill" style="max-width: 150px;" onchange="this.form.submit()">
+                    <option value="">كل الفئات</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if current_category|stringformat:"i" == cat.id|stringformat:"i" %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Search Input -->
+                <div class="input-group input-group-sm" style="max-width: 250px;">
+                    <input type="text" name="q" class="form-control rounded-pill-start" placeholder="بحث باسم المنشأة..." value="{{ search_query }}">
+                    <button class="btn btn-outline-secondary rounded-pill-end" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+
+                <!-- Export -->
+                <a href="{% url 'admin_export' 'establishments' %}" class="btn btn-success btn-sm rounded-pill px-3 shadow-sm border ms-2">
+                    <i class="fas fa-file-csv"></i>
+                </a>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="min-width: 900px;">
+                    <thead class="bg-light text-muted small text-uppercase">
+                        <tr>
+                            <th class="py-3 px-4">المنشأة</th>
+                            <th class="py-3">المالك</th>
+                            <th class="py-3">الحالة</th>
+                            <th class="py-3">تاريخ التسجيل</th>
+                            <th class="text-center py-3 px-4">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                        {% for est in places %}
+                        <tr>
+                            <td class="px-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar avatar-sm bg-primary-subtle text-primary rounded-circle me-3 d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+                                        style="width: 40px; height: 40px;">
+                                        {{ est.name|slice:":1"|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">{{ est.name }}</div>
+                                        <div class="small text-muted">{{ est.category.name|default:"غير مصنف" }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="fw-bold text-dark small">{{ est.owner.get_full_name|default:est.owner.username }}</div>
+                                </div>
+                                <div class="small text-muted" dir="ltr" style="text-align: right;">{{ est.owner.phone_number|default:"-" }}</div>
+                            </td>
+                            <td>
+                                {% if est.is_suspended %}
+                                <span
+                                    class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3">
+                                    <i class="fas fa-ban me-1"></i> معلق
+                                </span>
+                                {% elif est.is_active %}
+                                <span
+                                    class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3">
+                                    <i class="fas fa-check-circle me-1"></i> نشط
+                                </span>
+                                {% else %}
+                                <span
+                                    class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3">
+                                    <i class="fas fa-pause-circle me-1"></i> غير نشط
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="small fw-bold">{{ est.created_at|date:"Y/m/d" }}</div>
+                                <div class="small text-muted">{{ est.created_at|timesince }} مضت</div>
+                            </td>
+                            <td class="text-center px-4">
+                                <div class="dropdown">
+                                    <button class="btn btn-light btn-sm rounded-circle shadow-sm" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v text-muted"></i>
+                                    </button>
+                                    <ul class="dropdown-menu border-0 shadow-lg">
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'place_detail' est.pk %}" target="_blank">
+                                                <i class="fas fa-external-link-alt me-2 text-primary"></i> عرض في الموقع
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'admin:places_establishment_change' est.pk %}" target="_blank">
+                                                <i class="fas fa-edit me-2 text-info"></i> تعديل كامل
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        {% if est.is_suspended %}
+                                        <li>
+                                            <button class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#unsuspendModal{{ est.pk }}">
+                                                <i class="fas fa-unlock me-2"></i> تفعيل المنشأة
+                                            </button>
+                                        </li>
+                                        {% else %}
+                                        <li>
+                                            <button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#suspendModal{{ est.pk }}">
+                                                <i class="fas fa-ban me-2"></i> تعليق المنشأة
+                                            </button>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Suspend Modal -->
+                        <div class="modal fade" id="suspendModal{{ est.pk }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                                    <form method="post" action="{% url 'admin_establishment_suspend' est.pk %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="suspend">
+
+                                        <div class="modal-header bg-danger-subtle border-0">
+                                            <h5 class="modal-title fw-bold text-danger">
+                                                <i class="fas fa-exclamation-triangle me-2"></i>تعليق المنشأة
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+
+                                        <div class="modal-body p-4">
+                                            <div class="alert alert-light border mb-4">
+                                                <i class="fas fa-info-circle me-2 text-primary"></i>
+                                                أنت على وشك تعليق <strong>{{ est.name }}</strong>. سيؤدي هذا إلى إخفائها
+                                                عن العامة فوراً.
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold small text-muted">سبب التعليق <span
+                                                        class="text-danger">*</span></label>
+                                                <textarea name="reason"
+                                                    class="form-control bg-light border-0 rounded-3 p-3" rows="3"
+                                                    required placeholder="اذكر سبب التعليق..."></textarea>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold small text-muted">تاريخ انتهاء التعليق
+                                                    (اختياري)</label>
+                                                <input type="date" name="end_date"
+                                                    class="form-control bg-light border-0 rounded-3">
+                                            </div>
+                                        </div>
+
+                                        <div class="modal-footer border-0 bg-light px-4 py-3">
+                                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                                data-bs-dismiss="modal">إلغاء</button>
+                                            <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold">تأكيد
+                                                التعليق</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Unsuspend Modal -->
+                        <div class="modal fade" id="unsuspendModal{{ est.pk }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                                    <form method="post" action="{% url 'admin_establishment_suspend' est.pk %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="unsuspend">
+
+                                        <div class="modal-header bg-success-subtle border-0">
+                                            <h5 class="modal-title fw-bold text-success">
+                                                <i class="fas fa-check-circle me-2"></i>تفعيل المنشأة
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+
+                                        <div class="modal-body p-4">
+                                            <div class="text-center py-3">
+                                                <div class="mb-3">
+                                                    <i class="fas fa-unlock-alt fa-3x text-success opacity-50"></i>
+                                                </div>
+                                                <h5 class="fw-bold mb-2">هل أنت متأكد؟</h5>
+                                                <p class="text-muted">سيتم إعادة تفعيل المنشأة <strong>{{ est.name }}</strong> وإتاحتها للجمهور.</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="modal-footer border-0 bg-light px-4 py-3">
+                                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                                data-bs-dismiss="modal">إلغاء</button>
+                                            <button type="submit"
+                                                class="btn btn-success rounded-pill px-4 fw-bold">تفعيل المنشأة</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle mb-4"
+                                    style="width: 80px; height: 80px;">
+                                    <i class="fas fa-store fa-3x text-muted opacity-25"></i>
+                                </div>
+                                <h5 class="fw-bold text-gray-800">لا توجد منشآت</h5>
+                                <p class="text-muted mb-0">لم يتم تسجيل أي منشآت في النظام بعد.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <div class="card-footer bg-white border-0 py-4">
+            <nav>
+                <ul class="pagination justify-content-center mb-0 gap-1">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link rounded-circle d-flex align-items-center justify-content-center border-0 bg-light text-dark"
+                            style="width: 32px; height: 32px;" href="?page={{ page_obj.previous_page_number }}">
+                            <i class="fas fa-chevron-right small"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item disabled">
+                        <span class="page-link border-0 fw-bold mx-2">{{ page_obj.number }}</span>
+                    </li>
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link rounded-circle d-flex align-items-center justify-content-center border-0 bg-light text-dark"
+                            style="width: 32px; height: 32px;" href="?page={{ page_obj.next_page_number }}">
+                            <i class="fas fa-chevron-left small"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

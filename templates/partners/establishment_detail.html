@@ -1,0 +1,158 @@
+{% extends "partners/base_partner.html" %}
+
+{% block title %}إدارة {{ place.name }} - لوحة الشريك{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold mb-1">{{ place.name }}</h2>
+            <div class="d-flex align-items-center gap-2 text-muted">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>{{ place.category.name }}</span>
+                {% if place.is_active %}
+                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2">نشط</span>
+                {% else %}
+                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-2">قيد المراجعة/مغلق</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-4 text-start">
+            <a href="{% url 'place_detail' place.pk %}" target="_blank" class="btn btn-outline-primary rounded-pill">
+                <i class="fas fa-external-link-alt me-2"></i> معاينة الصفحة
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center h-100 py-3">
+                <div class="text-primary fs-3 mb-2"><i class="fas fa-bed"></i></div>
+                <h3 class="fw-bold mb-0">{{ unit_count }}</h3>
+                <span class="text-muted small">وحدات/وجبات</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center h-100 py-3">
+                <div class="text-warning fs-3 mb-2"><i class="fas fa-star"></i></div>
+                <h3 class="fw-bold mb-0">{{ place.avg_rating|default:"0" }}</h3>
+                <span class="text-muted small">تقييم عام</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center h-100 py-3">
+                <div class="text-success fs-3 mb-2"><i class="fas fa-comments"></i></div>
+                <h3 class="fw-bold mb-0">{{ review_count }}</h3>
+                <span class="text-muted small">مراجعة</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center h-100 py-3">
+                <div class="text-info fs-3 mb-2"><i class="fas fa-images"></i></div>
+                <h3 class="fw-bold mb-0">{{ image_count }}</h3>
+                <span class="text-muted small">صورة</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">إدارة المحتوى</h5>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'wizard_edit' place.pk %}"
+                            class="btn btn-light text-start py-3 px-3 fw-bold border">
+                            <i class="fas fa-pen text-primary me-2"></i> تعديل بيانات المنشأة والموقع
+                        </a>
+                        <a href="{% url 'partner_contact_list' place.pk %}"
+                            class="btn btn-light text-start py-3 px-3 fw-bold border">
+                            <i class="fas fa-address-book text-warning me-2"></i> جهات الاتصال
+                        </a>
+                        <a href="{% url 'partner_gallery' place.pk %}"
+                            class="btn btn-light text-start py-3 px-3 fw-bold border">
+                            <i class="fas fa-images text-info me-2"></i> معرض الصور ({{ image_count }})
+                        </a>
+                        <a href="{% url 'partner_unit_list' place.pk %}"
+                            class="btn btn-light text-start py-3 px-3 fw-bold border">
+                            <i class="fas fa-bed text-success me-2"></i> إدارة الوحدات والغرف ({{ unit_count }})
+                        </a>
+                        <a href="{% url 'partner_offer_list' place.pk %}"
+                            class="btn btn-light text-start py-3 px-3 fw-bold border">
+                            <i class="fas fa-tags text-danger me-2"></i> العروض الخاصة
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">حالة المنشأة</h5>
+                    <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded mb-3">
+                        <div>
+                            <span class="d-block fw-bold">الحالة التشغيلية</span>
+                            <span class="text-muted small update-status-text">
+                                {% if place.is_open_status %}مفتوح الآن{% else %}مغلق{% endif %}
+                            </span>
+                        </div>
+                        <button
+                            class="btn {% if place.is_open_status %}btn-success{% else %}btn-secondary{% endif %} rounded-pill px-4 toggle-status-btn"
+                            data-id="{{ place.pk }}">
+                            <i
+                                class="fas {% if place.is_open_status %}fa-door-open{% else %}fa-door-closed{% endif %} me-2"></i>
+                            <span class="status-text">{% if place.is_open_status %}مفتوح{% else %}مغلق{% endif %}</span>
+                        </button>
+                    </div>
+
+                    <div class="alert alert-info border-0 d-flex align-items-center">
+                        <i class="fas fa-info-circle me-3 fa-lg"></i>
+                        <small>يمكنك تغيير حالة "مفتوح/مغلق" يدوياً لإبلاغ الزوار بتوفر الخدمة فورياً.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completion Checklist -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-tasks me-2 text-primary"></i> قائمة اكتمال المنشأة</h5>
+                    <p class="text-muted small mb-3">أكمل هذه الخطوات لتحسين ظهور منشأتك وجذب المزيد من الزوار.</p>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="d-flex align-items-center gap-2 p-3 rounded-3 {% if image_count > 0 %}bg-success bg-opacity-10{% else %}bg-light{% endif %}">
+                                <i class="fas {% if image_count > 0 %}fa-check-circle text-success{% else %}fa-circle text-muted opacity-25{% endif %}"></i>
+                                <span class="small fw-bold">إضافة صور ({{ image_count }})</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="d-flex align-items-center gap-2 p-3 rounded-3 {% if unit_count > 0 %}bg-success bg-opacity-10{% else %}bg-light{% endif %}">
+                                <i class="fas {% if unit_count > 0 %}fa-check-circle text-success{% else %}fa-circle text-muted opacity-25{% endif %}"></i>
+                                <span class="small fw-bold">إضافة وحدات ({{ unit_count }})</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="d-flex align-items-center gap-2 p-3 rounded-3 {% if review_count > 0 %}bg-success bg-opacity-10{% else %}bg-light{% endif %}">
+                                <i class="fas {% if review_count > 0 %}fa-check-circle text-success{% else %}fa-circle text-muted opacity-25{% endif %}"></i>
+                                <span class="small fw-bold">تقييمات ({{ review_count }})</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="d-flex align-items-center gap-2 p-3 rounded-3 {% if place.is_active %}bg-success bg-opacity-10{% else %}bg-light{% endif %}">
+                                <i class="fas {% if place.is_active %}fa-check-circle text-success{% else %}fa-circle text-muted opacity-25{% endif %}"></i>
+                                <span class="small fw-bold">{% if place.is_active %}نشط ومعتمد{% else %}قيد المراجعة{% endif %}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

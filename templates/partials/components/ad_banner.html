@@ -1,0 +1,57 @@
+{% if ad %}
+<div class="container my-5 animate__animated animate__fadeIn">
+    <div class="card border-0 shadow-lg overflow-hidden position-relative rounded-4 text-white">
+        <!-- Banner Image -->
+        {% if ad.banner_image %}
+        <img src="{{ ad.banner_image.url }}" class="card-img w-100 object-fit-cover"
+            style="height: 250px; filter: brightness(0.7);" alt="{{ ad.title }}">
+        {% else %}
+        <!-- Fallback Gradient if image missing (Edge case) -->
+        <div class="card-img w-100" style="height: 250px; background: linear-gradient(45deg, #1e3a8a, #3b82f6);"></div>
+        {% endif %}
+
+        <!-- Content Overlay -->
+        <div class="card-img-overlay d-flex flex-column justify-content-center p-4 p-lg-5">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <span class="badge bg-warning text-dark mb-2 px-3 py-1 fw-bold rounded-pill">
+                        <i class="fas fa-bullhorn me-1"></i> إعلان مميز
+                    </span>
+                    <h2 class="fw-bold mb-3 display-6">{{ ad.title }}</h2>
+                    <p class="h5 fw-light opacity-90 mb-4">{{ ad.description|truncatechars:120 }}</p>
+
+                    <!-- Offer Details (if applicable) -->
+                    {% if ad.price %}
+                    <div
+                        class="d-inline-flex align-items-center bg-white bg-opacity-10 backdrop-blur-sm rounded-pill px-4 py-2 border border-white border-opacity-25 mb-4">
+                        {% if ad.discount_price %}
+                        <span class="text-warning fw-bold fs-4 ms-3">{{ ad.discount_price }} ر.ي</span>
+                        <span class="text-white-50 text-decoration-line-through">{{ ad.price }} ر.ي</span>
+                        {% else %}
+                        <span class="text-white fw-bold fs-4">{{ ad.price }} ر.ي</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-lg-4 text-lg-end">
+                    {% if ad.place or ad.target_url %}
+                    <a href="{% url 'ad_click' ad.pk %}"
+                        class="btn btn-warning btn-lg rounded-pill px-5 py-3 fw-bold text-dark shadow-sm hover-scale transition-transform">
+                        تصفح العرض <i class="fas fa-arrow-left ms-2"></i>
+                    </a>
+                    {% else %}
+                    <!-- Generic Link handling if added to model later -->
+                    <button class="btn btn-warning btn-lg rounded-pill px-5 py-3 fw-bold text-dark shadow-sm">
+                        تفاصيل أكثر
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Tracking Pixel -->
+        <img src="{% url 'ad_impression' ad.pk %}" style="display:none;" width="1" height="1" alt="" />
+    </div>
+</div>
+{% endif %}

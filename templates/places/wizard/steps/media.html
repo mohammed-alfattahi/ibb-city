@@ -1,0 +1,88 @@
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="text-center mb-4">
+            <i class="fas fa-images fa-3x text-primary mb-3"></i>
+            <h3>الوسائط والمرفقات</h3>
+            <p class="text-muted">أضف صور التراخيص والسجل التجاري لتوثيق منشأتك (اختياري).</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- License Image -->
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <label class="form-label fw-bold mb-3 d-block">صورة الترخيص</label>
+
+                        <div class="upload-preview bg-light rounded-3 p-3 mb-3 border">
+                            {% if form.instance.license_image %}
+                            <img src="{{ form.instance.license_image.url }}" class="img-fluid rounded shadow-sm mb-3"
+                                style="max-height: 180px;">
+                            <div class="form-check form-switch d-inline-block">
+                                <input class="form-check-input" type="checkbox" name="license_image-clear"
+                                    id="license_image-clear_id">
+                                <label class="form-check-label ms-2 text-danger" for="license_image-clear_id">حذف
+                                    الصورة</label>
+                            </div>
+                            {% else %}
+                            <div class="py-4 text-muted opacity-50">
+                                <i class="fas fa-file-invoice fa-4x mb-2"></i>
+                                <p class="small mb-0">لا توجد صورة</p>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="upload-btn-wrapper">
+                            {{ form.license_image }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registry Image -->
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <label class="form-label fw-bold mb-3 d-block">صورة السجل التجاري</label>
+
+                        <div class="upload-preview bg-light rounded-3 p-3 mb-3 border">
+                            {% if form.instance.commercial_registry_image %}
+                            <img src="{{ form.instance.commercial_registry_image.url }}"
+                                class="img-fluid rounded shadow-sm mb-3" style="max-height: 180px;">
+                            <div class="form-check form-switch d-inline-block">
+                                <input class="form-check-input" type="checkbox" name="commercial_registry_image-clear"
+                                    id="commercial_registry_image-clear_id">
+                                <label class="form-check-label ms-2 text-danger"
+                                    for="commercial_registry_image-clear_id">حذف الصورة</label>
+                            </div>
+                            {% else %}
+                            <div class="py-4 text-muted opacity-50">
+                                <i class="fas fa-certificate fa-4x mb-2"></i>
+                                <p class="small mb-0">لا توجد صورة</p>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="upload-btn-wrapper">
+                            {{ form.commercial_registry_image }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info mt-4 d-flex align-items-center" role="alert">
+            <i class="fas fa-info-circle fa-lg me-3"></i>
+            <div>
+                <strong>ملاحظة:</strong>
+                يمكنك إدارة صور المعرض (Gallery) ورفع صور إضافية للمكان من لوحة التحكم بعد الانتهاء من المعالج.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Improve file input appearance if standard widget is ugly */
+    input[type=file] {
+        max-width: 100%;
+    }
+</style>

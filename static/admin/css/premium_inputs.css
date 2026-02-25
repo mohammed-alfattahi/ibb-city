@@ -1,0 +1,188 @@
+/* ============ Premium Select2 Styling ============ */
+
+/* Container */
+.select2-container--admin-autocomplete .select2-selection--single {
+    height: 48px !important;
+    padding: 8px 12px;
+    border: 1px solid #e9ecef !important;
+    border-radius: 12px !important;
+    background-color: #f8f9fa !important;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.select2-container--admin-autocomplete .select2-selection--single:hover {
+    border-color: #28a745 !important;
+    background-color: #fff !important;
+}
+
+.select2-container--open .select2-selection--single {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+    background: #fff !important;
+}
+
+/* Text */
+.select2-container--admin-autocomplete .select2-selection--single .select2-selection__rendered {
+    line-height: normal !important;
+    color: #495057 !important;
+    font-size: 14px;
+    padding-left: 0;
+    padding-right: 20px;
+    /* Space for clear button */
+}
+
+/* Arrow */
+.select2-container--admin-autocomplete .select2-selection--single .select2-selection__arrow {
+    height: 100% !important;
+    right: 10px !important;
+}
+
+.select2-container--admin-autocomplete .select2-selection--single .select2-selection__arrow b {
+    border-color: #adb5bd transparent transparent transparent !important;
+    border-width: 6px 5px 0 5px !important;
+}
+
+/* Dropdown */
+.select2-dropdown {
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+    background: #fff;
+    padding: 10px;
+    margin-top: 8px;
+    z-index: 9999;
+}
+
+/* Search Box */
+.select2-search--dropdown {
+    padding: 8px 8px 12px !important;
+}
+
+.select2-search__field {
+    border: 2px solid #e9ecef !important;
+    border-radius: 8px !important;
+    padding: 10px !important;
+    font-size: 14px;
+}
+
+.select2-search__field:focus {
+    border-color: #28a745 !important;
+    outline: none;
+}
+
+/* Options */
+.select2-results__option {
+    padding: 10px 14px !important;
+    border-radius: 8px !important;
+    font-size: 14px;
+    color: #495057;
+    margin-bottom: 2px;
+    transition: all 0.1s;
+}
+
+.select2-results__option--highlighted[aria-selected] {
+    background-color: #e8f5e9 !important;
+    color: #28a745 !important;
+    font-weight: 600;
+}
+
+.select2-results__option[aria-selected="true"] {
+    background-color: #28a745 !important;
+    color: white !important;
+}
+
+/* Clear Button */
+.select2-selection__clear {
+    color: #dc3545 !important;
+    font-size: 18px;
+    margin-right: 10px;
+    line-height: 48px;
+}
+
+/* RTL Specifics */
+[dir="rtl"] .select2-container--admin-autocomplete .select2-selection--single .select2-selection__arrow {
+    left: 10px !important;
+    right: auto !important;
+}
+
+[dir="rtl"] .select2-search__field {
+    direction: rtl;
+}
+
+/* ============ AJAX Toggle Switch ============ */
+.toggle-switch-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e9ecef;
+    transition: .4s;
+    border-radius: 24px;
+    border: 2px solid #dee2e6;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input:checked+.toggle-slider {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+input:checked+.toggle-slider:before {
+    transform: translateX(20px);
+}
+
+/* RTL Flip for Toggle */
+[dir="rtl"] .toggle-slider:before {
+    left: auto;
+    right: 2px;
+}
+
+[dir="rtl"] input:checked+.toggle-slider:before {
+    transform: translateX(-20px);
+}
+
+/* Loading State for Toggle */
+.toggle-switch.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.toggle-switch.loading .toggle-slider:before {
+    background-color: #fff;
+    animation: pulse-white 1s infinite;
+}

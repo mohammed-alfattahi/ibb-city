@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}طلب ترقية لشريك - دليل إب السياحي{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-tie me-2"></i>
+                        طلب الترقية إلى شريك
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    {% if existing_profile and existing_profile.status == 'rejected' %}
+                    <div class="alert alert-danger mb-4">
+                        <h6><i class="fas fa-times-circle me-2"></i>تم رفض طلبك السابق</h6>
+                        <p class="mb-0">السبب: {{ existing_profile.rejection_reason }}</p>
+                        <hr>
+                        <small>يمكنك إعادة التقديم بعد تصحيح المعلومات</small>
+                    </div>
+                    {% endif %}
+
+                    <div class="alert alert-info mb-4">
+                        <h6><i class="fas fa-info-circle me-2"></i>معلومات مهمة</h6>
+                        <ul class="mb-0 small">
+                            <li>سيتم مراجعة طلبك من قبل مكتب السياحة</li>
+                            <li>صورة البطاقة الشخصية مطلوبة للتحقق</li>
+                            <li>يمكنك متابعة تصفح الموقع أثناء المراجعة</li>
+                        </ul>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.organization_name.label }}</label>
+                            {{ form.organization_name }}
+                            {% if form.organization_name.errors %}
+                            <div class="text-danger small">{{ form.organization_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.id_card_image.label }}</label>
+                            {{ form.id_card_image }}
+                            {% if form.id_card_image.errors %}
+                            <div class="text-danger small">{{ form.id_card_image.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">صورة واضحة للبطاقة الشخصية</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">{{ form.commercial_registry_file.label }}</label>
+                            {{ form.commercial_registry_file }}
+                            {% if form.commercial_registry_file.errors %}
+                            <div class="text-danger small">{{ form.commercial_registry_file.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">اختياري - السجل التجاري إن وجد</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>إرسال الطلب
+                            </button>
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-right me-2"></i>العودة للموقع
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

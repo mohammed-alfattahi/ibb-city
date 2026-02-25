@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}الإعدادات - دليل إب{% endblock %}
+
+{% block extra_css %}
+<style>
+    .settings-hero {
+        height: 250px;
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        border-bottom-left-radius: 40px;
+        border-bottom-right-radius: 40px;
+        margin-bottom: -60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+    }
+
+    .settings-hero h1 {
+        font-weight: 800;
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .settings-container {
+        max-width: 900px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 10;
+        padding-bottom: 5rem;
+    }
+
+    .settings-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.02);
+    }
+
+    .settings-nav {
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 1rem 1.5rem;
+    }
+
+    .nav-pills .nav-link {
+        color: #6b7280;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        transition: all 0.2s;
+    }
+
+    .nav-pills .nav-link.active {
+        background-color: white;
+        /* White bg for active */
+        color: var(--bs-primary);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        /* Subtle shadow */
+    }
+
+    .nav-pills .nav-link:hover:not(.active) {
+        background-color: #f3f4f6;
+    }
+
+    .setting-item {
+        padding: 1.5rem;
+        border-bottom: 1px solid #f3f4f6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .setting-item:last-child {
+        border-bottom: none;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-hero">
+    <div class="animate__animated animate__fadeInUp">
+        <h1 class="display-4">الإعدادات</h1>
+        <p class="fs-5 opacity-75">تحكم في تفاصيل حسابك وتفضيلاتك</p>
+    </div>
+</div>
+
+<div class="container settings-container">
+    <div class="settings-card animate__animated animate__fadeInUp animate__delay-1s">
+
+        <!-- Tabs -->
+        <div class="settings-nav">
+            <ul class="nav nav-pills nav-fill gap-2" id="settingsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="general-tab" data-bs-toggle="pill" data-bs-target="#general"
+                        type="button" role="tab">
+                        <i class="fas fa-user-circle me-2"></i> عام
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="security-tab" data-bs-toggle="pill" data-bs-target="#security"
+                        type="button" role="tab">
+                        <i class="fas fa-lock me-2"></i> الأمان
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="notifications-tab" data-bs-toggle="pill"
+                        data-bs-target="#notifications" type="button" role="tab">
+                        <i class="fas fa-bell me-2"></i> الإشعارات
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="tab-content p-4 p-lg-5" id="settingsTabsContent">
+
+            <!-- General Tab -->
+            <div class="tab-pane fade show active" id="general" role="tabpanel">
+                <h4 class="fw-bold mb-4">المعلومات الشخصية</h4>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">الاسم الكامل</label>
+                            <input type="text" class="form-control form-control-lg bg-light border-0"
+                                value="{{ user.get_full_name }}" disabled
+                                title="للتعديل يرجى استخدام صفحة الملف الشخصي">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">اسم المستخدم</label>
+                            <input type="text" class="form-control form-control-lg bg-light border-0"
+                                value="{{ user.username }}" disabled>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-muted small fw-bold">البريد الإلكتروني</label>
+                            <input type="email" class="form-control form-control-lg bg-light border-0"
+                                value="{{ user.email }}" disabled>
+                            <div class="form-text mt-2"><i class="fas fa-info-circle text-primary"></i> البريد
+                                الإلكتروني يستخدم لاستعادة الحساب والإشعارات.</div>
+                        </div>
+
+                        <div class="col-12 text-end mt-4">
+                            <a href="{% url 'user_profile' %}" class="btn btn-outline-primary rounded-pill px-4"
+                                title="انتقل للملف الشخصي لتعديل الصورة والبيانات العامة">
+                                <i class="fas fa-external-link-alt me-2"></i> تعديل البيانات في الملف الشخصي
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Security Tab -->
+            <div class="tab-pane fade" id="security" role="tabpanel">
+                <h4 class="fw-bold mb-4">الأمان وكلمة المرور</h4>
+
+                <div class="setting-item">
+                    <div>
+                        <h6 class="fw-bold mb-1">تغيير كلمة المرور</h6>
+                        <p class="text-muted small mb-0">يفضل تحديث كلمة المرور بشكل دوري لحماية حسابك.</p>
+                    </div>
+                    <a href="{% url 'password_change' %}"
+                        class="btn btn-light rounded-pill px-4 shadow-sm border">تغيير</a>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <h6 class="fw-bold mb-1">المصادقة الثنائية (2FA)</h6>
+                        <p class="text-muted small mb-0">إضافة طبقة حماية إضافية لحسابك.</p>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input fs-5" type="checkbox" role="switch" id="2faSwitch" disabled>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded-3 border border-warning dashed text-warning-emphasis small">
+                    <i class="fas fa-shield-alt me-2"></i> سيتم تفعيل خيارات أمان إضافية قريباً.
+                </div>
+            </div>
+
+            <!-- Notifications Tab (Mock) -->
+            <div class="tab-pane fade" id="notifications" role="tabpanel">
+                <h4 class="fw-bold mb-4">تفضيلات الإشعارات</h4>
+
+                <div class="setting-item">
+                    <div>
+                        <h6 class="fw-bold mb-1">إشعارات البريد الإلكتروني</h6>
+                        <p class="text-muted small mb-0">استلام رسائل حول الأماكن الجديدة والعروض.</p>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input fs-5" type="checkbox" role="switch" id="emailNotif"
+                               name="enable_email"
+                               {% if prefs.enable_email %}checked{% endif %}
+                               hx-post="{% url 'notification_update_preferences' %}"
+                               hx-vals='js:{"enable_email": event.target.checked}'
+                               hx-swap="none">
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <h6 class="fw-bold mb-1">إشعارات المتصفح</h6>
+                        <p class="text-muted small mb-0">تنبيهات فورية عند وجود تحديثات.</p>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input fs-5" type="checkbox" role="switch" id="pushNotif"
+                               name="enable_push"
+                               {% if prefs.enable_push %}checked{% endif %}
+                               hx-post="{% url 'notification_update_preferences' %}"
+                               hx-vals='js:{"enable_push": event.target.checked}'
+                               hx-swap="none">
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <h6 class="fw-bold mb-1">إشعارات الرسائل النصية (SMS)</h6>
+                        <p class="text-muted small mb-0">استلام تنبيهات هامة عبر الرسائل القصيرة.</p>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input fs-5" type="checkbox" role="switch" id="smsNotif"
+                               name="enable_sms"
+                               {% if prefs.enable_sms %}checked{% endif %}
+                               hx-post="{% url 'notification_update_preferences' %}"
+                               hx-vals='js:{"enable_sms": event.target.checked}'
+                               hx-swap="none">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

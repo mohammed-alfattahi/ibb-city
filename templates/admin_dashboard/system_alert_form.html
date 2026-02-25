@@ -1,0 +1,69 @@
+{% extends "management/admin_base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}إرسال تنبيه جماعي - لوحة التحكم{% endblock %}
+{% block title_breadcrumb %}إرسال تنبيه جماعي{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4" dir="rtl">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="fw-bold mb-0 text-primary">
+                        <i class="fas fa-bullhorn me-2"></i> إرسال تنبيه جديد
+                    </h5>
+                    <p class="text-muted small mb-0 mt-1">
+                        استخدم هذا النموذج لإرسال إشعارات جماعية للمستخدمين أو الشركاء.
+                    </p>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <div class="alert alert-warning mb-4 d-flex align-items-center" role="alert">
+                        <i class="fas fa-exclamation-triangle fs-4 me-3"></i>
+                        <div>
+                            <strong>تنبيه هام:</strong> سيتم إرسال هذا الإشعار إلى جميع المستخدمين المحددين فوراً.
+                            لا يمكن التراجع عن هذه العملية بعد الضغط على زر الإرسال.
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.title|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.alert_type|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.target_audience|as_crispy_field }}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form.message|as_crispy_field }}
+                        </div>
+
+                        <div class="d-flex justify-content-between pt-3 border-top">
+                            <a href="{% url 'custom_admin_dashboard' %}" class="btn btn-light rounded-pill px-4">
+                                <i class="fas fa-times me-2"></i> إلغاء
+                            </a>
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold">
+                                <i class="fas fa-paper-plane me-2"></i> إرسال التنبيه
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3 text-muted small">
+                <i class="fas fa-info-circle me-1"></i>
+                جميع عمليات الإرسال مسجلة باسمك ويتم تتبعها في سجلات النظام.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

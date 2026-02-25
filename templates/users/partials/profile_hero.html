@@ -1,0 +1,13 @@
+<div id="profile-hero" class="profile-hero mb-5 animate__animated animate__fadeIn">
+    {% if user.cover_image %}
+    <img src="{{ user.cover_image.url }}" alt="Cover" class="profile-cover-img">
+    {% else %}
+    <img src="https://images.unsplash.com/photo-1596423497886-f1262d46e387?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+        alt="Default Cover" class="profile-cover-img">
+    {% endif %}
+
+    <button class="btn btn-light position-absolute bottom-0 start-0 m-4 rounded-pill shadow-sm fw-bold edit-cover-btn"
+        style="opacity: 0.9;">
+        <i class="fas fa-camera me-2"></i> تغيير الغلاف
+    </button>
+</div>

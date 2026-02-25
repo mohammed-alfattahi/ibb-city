@@ -1,0 +1,25 @@
+{# Molecule: Stat Card #}
+<div class="card h-100 border-0 shadow-sm overflow-hidden {{ class }}">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="rounded-3 d-flex align-items-center justify-content-center"
+                style="width: 48px; height: 48px; background: var(--color-{{ type|default:'primary' }}-50); color: var(--color-{{ type|default:'primary' }}-600);">
+                <i class="{{ icon }} fs-4"></i>
+            </div>
+            {% if trend %}
+            <div
+                class="small fw-bold {% if trend > 0 %}text-success{% else %}text-danger{% endif %} bg-{{ trend_color|default:'light' }} px-2 py-1 rounded-pill">
+                <i class="fas fa-arrow-{% if trend > 0 %}up{% else %}down{% endif %} me-1"></i>
+                {{ trend|abs }}%
+            </div>
+            {% endif %}
+        </div>
+
+        <h6 class="text-muted fw-bold mb-1">{{ title }}</h6>
+        <h2 class="fw-bold mb-0 text-dark">{{ value }}</h2>
+
+        {% if subtitle %}
+        <p class="small text-muted mb-0 mt-2">{{ subtitle }}</p>
+        {% endif %}
+    </div>
+</div>

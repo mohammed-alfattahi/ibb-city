@@ -1,0 +1,38 @@
+{% extends "partners/base_partner.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Reply to Review</h1>
+    <a href="{% url 'partner_review_list' %}" class="btn btn-sm btn-outline-secondary">Back to Reviews</a>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card border-info">
+            <div class="card-header">Target Review</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ review.place.name }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">By {{ review.user.username }} - {{ review.rating }}/5</h6>
+                <p class="card-text">{{ review.comment }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Your Official Reply</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-reply me-2"></i>Post Reply
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

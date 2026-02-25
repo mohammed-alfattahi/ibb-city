@@ -1,0 +1,133 @@
+<section class="mb-5 {{ block.custom_class }}" id="gallery-section">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="section-title-custom mb-1">{{ block.title|default:"معرض الصور" }}</h3>
+            <p class="text-muted small mb-0">استكشف جمال المكان عبر الصور</p>
+        </div>
+        {% if place.media.exists %}
+        <button class="btn btn-outline-primary rounded-pill btn-sm px-3" data-bs-toggle="modal"
+            data-bs-target="#galleryModal">
+            <i class="fas fa-images me-1"></i> عرض الكل
+        </button>
+        {% endif %}
+    </div>
+
+    <!-- Masonry Grid -->
+    <div class="row g-3" style="min-height: 200px;">
+        <!-- Featured Image (First) -->
+        {% if place.media.all|length >= 1 %}
+        <div class="col-md-8">
+            <div class="gallery-item h-100 rounded-4 overflow-hidden position-relative shadow-sm cursor-pointer group"
+                onclick="openLightbox(0)">
+                <img src="{{ place.media.all.0.media_url.url }}"
+                    class="w-100 h-100 object-fit-cover transition-transform duration-500 group-hover-scale-105"
+                    style="min-height: 300px;" alt="Main Image">
+                <div class="position-absolute inset-0 bg-black opacity-0 group-hover-opacity-20 transition-opacity">
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Side Grid -->
+        <div class="col-md-4">
+            <div class="d-flex flex-column gap-3 h-100">
+                {% if place.media.all|length >= 2 %}
+                <div class="gallery-item flex-grow-1 rounded-4 overflow-hidden position-relative shadow-sm cursor-pointer group"
+                    onclick="openLightbox(1)">
+                    <img src="{{ place.media.all.1.media_url.url }}"
+                        class="w-100 h-100 object-fit-cover transition-transform duration-500 group-hover-scale-105"
+                        alt="Image 2">
+                </div>
+                {% endif %}
+                {% if place.media.all|length >= 3 %}
+                <div class="gallery-item flex-grow-1 rounded-4 overflow-hidden position-relative shadow-sm cursor-pointer group"
+                    onclick="openLightbox(2)">
+                    <img src="{{ place.media.all.2.media_url.url }}"
+                        class="w-100 h-100 object-fit-cover transition-transform duration-500 group-hover-scale-105"
+                        alt="Image 3">
+                    {% if place.media.count > 3 %}
+                    <!-- Count Overlay -->
+                    <div
+                        class="position-absolute top-0 start-0 w-100 h-100 bg-black bg-opacity-50 d-flex align-items-center justify-content-center text-white fw-bold fs-4">
+                        +{{ place.media.count|add:"-3" }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if not place.media.exists %}
+        <div class="col-12 text-center py-5 bg-light rounded-4">
+            <i class="fas fa-image fa-3x text-muted opacity-25 mb-3"></i>
+            <p class="text-muted">لا توجد صور مضافة حالياً.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Lightbox Modal -->
+<div class="modal fade" id="galleryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-transparent border-0 shadow-none">
+            <div class="modal-body p-0 position-relative">
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3 z-10"
+                    data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <div id="lightboxCarousel" class="carousel slide" data-bs-ride="false">
+                    <div class="carousel-inner rounded-4 overflow-hidden">
+                        {% for media in place.media.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}" style="max-height: 85vh;">
+                            <img src="{{ media.media_url.url }}" class="d-block w-100 object-fit-contain"
+                                style="max-height: 85vh;" alt="Gallery {{ forloop.counter }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if place.media.count > 1 %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#lightboxCarousel"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">السابق</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#lightboxCarousel"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">التالي</span>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Thumbnails strip could go here -->
+            <div class="modal-footer justify-content-center border-0 pt-0">
+                <div class="text-white small opacity-75">
+                    استخدم الأسهم للتنقل • اضغط Esc للإغلاق
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openLightbox(index) {
+        var myModal = new bootstrap.Modal(document.getElementById('galleryModal'));
+        var carouselEl = document.getElementById('lightboxCarousel');
+        var carousel = bootstrap.Carousel.getOrCreateInstance(carouselEl);
+
+        carousel.to(index);
+        myModal.show();
+    }
+</script>
+
+<style>
+    .group-hover-scale-105:hover {
+        transform: scale(1.05);
+    }
+
+    .gallery-item {
+        transition: box-shadow 0.3s ease;
+    }
+
+    .gallery-item:hover {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+    }
+</style>

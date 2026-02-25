@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Majesty Stays - فنادق ومنتجعات{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/modern_landing.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="landing-hero"
+    style="background-image: url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');">
+    <div class="landing-content animate__animated animate__zoomIn">
+        <h1 class="landing-title">Majesty Stays</h1>
+        <p class="landing-subtitle">تجربة إقامة ملكية في أرقى فنادق ومنتجعات إب</p>
+        <div class="mt-4">
+            <a href="#hotels-list" class="btn btn-light rounded-pill px-5 py-3 fw-bold shadow-lg">
+                احجز إقامتك الآن <i class="fas fa-arrow-down ms-2"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5" id="hotels-list">
+    <!-- Filters -->
+    <div class="d-flex justify-content-center gap-3 mb-5">
+        <button class="btn btn-dark rounded-pill px-4 active">الكل</button>
+        <button class="btn btn-outline-dark rounded-pill px-4">5 نجوم</button>
+        <button class="btn btn-outline-dark rounded-pill px-4">إطلالة جبلية</button>
+        <button class="btn btn-outline-dark rounded-pill px-4">مسابح خاصة</button>
+    </div>
+
+    <div class="row g-4">
+        {% for place in hotels %}
+        <div class="col-md-6 col-lg-4 animate__animated animate__fadeInUp"
+            style="animation-delay: {{ forloop.counter0|add:1 }}00ms">
+            <div class="majesty-card h-100">
+                <div class="majesty-img-wrapper">
+                    {% if place.cover_image %}
+                    <img src="{{ place.cover_image.url }}" alt="{{ place.name }}">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80"
+                        alt="{{ place.name }}">
+                    {% endif %}
+                    <span class="majesty-badge"><i class="fas fa-star text-warning"></i> {{ place.avg_rating|default:"-" }}</span>
+                </div>
+                <div class="p-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <small class="text-uppercase text-muted fw-bold text-truncate" style="max-width: 150px;">{{ place.category.name }}</small>
+                        <span class="text-success fw-bold">{{ place.get_price_range_display }}</span>
+                    </div>
+                    <h3 class="fw-bold mb-3 text-truncate">{{ place.name }}</h3>
+                    <div class="d-flex gap-3 text-muted small mb-4">
+                        <span><i class="fas fa-map-marker-alt me-1"></i> {{ place.get_directorate_display }}</span>
+                        <span><i class="fas fa-eye me-1"></i> {{ place.view_count }}</span>
+                    </div>
+                    <a href="{% url 'place_detail' place.pk %}" class="btn btn-majesty w-100">عرض التفاصيل</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="bg-light rounded-4 p-5">
+                <i class="fas fa-hotel fa-4x text-muted mb-3 opacity-25"></i>
+                <h3 class="text-muted fw-bold">لا توجد فنادق متاحة حالياً</h3>
+                <p class="text-muted">يرجى التحقق لاحقاً أو استكشاف مناطق أخرى.</p>
+                <a href="{% url 'place_list' %}" class="btn btn-outline-dark rounded-pill mt-3">تصفح كل الأماكن</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

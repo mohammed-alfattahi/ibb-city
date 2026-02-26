@@ -17,3 +17,4 @@ django-axes==6.5.0
 django-filter==23.5
 django-allauth==0.61.1
 django-celery-results==2.5.1
+django-ratelimit==4.1.0

@@ -10,7 +10,7 @@ from datetime import timedelta
 # Adjust for new settings location: parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-dummy-key')
+SECRET_KEY = config('mysecretkey123456789', default='django-insecure-dummy-key')
 
 # Default to False for safety, override in dev.py
 DEBUG = config('DEBUG', default=False, cast=bool)
@@ -123,7 +123,7 @@ LOCALE_PATHS = [BASE_DIR / 'locale']
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

@@ -7,3 +7,4 @@ dj-database-url==2.1.0
 psycopg2-binary==2.9.9
 sorl-thumbnail==13.0.0
 celery==5.3.6
+python-decouple==3.8
